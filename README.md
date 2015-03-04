@@ -4,7 +4,7 @@ Field Manager is a Craft CMS plugin to help make it easy to manage your fields a
 
 At this stage, functionality revolves around cloning fields and field groups, but [more features are planned](https://github.com/engram-design/FieldManager#roadmap)!
 
-![Map](https://raw.githubusercontent.com/engram-design/FieldManager/screenshots/main.png)
+![Map](https://raw.githubusercontent.com/engram-design/FieldManager/master/screenshots/main.png)
 
 ## Install
 
@@ -49,7 +49,7 @@ One thing to note for field group cloning, is that fields are required to have u
 * Tags
 * Users
 
-**[ButtonBox](https://github.com/supercool/Button-Box)**
+**ButtonBox by [Supercool](https://github.com/supercool/Button-Box)**
 
 * Buttons
 * Colours

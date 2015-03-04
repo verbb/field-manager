@@ -1,0 +1,52 @@
+#fieldmanager .group a {
+	color: #333f4d;
+}
+
+#fieldmanager .thin {
+	text-align: right;
+}
+
+#fieldmanager .field td,
+#fieldmanager .field th {
+	padding-top: 5px !important;
+	padding-bottom: 4px !important;
+	font-size: 90%;
+}
+
+#fieldmanager .field .name {
+	padding-left: 20px !important
+}
+
+#fieldmanager .delete-row {
+	padding-left: 25px !important;
+	padding-right: 10px !important;
+}
+
+
+
+.sidebar-nav .active a {
+	font-weight: bold;
+}
+
+
+
+.clone-btn.element {
+	cursor: pointer;
+}
+
+.clone-btn.element.loading:after {
+	right: -24px !important;
+	top: -4px !important;
+}
+
+
+
+
+.icon.delete-group:not(.disabled):hover:before {
+	color: #da5a47;
+}
+.icon.delete-group:before {
+	content: 'remove';
+	color: rgba(0, 0, 0, 0.2);
+}
+

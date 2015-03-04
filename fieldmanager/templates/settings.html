@@ -1,0 +1,11 @@
+{% import '_includes/forms' as forms %}
+
+{{ forms.lightswitchField({
+    id: 'cpSectionDisabled',
+    name: 'cpSectionDisabled',
+    label: 'Show in CP navigation'|t,
+    on: settings.cpSectionDisabled,
+    instructions: 'Display Field Manager in CP navigation menu.'|t
+}) }}
+
+<hr />

@@ -1,0 +1,67 @@
+{% extends "_layouts/cp" %}
+
+{% includeCssResource 'fieldmanager/css/fieldmanager.css' %}
+{% includeJsResource 'fieldmanager/js/fieldmanager.js' %}
+
+{% set title = 'Field Manager' %}
+
+{% set groups = craft.fields.getAllGroups('id') %}
+
+{% set sidebar %}
+    <nav class="sidebar-nav">
+        <ul>
+            <li class="heading"><span>{{ 'Field Groups'|t }}</span></li>
+            <li class="active"><a href="#" data-groupid="all">{{ 'All'|t }}</a></li>
+            {% for group in groups %}
+                <li><a href="#" data-groupid="{{ group.id }}">{{ group.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </nav>
+{% endset %}
+
+{% set content %}
+
+    <table id="fieldmanager" class="data fullwidth collapsible">
+        <thead>
+            <th>{{ "Group Name"|t }}</th>
+            <th>{{ "Handle"|t }}</th>
+            <th>{{ "Type"|t }}</th>
+            <th></th>
+            <th></th>
+        </thead>
+        <tbody>
+            {% for group in groups %}
+                {% set fields = craft.fields.getFieldsByGroupId(group.id) %}
+
+                <tr class="group" data-groupid="{{ group.id }}">
+                    <th><a class="go" href="{{ url('settings/fields/' ~ group.id) }}">{{ group.name }}</a></th>
+                    <td></td>
+                    <td></td>
+                    <td class="thin"><div class="btn small clone-btn element">Clone Group</div></td>
+                    <td class="thin delete-row"><a class="delete-group icon" title="{{ 'Delete'|t }}" role="button"></a></td>
+                </tr>
+
+                {% for field in fields %}
+                    <tr class="field" data-id="{{ field.id }}" data-groupid="{{ group.id }}" data-name="{{ field.name }}">
+                        <td class="name"><strong><a class="go" href="{{ url('settings/fields/edit/' ~ field.id) }}">{{ field.name }}</a></strong></td>
+                        <td><code>{{ field.handle }}</code></td>
+                        <td>{{ field.type }}</td>
+                        <td class="thin"><div class="btn small clone-btn element">Clone</div></td>
+                        <td class="thin delete-row"><a class="delete icon" title="{{ 'Delete'|t }}" role="button"></a></td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endset %}
+
+{% set js %}
+    new Craft.AdminTable({
+        tableSelector: '#fieldmanager',
+        noObjectsSelector: '#nofields',
+        deleteAction: 'fields/deleteField'
+    });
+{% endset %}
+{% includeJs js %}
+

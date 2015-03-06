@@ -24,7 +24,9 @@ Cloning an individual field gives you the opportunity to set its Group, Name and
 
 For cloning a field group, you'll be able to set the Name for this new group. All fields within this group will be duplicated.
 
-One thing to note for field group cloning, is that fields are required to have unique handles. Therefore, Field Manager prefixes the field handle with the group name you provide. For example, if your new group is called `New Group`, and it contains a field called `Body Content`, the field handle will be `newGroup_bodyContent`. We will look at introducing a method for customising this soon.
+One thing to note for field group cloning, is that fields are required to have unique handles. Therefore, Field Manager prefixes each field's handle with the group name you provide. For example, if your new group is called `New Group`, and it contains a field called `Body Content`, the field handle will be `newGroup_bodyContent`.
+
+You may also set this yourself if you choose to, using the `Prefix` field when cloning a field group. Please note that it needs to be a valid handle (no spaces, no hyphens, underscores only).
 
 ### Supported FieldTypes
 
@@ -72,6 +74,10 @@ One thing to note for field group cloning, is that fields are required to have u
 Found a bug? Have a suggestion? [Submit an issue](https://github.com/engram-design/FieldManager/issues)
 
 ### Changelog
+
+#### 1.1
+
+- Added an option to provide a `prefix` to be used for all field handle's value when cloning group. This is because field handles need to be unique!
 
 #### 1.0
 

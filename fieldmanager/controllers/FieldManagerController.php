@@ -9,9 +9,11 @@ class FieldManagerController extends BaseController
         $this->requireAjaxRequest();
 
         $groupId = craft()->request->getRequiredPost('groupId');
+        $group = craft()->fields->getGroupById($groupId);
 
         $variables = array(
-            'group' => craft()->fields->getGroupById($groupId),
+            'group' => $group,
+            'prefix' => craft()->fieldManager->generateHandle($group->name) . '_',
         );
 
         $returnData['html'] = $this->renderTemplate('fieldmanager/_fields/group', $variables, true);
@@ -77,6 +79,7 @@ class FieldManagerController extends BaseController
         $settings = array(
             'groupId' => craft()->request->getRequiredPost('groupId'),
             'name' => craft()->request->getRequiredPost('name'),
+            'prefix' => craft()->request->getRequiredPost('prefix'),
         );
 
         $originGroup = craft()->fields->getGroupById($settings['groupId']);

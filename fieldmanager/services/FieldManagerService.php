@@ -68,7 +68,7 @@ class FieldManagerService extends BaseApplicationComponent
             // Create our own settings for these new fields for name/handle.
             // Will look something like GroupName_FieldName
             foreach ($originFields as $originField) {
-                $handle = $this->generateHandle($newGroup->name) . '_' . $this->generateHandle($originField->name);
+                $handle = $settings['prefix'] . $originField->handle;
 
                 $settings = array(
                     'fieldId'   => $originField->id,

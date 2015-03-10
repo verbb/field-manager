@@ -75,7 +75,7 @@ Found a bug? Have a suggestion? [Submit an issue](https://github.com/engram-desi
 
 #### 1.2
 
-- Edit fields or field groups directly from the FieldManager screen.
+- Edit fields or field groups directly from the FieldManager screen. Just click the blue links on the left-hand side of the table.
 - Better error-handling for `saveField()`
 - Swapped HUD for Modal when cloning single field. Allows editing of all field settings/properties, not just group, name and handle.
 
@@ -85,4 +85,4 @@ Found a bug? Have a suggestion? [Submit an issue](https://github.com/engram-desi
 
 #### 1.0
 
-Initial release.
+- Initial release.

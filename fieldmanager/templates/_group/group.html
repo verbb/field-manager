@@ -1,0 +1,23 @@
+{% import "_includes/forms" as forms %}
+
+{{ forms.textField({
+    label: "Name"|t,
+    instructions: 'What do you want to name your group?'|t,
+    id: 'name',
+    name: 'name',
+    required: true,
+    autofocus: true,
+    value: group.name,
+}) }}
+
+{{ forms.textField({
+    label: "Field Prefix"|t,
+    instructions: 'A prefix for each field\'s handle in this group. <br> Field handles must be unique.'|t,
+    id: 'prefix',
+    name: 'prefix',
+    required: true,
+    value: prefix,
+}) }}
+
+<input type="hidden" name="id" value="{{ group.id }}" style="display: none;" />
+

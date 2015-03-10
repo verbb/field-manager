@@ -20,7 +20,7 @@ At this stage, functionality revolves around cloning fields and field groups, bu
 
 Ever needed to clone a field - or even a whole field group? You can easily use Field Manager to do both!
 
-Cloning an individual field gives you the opportunity to set its Group, Name and Handle. All other settings are carried across to your new field.
+Cloning an individual field gives you the opportunity to set its Group, Name, Handle and all other settings related to that field type. Settings available to edit are identical to settings available when using the regular field edit screen.
 
 For cloning a field group, you'll be able to set the Name for this new group. All fields within this group will be duplicated.
 
@@ -64,8 +64,6 @@ You may also set this yourself if you choose to, using the `Prefix` field when c
 ## Roadmap
 
 * Provide Import/Export functionality for fields and field groups
-* Possibly change HUD to full Modal window, allowing editing of all field properties (rather than just Name/Handle) before you clone it. Only for single-field cloning
-* Bulk-editing and general editing, rather than redirecting to fields settings screen
 * Ajax-ify adding to table when cloning, rather than page reload
 * Beg Pixel & Tonic to incorporate this into Craft natively
 
@@ -75,9 +73,15 @@ Found a bug? Have a suggestion? [Submit an issue](https://github.com/engram-desi
 
 ### Changelog
 
+#### 1.2
+
+- Edit fields or field groups directly from the FieldManager screen.
+- Better error-handling for `saveField()`
+- Swapped HUD for Modal when cloning single field. Allows editing of all field settings/properties, not just group, name and handle.
+
 #### 1.1
 
-- Added an option to provide a `prefix` to be used for all field handle's value when cloning group. This is because field handles need to be unique!
+- Added an option to provide a `prefix` to be used for all fields handle value when cloning group. This is because field handles need to be unique!
 
 #### 1.0
 

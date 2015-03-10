@@ -9,6 +9,7 @@ class FieldManagerController extends BaseController
         $this->requireAjaxRequest();
 
         $groupId = craft()->request->getRequiredPost('groupId');
+        $template = craft()->request->getRequiredPost('template');
         $group = craft()->fields->getGroupById($groupId);
 
         $variables = array(
@@ -16,12 +17,12 @@ class FieldManagerController extends BaseController
             'prefix' => craft()->fieldManager->generateHandle($group->name) . '_',
         );
 
-        $returnData['html'] = $this->renderTemplate('fieldmanager/_fields/group', $variables, true);
+        $returnData['html'] = $this->renderTemplate('fieldmanager/_group/' . $template, $variables, true);
 
         $this->returnJson($returnData);
     }
 
-    public function actionGetSingleFieldHtml()
+    /*public function actionGetSingleFieldHtml()
     {
         $this->requirePostRequest();
         $this->requireAjaxRequest();
@@ -34,14 +35,32 @@ class FieldManagerController extends BaseController
             'group' => craft()->fields->getGroupById($groupId),
         );
 
-        $returnData['html'] = $this->renderTemplate('fieldmanager/_fields/single', $variables, true);
+        $returnData['html'] = $this->renderTemplate('fieldmanager/_single/single', $variables, true);
+
+        $this->returnJson($returnData);
+    }*/
+
+    public function actionGetModalBody()
+    {
+        $this->requirePostRequest();
+        $this->requireAjaxRequest();
+
+        $fieldId = craft()->request->getRequiredPost('fieldId');
+        $groupId = craft()->request->getRequiredPost('groupId');
+        $template = craft()->request->getRequiredPost('template');
+
+        $field = craft()->fields->getFieldById($fieldId);
+
+        $variables = array(
+            'field' => craft()->fields->getFieldById($fieldId),
+            'group' => craft()->fields->getGroupById($groupId),
+        );
+
+        // Don't process the output yet - issues with JS in template...
+        $returnData = $this->renderTemplate('fieldmanager/_single/'.$template, $variables, false, false);
 
         $this->returnJson($returnData);
     }
-
-
-
-
 
 
     public function actionSaveSingleField()
@@ -50,23 +69,19 @@ class FieldManagerController extends BaseController
         $this->requireAjaxRequest();
 
         $settings = array(
-            'fieldId' => craft()->request->getRequiredPost('fieldId'),
+            'fieldId' => craft()->request->getPost('fieldId'),
             'group' => craft()->request->getRequiredPost('group'),
-            'name' => craft()->request->getRequiredPost('name'),
-            'handle' => craft()->request->getRequiredPost('handle'),
+            'name' => craft()->request->getPost('name'),
+            'handle' => craft()->request->getPost('handle'),
+            'instructions' => craft()->request->getPost('instructions'),
+            'translatable' => (bool)craft()->request->getPost('translatable'),
+            'type' => craft()->request->getRequiredPost('type'),
+            'types' => craft()->request->getPost('types'),
         );
 
         $originField = craft()->fields->getFieldById($settings['fieldId']);
 
-        if ((craft()->fieldManager->saveField($settings)) !== false) {
-            $returnData = array('success' => true);
-
-            craft()->userSession->setNotice(Craft::t($originField->name . ' field cloned successfully.'));
-        } else {
-            $returnData = array('success' => false);
-
-            //craft()->userSession->setError(Craft::t('Could not clone the '.$originField->name.' field.'));
-        }
+        $returnData = craft()->fieldManager->saveField($settings, false);
 
         $this->returnJson($returnData);
     }

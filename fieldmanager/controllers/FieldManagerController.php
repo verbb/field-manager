@@ -135,6 +135,10 @@ class FieldManagerController extends BaseController
         $json = craft()->request->getParam('data', '{}');
         $data = json_decode($json, true);
 
+        if ($group) {
+            craft()->userSession->setError('Specify a group to import into.');
+        }
+
         if ($data !== null) {
             $fieldImportResult = craft()->fieldManager_port->import($group, $data);
 

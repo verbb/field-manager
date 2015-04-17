@@ -61,17 +61,15 @@ You may also set this yourself if you choose to, using the `Prefix` field when c
 
 ...and many more. Field Manager can handle just about any FieldType, the above are simply those that have been tested.
 
-## Roadmap
-
-* Provide Import/Export functionality for fields and field groups
-* Ajax-ify adding to table when cloning, rather than page reload
-* Beg Pixel & Tonic to incorporate this into Craft natively
-
 ## Bugs, feature requests, support
 
 Found a bug? Have a suggestion? [Submit an issue](https://github.com/engram-design/FieldManager/issues)
 
 ### Changelog
+
+#### 1.3
+
+- Added import/exporting of fields.
 
 #### 1.2
 

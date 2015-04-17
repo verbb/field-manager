@@ -1,5 +1,34 @@
 $(function() {
 
+	// Handle top-level checkboxes
+	$(document).on('change', 'tr.group .field .checkbox', function(e) {
+		e.preventDefault();
+
+		var groupId = $(this).parents('tr.group').data('groupid');
+		var $checkboxes = $('tr.field[data-groupid="'+groupId+'"] .field .checkbox');
+
+		if (!$(this).hasClass('hasChecked')) {
+			$(this).addClass('hasChecked');
+			
+			$checkboxes.prop('checked', true);
+		} else {
+			$(this).removeClass('hasChecked');
+
+			$checkboxes.prop('checked', false);
+		}
+	});
+
+	// Handle any checkbox
+	$(document).on('change', '#fieldmanager .checkbox', function(e) {
+		e.preventDefault();
+
+		if ($('#fieldmanager .checkbox:checked').length > 0) {
+			$('.export-btn').removeClass('disabled').prop('disabled', false);
+		} else {
+			$('.export-btn').addClass('disabled').prop('disabled', true);
+		}
+	});
+
 	$('.sidebar-nav a').on('click', function(e) {
 		e.preventDefault();
 		var groupId = $(this).attr('data-groupid');

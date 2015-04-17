@@ -1,3 +1,4 @@
+#fieldmanager .group a:hover:after,
 #fieldmanager .group a {
 	color: #333f4d;
 }
@@ -15,6 +16,17 @@
 
 #fieldmanager .field .name {
 	padding-left: 20px !important
+}
+
+#fieldmanager .checkboxfield {
+	display: inline-block;
+	margin: 0 5px 0;
+	vertical-align: middle;
+}
+
+#fieldmanager input.checkbox + label {
+	display: inline-block;
+	top: 2px;
 }
 
 #fieldmanager .delete-row {

@@ -112,4 +112,38 @@ class FieldManagerController extends BaseController
         $this->returnJson($returnData);
     }
 
+    public function actionExport()
+    {
+        $this->requirePostRequest();
+
+        $fields = craft()->request->getParam('selectedFields');
+        $fieldsObj = craft()->fieldManager_port->export($fields);   
+        $json = json_encode($fieldsObj, JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
+
+        HeaderHelper::setDownload('export.json', strlen($json));
+
+        JsonHelper::sendJsonHeaders();
+        echo $json;
+        craft()->end();
+    }
+
+    public function actionImport()
+    {
+        $this->requirePostRequest();
+
+        $group = craft()->request->getParam('group', '');
+        $json = craft()->request->getParam('data', '{}');
+        $data = json_decode($json, true);
+
+        if ($data !== null) {
+            $fieldImportResult = craft()->fieldManager_port->import($group, $data);
+
+            if ($fieldImportResult === true) {
+                craft()->userSession->setNotice('Imported successfully.');
+            } else {
+                craft()->userSession->setError(implode(', ', $fieldImportResult));
+            }
+        }
+    }
+
 }

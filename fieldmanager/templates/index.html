@@ -1,9 +1,16 @@
 {% extends "_layouts/cp" %}
 
+{% import "_includes/forms" as forms %}
+
 {% includeCssResource 'fieldmanager/css/fieldmanager.css' %}
 {% includeJsResource 'fieldmanager/js/fieldmanager.js' %}
 
 {% set title = 'Field Manager' %}
+
+{% set tabs = {
+    fields: { label: "Fields"|t, url: url('fieldmanager') },
+    import: { label: "Import"|t, url: url('fieldmanager/import') },
+} %}
 
 {% set groups = craft.fields.getAllGroups('id') %}
 
@@ -21,6 +28,10 @@
 
 {% set content %}
 
+<form method="POST" accept-charset="UTF-8">
+    <input type="hidden" name="action" value="fieldManager/export">
+    {{ getCsrfInput() }}
+
     <table id="fieldmanager" class="data fullwidth collapsible">
         <thead>
             <th>{{ "Group Name"|t }}</th>
@@ -34,7 +45,10 @@
                 {% set fields = craft.fields.getFieldsByGroupId(group.id) %}
 
                 <tr class="group" data-groupid="{{ group.id }}">
-                    <th><a class="go" href="{{ url('settings/fields/' ~ group.id) }}">{{ group.name }}</a></th>
+                    <th>
+                        {{ forms.checkboxField({}) }}
+                        <a class="go" href="{{ url('settings/fields/' ~ group.id) }}">{{ group.name }}</a>
+                    </th>
                     <td></td>
                     <td></td>
                     <td class="thin"><div class="btn small clone-btn element">Clone Group</div></td>
@@ -43,7 +57,13 @@
 
                 {% for field in fields %}
                     <tr class="field" data-id="{{ field.id }}" data-groupid="{{ group.id }}" data-name="{{ field.name }}">
-                        <td class="name"><strong><a class="go" href="{{ url('settings/fields/edit/' ~ field.id) }}">{{ field.name }}</a></strong></td>
+                        <td class="name">
+                            {{ forms.checkboxField({
+                                name: 'selectedFields[]',
+                                value: field.id,
+                            }) }}
+                            <strong><a class="go" href="{{ url('settings/fields/edit/' ~ field.id) }}">{{ field.name }}</a></strong>
+                        </td>
                         <td><code>{{ field.handle }}</code></td>
                         <td>{{ field.type }}</td>
                         <td class="thin"><div class="btn small clone-btn element">Clone</div></td>
@@ -53,6 +73,13 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <hr>
+
+    <div class="buttons">
+        <input type="submit" class="btn submit disabled export-btn" disabled value="Export selected">
+    </div>
+</form>
 
 {% endset %}
 

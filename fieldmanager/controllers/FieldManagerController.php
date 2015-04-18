@@ -117,8 +117,10 @@ class FieldManagerController extends BaseController
         $this->requirePostRequest();
 
         $fields = craft()->request->getParam('selectedFields');
-        $fieldsObj = craft()->fieldManager_port->export($fields);   
-        $json = json_encode($fieldsObj, JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
+        $fieldsObj = craft()->fieldManager_port->export($fields);
+
+        // Support PHP <5.4, JSON_PRETTY_PRINT = 128, JSON_NUMERIC_CHECK = 32
+        $json = json_encode($fieldsObj, 128 | 32);
 
         HeaderHelper::setDownload('export.json', strlen($json));
 
@@ -135,8 +137,8 @@ class FieldManagerController extends BaseController
         $json = craft()->request->getParam('data', '{}');
         $data = json_decode($json, true);
 
-        if ($group) {
-            craft()->userSession->setError('Specify a group to import into.');
+        if (!$group) {
+            return craft()->userSession->setError('Specify a group to import into.');
         }
 
         if ($data !== null) {

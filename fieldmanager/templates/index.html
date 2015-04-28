@@ -45,9 +45,11 @@
                 {% set fields = craft.fields.getFieldsByGroupId(group.id) %}
 
                 <tr class="group" data-groupid="{{ group.id }}">
-                    <th>
-                        {{ forms.checkboxField({}) }}
-                        <a class="go" href="{{ url('settings/fields/' ~ group.id) }}">{{ group.name }}</a>
+                    <th scope="row">
+                        {% set label %}<a class="go" href="{{ url('settings/fields/' ~ group.id) }}">{{ group.name }}</a>{% endset %}
+                        {{ forms.checkboxField({
+                            label: label
+                        }) }}
                     </th>
                     <td></td>
                     <td></td>
@@ -57,12 +59,13 @@
 
                 {% for field in fields %}
                     <tr class="field" data-id="{{ field.id }}" data-groupid="{{ group.id }}" data-name="{{ field.name }}">
-                        <td class="name">
+                        <th scope="row" class="name">
+                            {% set label %}<a class="go" href="{{ url('settings/fields/edit/' ~ field.id) }}">{{ field.name }}</a>{% endset %}
                             {{ forms.checkboxField({
                                 name: 'selectedFields[]',
                                 value: field.id,
+                                label: label
                             }) }}
-                            <strong><a class="go" href="{{ url('settings/fields/edit/' ~ field.id) }}">{{ field.name }}</a></strong>
                         </td>
                         <td><code>{{ field.handle }}</code></td>
                         <td>{{ field.type }}</td>

@@ -69,6 +69,10 @@ Found a bug? Have a suggestion? [Submit an issue](https://github.com/engram-desi
 
 ### Changelog
 
+#### 1.3.2
+
+- Added support for exporting Matrix fields.
+
 #### 1.3.1
 
 - Added full-featured import mapping. Allows changing of field name, handle and group assignment for each field for import.

@@ -1,5 +1,51 @@
 $(function() {
 
+    // Allow multiple back-end action hooks depending on button clicked. I'm sure there is a better way though!
+    $(document).on('click', 'input[type="submit"]', function(e) {
+    	e.preventDefault();
+    	var form = $(this).parents('form');
+
+    	if ($(this).attr('data-action')) {
+	    	$(form).find('input[name="action"]').val($(this).attr('data-action'));
+    	}
+
+    	$(form).submit();
+    });
+
+    // Clicking on an radio in the Mapping table header will check all other radios in that columns
+    $(document).on('change', 'select#groupAll', function(e) {
+    	e.preventDefault();
+
+    	$('#fieldmapping .groupSelect select').val($(this).val());
+	});
+
+    $(document).on('click', '#newgroupbtn', function(e) {
+		var name = prompt(Craft.t('What do you want to name your group?'), '');
+
+		if (name) {
+			var data = {
+				name: name
+			};
+
+			Craft.postActionRequest('fields/saveGroup', data, $.proxy(function(response, textStatus) {
+				if (textStatus == 'success') {
+					if (response.success) {
+						var newGroupOption = $('<option value="'+response.group.id+'">'+response.group.name+'</option>');
+
+						$('#fieldmapping .groupSelect select').append(newGroupOption);
+						$('#fieldmapping select#groupAll').append(newGroupOption);
+					} else if (response.errors) {
+						var errors = this.flattenErrors(response.errors);
+						alert(Craft.t('Could not create the group:')+"\n\n"+errors.join("\n"));
+					} else {
+						Craft.cp.displayError();
+					}
+				}
+
+			}, this));
+		}
+	});
+
 	// Handle top-level checkboxes
 	$(document).on('change', 'tr.group .field .checkbox', function(e) {
 		e.preventDefault();

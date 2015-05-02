@@ -22,6 +22,23 @@ class FieldManagerController extends BaseController
         $this->returnJson($returnData);
     }
 
+    public function actionMapFields()
+    {
+        $this->requirePostRequest();
+
+        $json = craft()->request->getParam('data', '{}');
+        $data = json_decode($json, true);
+
+        if ($data !== null) {
+            $this->renderTemplate('fieldmanager/import/map', array(
+                'fields'  => $data,
+            ));
+        } else {
+            craft()->userSession->setError(Craft::t('Could not parse JSON data.'));
+        }
+
+    }
+
     /*public function actionGetSingleFieldHtml()
     {
         $this->requirePostRequest();
@@ -133,22 +150,36 @@ class FieldManagerController extends BaseController
     {
         $this->requirePostRequest();
 
-        $group = craft()->request->getParam('group', '');
+        $fields = craft()->request->getParam('fields', '');
         $json = craft()->request->getParam('data', '{}');
         $data = json_decode($json, true);
 
-        if (!$group) {
-            return craft()->userSession->setError('Specify a group to import into.');
+        // First - remove any field we're not importing
+        $fieldsToImport = array();
+        foreach ($fields as $key => $field) {
+            if ($field['groupId'] != 'noimport') {
+
+                // Get the field data from our imported JSON data
+                $fieldsToImport[$field['handle']] = $data[$field['origHandle']];
+
+                // But then remove the Name value - the user may have changed this!
+                $fieldsToImport[$field['handle']]['name'] = $field['name'];
+
+                // Then add the Group ID
+                $fieldsToImport[$field['handle']]['groupId'] = $field['groupId'];
+            }
         }
 
-        if ($data !== null) {
-            $fieldImportResult = craft()->fieldManager_port->import($group, $data);
+        if (count($fieldsToImport) > 0) {
+            $fieldImportResult = craft()->fieldManager_port->import($fieldsToImport);
 
             if ($fieldImportResult === true) {
                 craft()->userSession->setNotice('Imported successfully.');
             } else {
                 craft()->userSession->setError(implode(', ', $fieldImportResult));
             }
+        } else {
+            craft()->userSession->setNotice('No fields imported.');
         }
     }
 

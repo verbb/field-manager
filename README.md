@@ -61,10 +61,6 @@ You may also set this yourself if you choose to, using the `Prefix` field when c
 
 ...and many more. Field Manager can handle just about any FieldType, the above are simply those that have been tested.
 
-## Roadmap
-
-- Add field-mapping similar to [FeedMe](https://github.com/engram-design/FeedMe) for better import handling.
-
 
 ## Bugs, feature requests, support
 
@@ -72,6 +68,10 @@ Found a bug? Have a suggestion? [Submit an issue](https://github.com/engram-desi
 
 
 ### Changelog
+
+#### 1.3.1
+
+- Added full-featured import mapping. Allows changing of field name, handle and group assignment for each field for import.
 
 #### 1.3
 

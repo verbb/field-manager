@@ -26,7 +26,6 @@
 
 #fieldmanager input.checkbox + label {
 	display: inline-block;
-	top: 2px;
 }
 
 #fieldmanager .delete-row {
@@ -111,6 +110,27 @@
 .fieldsettingsmodal .footer .spinner {
 	position: absolute;
 }
+
+
+
+
+#fieldmapping thead tr th {
+	vertical-align: middle;
+}
+
+#fieldmapping tbody tr td {
+	text-align: left;
+}
+
+#fieldmapping tbody tr td.textarea {
+	padding-left: 0;
+}
+
+#newgroupbtn {
+	float: right !important;
+}
+
+
 
 
 

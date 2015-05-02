@@ -3,19 +3,18 @@ namespace Craft;
 
 class FieldManager_PortService extends BaseApplicationComponent
 {
-    public function import($group, $fieldDefs) {
+    public function import($fieldDefs) {
 
         $fields     = craft()->fields->getAllFields('handle');
         $fieldTypes = craft()->fields->getAllFieldTypes();
 
         foreach ($fieldDefs as $fieldHandle => $fieldDef) {
             if (array_key_exists($fieldDef['type'], $fieldTypes)) {
-                //$field = array_key_exists($fieldHandle, $fields) ? $fields[$fieldHandle] : new FieldModel();
                 $field = new FieldModel();
 
                 $field->setAttributes(array(
                     'handle'       => $fieldHandle,
-                    'groupId'      => $group,
+                    'groupId'      => $fieldDef['groupId'],
                     'name'         => $fieldDef['name'],
                     'context'      => $fieldDef['context'],
                     'instructions' => $fieldDef['instructions'],

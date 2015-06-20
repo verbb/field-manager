@@ -14,7 +14,7 @@ class FieldManagerPlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '1.3.2';
+        return '1.3.3';
     }
 
     public function getDeveloper()
@@ -29,7 +29,7 @@ class FieldManagerPlugin extends BasePlugin
 
     public function hasCpSection()
     {
-        return craft()->fieldManager->isCpSectionDisabled() ? false : true;
+        return craft()->fieldManager->isCpSectionEnabled() ? true : false;
     }
 
     public function getSettingsHtml()
@@ -42,7 +42,7 @@ class FieldManagerPlugin extends BasePlugin
     protected function defineSettings()
     {
         return array(
-            'cpSectionDisabled' => array( AttributeType::Bool, 'default' => false ),
+            'cpSectionEnabled' => array( AttributeType::Bool, 'default' => true ),
         );
     }
 

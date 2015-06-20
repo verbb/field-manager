@@ -3,10 +3,10 @@ namespace Craft;
 
 class FieldManagerService extends BaseApplicationComponent
 {
-    public function isCpSectionDisabled()
+    public function isCpSectionEnabled()
     {
         $settings = craft()->plugins->getPlugin('fieldManager')->getSettings();
-        return isset( $settings[ 'cpSectionDisabled' ] ) && $settings[ 'cpSectionDisabled' ];
+        return isset( $settings[ 'cpSectionEnabled' ] ) && $settings[ 'cpSectionEnabled' ];
     }
 
     public function saveField($settings, $useOriginalSettings = true)

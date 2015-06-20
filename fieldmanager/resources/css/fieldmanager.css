@@ -51,7 +51,9 @@
 }
 
 
-
+.delete-row .icon.delete {
+	font-size: 110%;
+}
 
 .icon.delete-group:not(.disabled):hover:before {
 	color: #da5a47;
@@ -124,6 +126,11 @@
 
 #fieldmapping tbody tr td.textarea {
 	padding-left: 0;
+}
+
+#fieldmapping textarea {
+	padding: 6px 9px;
+	border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
 #newgroupbtn {

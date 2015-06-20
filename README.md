@@ -51,7 +51,7 @@ You may also set this yourself if you choose to, using the `Prefix` field when c
 * Tags
 * Users
 
-**ButtonBox by [Supercool](https://github.com/supercool/Button-Box)**
+**[ButtonBox](https://github.com/supercool/Button-Box)**
 
 * Buttons
 * Colours
@@ -59,12 +59,9 @@ You may also set this yourself if you choose to, using the `Prefix` field when c
 * Stars
 * Width
 
+**[SuperTable](https://github.com/engram-design/SuperTable)**
+
 ...and many more. Field Manager can handle just about any FieldType, the above are simply those that have been tested.
-
-
-## Roadmap
-
-- Support clone, import/export of [SuperTable](https://github.com/engram-design/SuperTable)
 
 
 ## Bugs, feature requests, support
@@ -73,6 +70,13 @@ Found a bug? Have a suggestion? [Submit an issue](https://github.com/engram-desi
 
 
 ### Changelog
+
+#### 1.3.3
+
+- Added support for [SuperTable](https://github.com/engram-design/SuperTable).
+- Fix for 'Show in CP Nav' setting - [#5](https://github.com/engram-design/FieldManager/issues/5).
+- Fix when exporting Matrix fields, field settings weren't getting exported - [#6](https://github.com/engram-design/FieldManager/issues/6).
+- Minor cosmetic fixes.
 
 #### 1.3.2
 

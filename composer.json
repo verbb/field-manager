@@ -1,0 +1,12 @@
+{
+    "name": "engram-design/FieldManager",
+    "description": "A Craft CMS plugin to make it easy to manage your fields and field groups",
+    "authors": [{
+        "name": "S. Group",
+        "email": "joshua@sgroup.com.au"
+	}],
+    "type": "craft-plugin",
+    "require": {
+        "composer/installers": "~1.0"
+    }
+}

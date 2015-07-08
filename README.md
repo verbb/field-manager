@@ -28,7 +28,7 @@ One thing to note for field group cloning, is that fields are required to have u
 
 You may also set this yourself if you choose to, using the `Prefix` field when cloning a field group. Please note that it needs to be a valid handle (no spaces, no hyphens, underscores only).
 
-### Supported FieldTypes
+## Supported FieldTypes
 
 **Craft**
 
@@ -69,7 +69,12 @@ You may also set this yourself if you choose to, using the `Prefix` field when c
 Found a bug? Have a suggestion? [Submit an issue](https://github.com/engram-design/FieldManager/issues)
 
 
-### Changelog
+## Changelog
+
+#### 1.3.4
+
+- Refactor import/export services.
+- Fully support import/export Matrix-in-SuperTable and SuperTable-in-Matrix.
 
 #### 1.3.3
 

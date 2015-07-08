@@ -134,7 +134,7 @@ class FieldManagerController extends BaseController
         $this->requirePostRequest();
 
         $fields = craft()->request->getParam('selectedFields');
-        $fieldsObj = craft()->fieldManager_port->export($fields);
+        $fieldsObj = craft()->fieldManager_export->export($fields);
 
         // Support PHP <5.4, JSON_PRETTY_PRINT = 128, JSON_NUMERIC_CHECK = 32
         $json = json_encode($fieldsObj, 128 | 32);
@@ -171,7 +171,7 @@ class FieldManagerController extends BaseController
         }
 
         if (count($fieldsToImport) > 0) {
-            $fieldImportResult = craft()->fieldManager_port->import($fieldsToImport);
+            $fieldImportResult = craft()->fieldManager_import->import($fieldsToImport);
 
             if ($fieldImportResult === true) {
                 craft()->userSession->setNotice('Imported successfully.');

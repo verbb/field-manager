@@ -23,6 +23,10 @@ class FieldManager_ImportService extends BaseApplicationComponent
                     'settings'     => $fieldDef['settings']
                 ));
 
+                if ($field->type == 'PositionSelect') {
+                    $this->handlePositionSelect($fieldDef, $field);
+                }
+
                 if (!craft()->fields->saveField($field)) {
                     return $field->getAllErrors();
                 }
@@ -34,7 +38,6 @@ class FieldManager_ImportService extends BaseApplicationComponent
                 if ($field->type == 'SuperTable') {
                     $this->handleSuperTableImport($fieldDef, $field);
                 }
-
             }
         }
 
@@ -80,6 +83,10 @@ class FieldManager_ImportService extends BaseApplicationComponent
                 if ($blockTypeField->type == 'SuperTable') {
                     $extraFields[] = array($blockTypeFieldDef, $blockTypeField);
                 }
+
+                if ($blockTypeField->type == 'PositionSelect') {
+                    $this->handlePositionSelect($blockTypeFieldDef, $blockTypeField);
+                }
             }
 
             $blockType->setFields($newBlockTypeFields);
@@ -117,6 +124,10 @@ class FieldManager_ImportService extends BaseApplicationComponent
                 if ($blockTypeField->type == 'Matrix') {
                     $extraFields[] = array($blockTypeFieldDef, $blockTypeField);
                 }
+
+                if ($blockTypeField->type == 'PositionSelect') {
+                    $this->handlePositionSelect($blockTypeFieldDef, $blockTypeField);
+                }
             }
 
             $blockType->setFields($newBlockTypeFields);
@@ -129,6 +140,18 @@ class FieldManager_ImportService extends BaseApplicationComponent
                 $this->handleMatrixImport($options[0], $options[1]);
             }
         }
+    }
+
+    public function handlePositionSelect($fieldDef, &$field)
+    {
+        // This is a little bit strange...
+        // Imports as { settings: { options: { 0: left, 1: right } } } but should be
+        // { settings: { options: { left: 1, right: 1 } } }
+
+        $settings = $fieldDef['settings'];
+        $settings['options'] = array_fill_keys($settings['options'], '1');
+
+        $field->settings = $settings;
     }
 
 

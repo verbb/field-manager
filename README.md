@@ -71,6 +71,10 @@ Found a bug? Have a suggestion? [Submit an issue](https://github.com/engram-desi
 
 ## Changelog
 
+#### 1.3.5
+
+- Fixed import/export issue with Position Select field - [#9](https://github.com/engram-design/FieldManager/issues/9).
+
 #### 1.3.4
 
 - Refactor import/export services.

@@ -14,7 +14,7 @@ class FieldManagerPlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '1.3.5';
+        return '1.3.6';
     }
 
     public function getDeveloper()

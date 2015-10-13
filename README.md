@@ -84,6 +84,10 @@ Found a bug? Have a suggestion? [Submit an issue](https://github.com/engram-desi
 
 ## Changelog
 
+#### 1.3.6
+
+- Adds support for installation via [composer](http://getcomposer.org)
+
 #### 1.3.5
 
 - Fixed import/export issue with Position Select field - [#9](https://github.com/engram-design/FieldManager/issues/9).

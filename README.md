@@ -11,6 +11,19 @@ At this stage, functionality revolves around cloning fields and field groups, bu
 - Add the `fieldmanager` directory into your `craft/plugins` directory.
 - Navigate to Settings -> Plugins and click the "Install" button.
 
+### Installation via Composer
+
+- Install [composer](http://getcomposer.org) if you haven't yet
+- Add dependency to `composer.json`:
+  ```
+  {
+    "require": {
+      "engram-design/fieldmanager": "~1.3",
+    }
+  }
+  ```
+- Run `composer update`
+
 **Plugin options**
 
 - Change the plugin name as it appear in the CP navigation.
@@ -70,6 +83,10 @@ Found a bug? Have a suggestion? [Submit an issue](https://github.com/engram-desi
 
 
 ## Changelog
+
+#### 1.3.6
+
+- Adds support for installation via [composer](http://getcomposer.org)
 
 #### 1.3.5
 

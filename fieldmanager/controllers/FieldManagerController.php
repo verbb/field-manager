@@ -3,6 +3,9 @@ namespace Craft;
 
 class FieldManagerController extends BaseController
 {
+    // Public Methods
+    // =========================================================================
+
     public function actionGetGroupFieldHtml()
     {
         $this->requirePostRequest();

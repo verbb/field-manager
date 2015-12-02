@@ -3,8 +3,11 @@ namespace Craft;
 
 class FieldManager_ImportService extends BaseApplicationComponent
 {
-    public function import($fieldDefs) {
+    // Public Methods
+    // =========================================================================
 
+    public function import($fieldDefs)
+    {
         $fields     = craft()->fields->getAllFields('handle');
         $fieldTypes = craft()->fields->getAllFieldTypes();
 
@@ -44,7 +47,8 @@ class FieldManager_ImportService extends BaseApplicationComponent
         return true;
     }
 
-    public function handleMatrixImport($fieldDef, $field) {
+    public function handleMatrixImport($fieldDef, $field)
+    {
         $blockTypes = craft()->matrix->getBlockTypesByFieldId($field->id, 'handle');
 
         if (!array_key_exists('blockTypes', $fieldDef)) {
@@ -101,7 +105,8 @@ class FieldManager_ImportService extends BaseApplicationComponent
         }
     }
 
-    public function handleSuperTableImport($fieldDef, $field) {
+    public function handleSuperTableImport($fieldDef, $field)
+    {
         $blockTypes = craft()->superTable->getBlockTypesByFieldId($field->id, 'id');
 
         foreach ($fieldDef['blockTypes'] as $blockTypeFields) {

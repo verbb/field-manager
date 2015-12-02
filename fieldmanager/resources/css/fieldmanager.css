@@ -39,7 +39,9 @@
 	font-weight: bold;
 }
 
-
+body.ltr .rightalign {
+	float: right;
+}
 
 .clone-btn.element {
 	cursor: pointer;
@@ -58,6 +60,7 @@
 .icon.delete-group:not(.disabled):hover:before {
 	color: #da5a47;
 }
+
 .icon.delete-group:before {
 	content: 'remove';
 	color: rgba(0, 0, 0, 0.2);

@@ -3,6 +3,9 @@ namespace Craft;
 
 class FieldManager_ExportService extends BaseApplicationComponent
 {
+    // Public Methods
+    // =========================================================================
+
     public function export(array $fieldIds)
     {
         $fieldDefs = array();
@@ -33,7 +36,8 @@ class FieldManager_ExportService extends BaseApplicationComponent
         return $fieldDefs;
     }
 
-    public function handleMatrixExport($field) {
+    public function handleMatrixExport($field)
+    {
         $blockTypeDefs = array();
         $blockTypes = craft()->matrix->getBlockTypesByFieldId($field->id);
 
@@ -63,7 +67,8 @@ class FieldManager_ExportService extends BaseApplicationComponent
         return $blockTypeDefs;
     }
 
-    public function handleSuperTableExport($field) {
+    public function handleSuperTableExport($field)
+    {
         $blockTypeDefs = array();
         $blockTypes = craft()->superTable->getBlockTypesByFieldId($field->id);
 

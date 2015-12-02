@@ -3,9 +3,9 @@ namespace Craft;
 
 class FieldManagerPlugin extends BasePlugin
 {
-    /* --------------------------------------------------------------
-    * PLUGIN INFO
-    * ------------------------------------------------------------ */
+    // =========================================================================
+    // PLUGIN INFO
+    // =========================================================================
 
     public function getName()
     {
@@ -14,7 +14,12 @@ class FieldManagerPlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '1.3.5';
+        return '1.4.0';
+    }
+
+    public function getSchemaVersion()
+    {
+        return '1.0.0';
     }
 
     public function getDeveloper()
@@ -27,6 +32,21 @@ class FieldManagerPlugin extends BasePlugin
         return 'http://sgroup.com.au';
     }
 
+    public function getPluginUrl()
+    {
+        return 'https://github.com/engram-design/FieldManager';
+    }
+
+    public function getDocumentationUrl()
+    {
+        return $this->getPluginUrl() . '/blob/master/README.md';
+    }
+
+    public function getReleaseFeedUrl()
+    {
+        return $this->getPluginUrl() . '/blob/master/changelog.json';
+    }
+
     public function hasCpSection()
     {
         return craft()->fieldManager->isCpSectionEnabled() ? true : false;
@@ -34,9 +54,9 @@ class FieldManagerPlugin extends BasePlugin
 
     public function getSettingsHtml()
     {
-        return craft()->templates->render( 'fieldmanager/settings', array(
+        return craft()->templates->render('fieldmanager/settings', array(
             'settings' => $this->getSettings(),
-        ) );
+        ));
     }
 
     protected function defineSettings()
@@ -45,11 +65,4 @@ class FieldManagerPlugin extends BasePlugin
             'cpSectionEnabled' => array( AttributeType::Bool, 'default' => true ),
         );
     }
-
-
-
-    /* --------------------------------------------------------------
-    * HOOKS
-    * ------------------------------------------------------------ */
- 
 }

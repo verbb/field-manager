@@ -182,7 +182,7 @@ $(function() {
 	            $hudContents = $hudContents.add(this.$form);
 
 	            this.hud = new Garnish.HUD(this.$element, $hudContents, {
-	                bodyClass: 'body elementeditor',
+	                bodyClass: 'body',
 	                closeOtherHUDs: false
 	            });
 
@@ -275,7 +275,7 @@ $(function() {
 	            $hudContents = $hudContents.add(this.$form);
 
 	            this.hud = new Garnish.HUD(this.$element, $hudContents, {
-	                bodyClass: 'body elementeditor',
+	                bodyClass: 'body',
 	                closeOtherHUDs: false
 	            });
 

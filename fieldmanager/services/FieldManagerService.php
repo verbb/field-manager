@@ -3,6 +3,9 @@ namespace Craft;
 
 class FieldManagerService extends BaseApplicationComponent
 {
+    // Public Methods
+    // =========================================================================
+
     public function isCpSectionEnabled()
     {
         $settings = craft()->plugins->getPlugin('fieldManager')->getSettings();

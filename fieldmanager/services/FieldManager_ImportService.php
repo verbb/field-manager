@@ -56,6 +56,8 @@ class FieldManager_ImportService extends BaseApplicationComponent
         }
 
         foreach ($fieldDef['blockTypes'] as $blockTypeHandle => $blockTypeDef) {
+            $settings = new MatrixSettingsModel($field);
+
             $blockType = array_key_exists($blockTypeHandle, $blockTypes) ? $blockTypes[$blockTypeHandle] : new MatrixBlockTypeModel();
             $blockType->fieldId = $field->id;
             $blockType->name    = $blockTypeDef['name'];
@@ -94,10 +96,10 @@ class FieldManager_ImportService extends BaseApplicationComponent
             }
 
             $blockType->setFields($newBlockTypeFields);
-            
-            if (!craft()->matrix->saveBlockType($blockType)) {
-                return $blockType->getAllErrors();
-            }
+
+            craft()->matrix->saveBlockType($blockType);
+            $settings->setBlockTypes(array($blockType));
+            $success = craft()->matrix->saveSettings($settings);
 
             foreach ($extraFields as $options) {
                 $this->handleSuperTableImport($options[0], $options[1]);
@@ -110,6 +112,8 @@ class FieldManager_ImportService extends BaseApplicationComponent
         $blockTypes = craft()->superTable->getBlockTypesByFieldId($field->id, 'id');
 
         foreach ($fieldDef['blockTypes'] as $blockTypeFields) {
+            $settings = new SuperTable_SettingsModel($field);
+
             $blockType = new SuperTable_BlockTypeModel();
             $blockType->fieldId = $field->id;
 
@@ -136,10 +140,10 @@ class FieldManager_ImportService extends BaseApplicationComponent
             }
 
             $blockType->setFields($newBlockTypeFields);
-            
-            if (!craft()->superTable->saveBlockType($blockType)) {
-                return $blockType->getAllErrors();
-            }
+
+            craft()->superTable->saveBlockType($blockType);
+            $settings->setBlockTypes(array($blockType));
+            $success = craft()->superTable->saveSettings($settings);
 
             foreach ($extraFields as $options) {
                 $this->handleMatrixImport($options[0], $options[1]);

@@ -1,5 +1,13 @@
 [
     {
+        "version": "1.4.1",
+        "downloadUrl": "https://github.com/engram-design/FieldManager/archive/1.4.1.zip",
+        "date": "2015-12-28 16:25:00",
+        "notes": [
+            "[Fixed] Better support for SuperTable cloning [#13](https://github.com/engram-design/FieldManager/issues/13).",
+            "[Fixed] Fixed issue with Matrix and SuperTable fields not properly setting their content columns after import."
+        ]
+    }, {
         "version": "1.4.0",
         "downloadUrl": "https://github.com/engram-design/FieldManager/archive/1.4.0.zip",
         "date": "2015-12-02 23:25:00",

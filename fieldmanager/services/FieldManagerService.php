@@ -36,7 +36,9 @@ class FieldManagerService extends BaseApplicationComponent
 
             // TODO: fix this
             if ($newField->type == 'Matrix') {
-                $newField->settings     = $originField->settings;
+                $newField->settings = $originField->settings;
+            } else if ($newField->type == 'SuperTable') {
+                $newField->settings = $originField->settings;
             } else {
                 if (isset($settings['types'][$newField->type])) {
                     $newField->settings = $settings['types'][$newField->type];
@@ -60,6 +62,11 @@ class FieldManagerService extends BaseApplicationComponent
             // Matrix, you sly dog!
             if ($newField->type == 'Matrix') {
                 $this->processMatrix($originField, $newField);
+            }
+
+            // SuperTable, you sly dog!
+            if ($newField->type == 'SuperTable') {
+                $this->processSuperTable($originField, $newField);
             }
 
             Craft::log($originField->name . ' field cloned successfully.');
@@ -150,6 +157,44 @@ class FieldManagerService extends BaseApplicationComponent
 
         $settings->setBlockTypes($newBlockTypes);
         craft()->matrix->saveSettings($settings);
+    }
+
+    public function processSuperTable($originField, $field) {
+        $settings = new SuperTable_SettingsModel($field);
+
+        // Get the original SuperTable Blocks
+        $blockTypes = craft()->superTable->getBlockTypesByFieldId($originField->id);
+
+        $newBlockTypes = array();
+        foreach ($blockTypes as $originBlockType) {
+            $newBlockType = new SuperTable_BlockTypeModel();
+
+            // New SuperTable Block
+            $newBlockType->fieldId = $field->id;
+
+            $newBlockFields = array();
+            foreach ($originBlockType->fields as $originField) {
+                $newBlockField = new FieldModel();
+
+                // New SuperTable Block field
+                $newBlockField->name         = $originField->name;
+                $newBlockField->handle       = $originField->handle;
+                $newBlockField->required     = $originField->required;
+                $newBlockField->translatable = $originField->translatable;
+                $newBlockField->type         = $originField->type;
+                $newBlockField->settings     = $originField->settings;
+
+                $newBlockFields[] = $newBlockField;
+            }
+
+            $newBlockType->setFields($newBlockFields);
+
+            craft()->superTable->saveBlockType($newBlockType);
+            $newBlockTypes[] = $newBlockType;
+        }
+
+        $settings->setBlockTypes($newBlockTypes);
+        craft()->superTable->saveSettings($settings);
     }
 
 

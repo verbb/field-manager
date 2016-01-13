@@ -14,7 +14,7 @@ class FieldManagerPlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '1.4.1';
+        return '1.4.2';
     }
 
     public function getSchemaVersion()
@@ -44,7 +44,7 @@ class FieldManagerPlugin extends BasePlugin
 
     public function getReleaseFeedUrl()
     {
-        return $this->getPluginUrl() . '/blob/master/changelog.json';
+        return 'https://raw.githubusercontent.com/engram-design/FieldManager/blob/master/changelog.json';
     }
 
     public function hasCpSection()

@@ -1,5 +1,13 @@
 [
     {
+        "version": "1.4.2",
+        "downloadUrl": "https://github.com/engram-design/FieldManager/archive/1.4.2.zip",
+        "date": "2016-01-13 18:15:00",
+        "notes": [
+            "[Fixed] Fixed issue with plugin release feed url."
+        ]
+    },
+    {
         "version": "1.4.1",
         "downloadUrl": "https://github.com/engram-design/FieldManager/archive/1.4.1.zip",
         "date": "2015-12-28 16:25:00",

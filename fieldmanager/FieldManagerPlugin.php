@@ -44,7 +44,7 @@ class FieldManagerPlugin extends BasePlugin
 
     public function getReleaseFeedUrl()
     {
-        return 'https://raw.githubusercontent.com/engram-design/FieldManager/blob/master/changelog.json';
+        return 'https://raw.githubusercontent.com/engram-design/FieldManager/master/changelog.json';
     }
 
     public function hasCpSection()

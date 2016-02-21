@@ -126,6 +126,7 @@ class FieldManagerService extends BaseApplicationComponent
         $blockTypes = craft()->matrix->getBlockTypesByFieldId($originField->id);
 
         $newBlockTypes = array();
+        $extraFields = array();
         foreach ($blockTypes as $originBlockType) {
             $newBlockType = new MatrixBlockTypeModel();
 
@@ -142,11 +143,16 @@ class FieldManagerService extends BaseApplicationComponent
                 $newBlockField->name         = $originField->name;
                 $newBlockField->handle       = $originField->handle;
                 $newBlockField->required     = $originField->required;
+                $newBlockField->instructions = $originField->instructions;
                 $newBlockField->translatable = $originField->translatable;
                 $newBlockField->type         = $originField->type;
                 $newBlockField->settings     = $originField->settings;
 
                 $newBlockFields[] = $newBlockField;
+
+                if ($newBlockField->type == 'SuperTable') {
+                    $extraFields[] = array($originField, $newBlockField);
+                }
             }
 
             $newBlockType->setFields($newBlockFields);
@@ -155,8 +161,14 @@ class FieldManagerService extends BaseApplicationComponent
             $newBlockTypes[] = $newBlockType;
         }
 
-        $settings->setBlockTypes($newBlockTypes);
-        craft()->matrix->saveSettings($settings);
+        //$settings->setBlockTypes($newBlockTypes);
+        //craft()->matrix->saveSettings($settings);
+
+        if ($extraFields) {
+            foreach ($extraFields as $options) {
+                $this->processSuperTable($options[0], $options[1]);
+            }
+        }
     }
 
     public function processSuperTable($originField, $field) {
@@ -166,6 +178,7 @@ class FieldManagerService extends BaseApplicationComponent
         $blockTypes = craft()->superTable->getBlockTypesByFieldId($originField->id);
 
         $newBlockTypes = array();
+        $extraFields = array();
         foreach ($blockTypes as $originBlockType) {
             $newBlockType = new SuperTable_BlockTypeModel();
 
@@ -180,11 +193,16 @@ class FieldManagerService extends BaseApplicationComponent
                 $newBlockField->name         = $originField->name;
                 $newBlockField->handle       = $originField->handle;
                 $newBlockField->required     = $originField->required;
+                $newBlockField->instructions = $originField->instructions;
                 $newBlockField->translatable = $originField->translatable;
                 $newBlockField->type         = $originField->type;
                 $newBlockField->settings     = $originField->settings;
 
                 $newBlockFields[] = $newBlockField;
+
+                if ($newBlockField->type == 'Matrix') {
+                    $extraFields[] = array($originField, $newBlockField);
+                }
             }
 
             $newBlockType->setFields($newBlockFields);
@@ -193,8 +211,37 @@ class FieldManagerService extends BaseApplicationComponent
             $newBlockTypes[] = $newBlockType;
         }
 
-        $settings->setBlockTypes($newBlockTypes);
-        craft()->superTable->saveSettings($settings);
+        //$settings->setBlockTypes($newBlockTypes);
+        //craft()->superTable->saveSettings($settings);
+
+        if ($extraFields) {
+            foreach ($extraFields as $options) {
+                $this->processMatrix($options[0], $options[1]);
+            }
+        }
+    }
+
+    public function getUnusedFieldIds() 
+    {
+        // All fields
+        $query = craft()->db->createCommand();
+        $allFieldIds = $query
+            ->select('craft_fields.id')
+            ->from('fields')
+            ->order('craft_fields.id')
+            ->queryColumn();
+        
+        // Fields in-use
+        $query = craft()->db->createCommand();
+        $query->distinct = true;
+        $usedFieldIds = $query
+            ->select('craft_fieldlayoutfields.fieldId')
+            ->from('fieldlayoutfields')
+            ->order('craft_fieldlayoutfields.fieldId')
+            ->queryColumn();
+
+        // Get only the unused fields
+        return array_diff($allFieldIds, $usedFieldIds);
     }
 
 

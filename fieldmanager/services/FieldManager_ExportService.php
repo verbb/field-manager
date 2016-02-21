@@ -48,6 +48,7 @@ class FieldManager_ExportService extends BaseApplicationComponent
                 $blockTypeFieldDefs[$blockTypeField->handle] = array(
                     'name'         => $blockTypeField->name,
                     'required'     => $blockTypeField->required,
+                    'instructions' => $blockTypeField->instructions,
                     'translatable' => $blockTypeField->translatable,
                     'type'         => $blockTypeField->type,
                     'settings'     => $blockTypeField->settings
@@ -79,6 +80,7 @@ class FieldManager_ExportService extends BaseApplicationComponent
                 $blockTypeFieldDefs[$blockTypeField->handle] = array(
                     'name'         => $blockTypeField->name,
                     'required'     => $blockTypeField->required,
+                    'instructions' => $blockTypeField->instructions,
                     'translatable' => $blockTypeField->translatable,
                     'type'         => $blockTypeField->type,
                     'settings'     => $blockTypeField->settings

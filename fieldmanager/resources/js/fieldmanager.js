@@ -99,14 +99,19 @@ $(function() {
 		new Craft.SingleFieldSettingsModal($(this), $(this).parents('tr.field'));
     });
 
-	$('tr.group a.go').on('click', function(e) {
+	$('tr.group .go a').on('click', function(e) {
 		e.preventDefault();
     	new Craft.FieldManagerEditGroupField($(this), $(this).parents('tr.group'));
     });
 
-	$('tr.field a.go').on('click', function(e) {
+	$('tr.field .go a').on('click', function(e) {
 		e.preventDefault();
 		new Craft.SingleFieldEditModal($(this), $(this).parents('tr.field'));
+    });
+
+	$('.new-field-btn').on('click', function(e) {
+		e.preventDefault();
+		new Craft.SingleFieldAddModal($(this));
     });
 
 
@@ -482,7 +487,12 @@ $(function() {
 			this.$footerSpinner = $('<div class="spinner hidden"/>').appendTo($footer);
 			this.$buttons = $('<div class="buttons rightalign first"/>').appendTo($footer);
 			this.$cancelBtn = $('<div class="btn">'+Craft.t('Cancel')+'</div>').appendTo(this.$buttons);
-			this.$saveBtn = $('<div class="btn submit">'+Craft.t('Clone')+'</div>').appendTo(this.$buttons);
+
+			if (!this.fieldId) {
+				this.$saveBtn = $('<div class="btn submit">'+Craft.t('Add field')+'</div>').appendTo(this.$buttons);
+			} else {
+				this.$saveBtn = $('<div class="btn submit">'+Craft.t('Clone')+'</div>').appendTo(this.$buttons);
+			}
 
 			this.$body = $body;
 
@@ -554,6 +564,8 @@ $(function() {
 			this.base();
 		},
 	});
+
+
 
 
 
@@ -637,6 +649,95 @@ $(function() {
 
 				this.onFadeOut();
 				Craft.cp.displayNotice(Craft.t('Field saved.'));
+
+			}, this));
+
+			this.removeListener(this.$saveBtn, 'click');
+			this.removeListener(this.$cancelBtn, 'click');
+		},
+
+		show: function() {
+			this.base();
+		},
+	});
+
+
+
+
+
+	Craft.SingleFieldAddModal = Garnish.Modal.extend({
+		fieldId: null,
+		groupId: null,
+
+		$body: null,
+		$element: null,
+		$buttons: null,
+		$cancelBtn: null,
+		$saveBtn: null,
+		$footerSpinner: null,
+
+	    init: function($element, $data) {
+	        this.$element = $element;
+
+			// Build the modal
+			var $container = $('<div class="modal fieldsettingsmodal"></div>').appendTo(Garnish.$bod),
+				$body = $('<div class="body"><div class="spinner big"></div></div>').appendTo($container),
+				$footer = $('<div class="footer"/>').appendTo($container);
+
+			this.base($container, this.settings);
+
+			this.$footerSpinner = $('<div class="spinner hidden"/>').appendTo($footer);
+			this.$buttons = $('<div class="buttons rightalign first"/>').appendTo($footer);
+			this.$cancelBtn = $('<div class="btn">'+Craft.t('Cancel')+'</div>').appendTo(this.$buttons);
+			this.$saveBtn = $('<div class="btn submit">'+Craft.t('Save')+'</div>').appendTo(this.$buttons);
+
+			this.$body = $body;
+
+			this.addListener(this.$cancelBtn, 'activate', 'onFadeOut');
+			this.addListener(this.$saveBtn, 'activate', 'saveSettings');
+		},
+
+		onFadeIn: function() {
+	        var data = {
+	            template: 'modal_edit',
+	        };
+
+			Craft.postActionRequest('fieldManager/getModalBody', data, $.proxy(function(response, textStatus) {
+				if (textStatus == 'success') {
+					this.$body.html(response);
+
+					Craft.initUiElements(this.$body);
+
+					new Craft.HandleGenerator('#name', '#handle');
+				}
+			}, this));
+
+			this.base();
+		},
+
+		onFadeOut: function() {
+			this.hide();
+			this.destroy();
+			this.$shade.remove();
+			this.$container.remove();
+
+			this.removeListener(this.$saveBtn, 'click');
+			this.removeListener(this.$cancelBtn, 'click');
+		},
+
+		saveSettings: function() {
+			var params = this.$body.find('form').serializeObject();
+			params.fieldId = this.fieldId;
+
+			this.$footerSpinner.removeClass('hidden');
+
+			Craft.postActionRequest('fields/saveField', params, $.proxy(function(response, textStatus) {
+				this.$footerSpinner.addClass('hidden');
+
+				this.onFadeOut();
+				Craft.cp.displayNotice(Craft.t('Field added.'));
+
+                location.href = Craft.getUrl('fieldmanager');
 
 			}, this));
 

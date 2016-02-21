@@ -65,16 +65,21 @@ class FieldManagerController extends BaseController
         $this->requirePostRequest();
         $this->requireAjaxRequest();
 
-        $fieldId = craft()->request->getRequiredPost('fieldId');
-        $groupId = craft()->request->getRequiredPost('groupId');
-        $template = craft()->request->getRequiredPost('template');
+        $fieldId = craft()->request->getPost('fieldId');
+        $groupId = craft()->request->getPost('groupId');
+        $template = craft()->request->getPost('template');
 
         $field = craft()->fields->getFieldById($fieldId);
 
-        $variables = array(
-            'field' => craft()->fields->getFieldById($fieldId),
-            'group' => craft()->fields->getGroupById($groupId),
-        );
+        $variables = array();
+
+        if ($fieldId) {
+            $variables['field'] = craft()->fields->getFieldById($fieldId);
+        }
+
+        if ($groupId) {
+            $variables['group'] = craft()->fields->getGroupById($groupId);
+        }
 
         // Don't process the output yet - issues with JS in template...
         $returnData = $this->renderTemplate('fieldmanager/_single/'.$template, $variables, false, false);

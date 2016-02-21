@@ -1,5 +1,17 @@
 [
     {
+        "version": "1.4.3",
+        "downloadUrl": "https://github.com/engram-design/FieldManager/archive/1.4.3.zip",
+        "date": "2016-02-21 18:20:00",
+        "notes": [
+            "[Added] Create new fields directly from the Field Manager page [#16](https://github.com/engram-design/FieldManager/issues/16).",
+            "[Added] Fields are shown if they are unused - handy to keep your fields clean [#16](https://github.com/engram-design/FieldManager/issues/16).",
+            "[Fixed] Fixed issue when cloning Matrix field and not carrying over instructions [#17](https://github.com/engram-design/FieldManager/issues/17).",
+            "[Fixed] Instructions were missing when importing/exporting Matrix & Super Table field.",
+            "[Fixed] Additional fixes for Matrix/Super Table nested cloning and importing."
+        ]
+    },
+    {
         "version": "1.4.2",
         "downloadUrl": "https://github.com/engram-design/FieldManager/archive/1.4.2.zip",
         "date": "2016-01-13 18:15:00",

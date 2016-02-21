@@ -14,16 +14,26 @@
 
 {% set groups = craft.fields.getAllGroups('id') %}
 
+{% set unusedFieldIds = craft.fieldManager.getUnusedFieldIds() %}
+
 {% set sidebar %}
     <nav class="sidebar-nav">
         <ul>
             <li class="heading"><span>{{ 'Field Groups'|t }}</span></li>
-            <li class="active"><a href="#" data-groupid="all">{{ 'All'|t }}</a></li>
+            <li class="active"><a href="#" data-groupid="all">{{ 'All' | t }}</a></li>
             {% for group in groups %}
                 <li><a href="#" data-groupid="{{ group.id }}">{{ group.name }}</a></li>
             {% endfor %}
         </ul>
     </nav>
+{% endset %}
+
+{% set extraPageHeaderHtml %}
+    {% if groups %}
+        <div class="buttons right">
+            <a href="{{ url('settings/fields/new') }}" class="submit btn add icon new-field-btn">{{ "New field"|t }}</a>
+        </div>
+    {% endif %}
 {% endset %}
 
 {% set content %}
@@ -46,7 +56,12 @@
 
                 <tr class="group" data-groupid="{{ group.id }}">
                     <th scope="row">
-                        {% set label %}<a class="go" href="{{ url('settings/fields/' ~ group.id) }}">{{ group.name }}</a>{% endset %}
+                        {% set label %}
+                            <span class="go">
+                                <a href="{{ url('settings/fields/' ~ group.id) }}">{{ group.name }}</a>
+                            </span>
+                        {% endset %}
+
                         {{ forms.checkboxField({
                             label: label
                         }) }}
@@ -60,7 +75,16 @@
                 {% for field in fields %}
                     <tr class="field" data-id="{{ field.id }}" data-groupid="{{ group.id }}" data-name="{{ field.name }}">
                         <th scope="row" class="name">
-                            {% set label %}<a class="go" href="{{ url('settings/fields/edit/' ~ field.id) }}">{{ field.name }}</a>{% endset %}
+                            {% set label %}
+                                <span class="go">
+                                    <a href="{{ url('settings/fields/edit/' ~ field.id) }}">{{ field.name }}</a>
+
+                                    {% if field.id in unusedFieldIds %}
+                                        <span class="unused-field">Unused</span>
+                                    {% endif %}
+                                </span>
+                            {% endset %}
+
                             {{ forms.checkboxField({
                                 name: 'selectedFields[]',
                                 value: field.id,

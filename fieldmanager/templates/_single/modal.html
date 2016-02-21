@@ -20,7 +20,7 @@
 				    id: 'group',
 				    name: 'group',
 				    options: groupOptions,
-				    value: group.id,
+				    value: (group is defined ? group.id : null),
 				}) }}
 
 				{{ forms.textField({

@@ -80,6 +80,7 @@ class FieldManager_ImportService extends BaseApplicationComponent
                 $blockTypeField->name           = $blockTypeFieldDef['name'];
                 $blockTypeField->handle         = $blockTypeFieldHandle;
                 $blockTypeField->required       = $blockTypeFieldDef['required'];
+                $blockTypeField->instructions   = isset($blockTypeFieldDef['instructions']) ? $blockTypeFieldDef['instructions'] : '';
                 $blockTypeField->translatable   = $blockTypeFieldDef['translatable'];
                 $blockTypeField->type           = $blockTypeFieldDef['type'];
                 $blockTypeField->settings       = $blockTypeFieldDef['settings'];
@@ -98,11 +99,14 @@ class FieldManager_ImportService extends BaseApplicationComponent
             $blockType->setFields($newBlockTypeFields);
 
             craft()->matrix->saveBlockType($blockType);
-            $settings->setBlockTypes(array($blockType));
-            $success = craft()->matrix->saveSettings($settings);
 
-            foreach ($extraFields as $options) {
-                $this->handleSuperTableImport($options[0], $options[1]);
+            if ($extraFields) {
+                //$settings->setBlockTypes(array($blockType));
+                //$success = craft()->matrix->saveSettings($settings);
+
+                foreach ($extraFields as $options) {
+                    $this->handleSuperTableImport($options[0], $options[1]);
+                }
             }
         }
     }
@@ -124,6 +128,7 @@ class FieldManager_ImportService extends BaseApplicationComponent
                 $blockTypeField->name           = $blockTypeFieldDef['name'];
                 $blockTypeField->handle         = $blockTypeFieldHandle;
                 $blockTypeField->required       = $blockTypeFieldDef['required'];
+                $blockTypeField->instructions   = isset($blockTypeFieldDef['instructions']) ? $blockTypeFieldDef['instructions'] : '';
                 $blockTypeField->translatable   = $blockTypeFieldDef['translatable'];
                 $blockTypeField->type           = $blockTypeFieldDef['type'];
                 $blockTypeField->settings       = $blockTypeFieldDef['settings'];
@@ -142,11 +147,14 @@ class FieldManager_ImportService extends BaseApplicationComponent
             $blockType->setFields($newBlockTypeFields);
 
             craft()->superTable->saveBlockType($blockType);
-            $settings->setBlockTypes(array($blockType));
-            $success = craft()->superTable->saveSettings($settings);
 
-            foreach ($extraFields as $options) {
-                $this->handleMatrixImport($options[0], $options[1]);
+            if ($extraFields) {
+                //$settings->setBlockTypes(array($blockType));
+                //$success = craft()->superTable->saveSettings($settings);
+
+                foreach ($extraFields as $options) {
+                    $this->handleMatrixImport($options[0], $options[1]);
+                }
             }
         }
     }

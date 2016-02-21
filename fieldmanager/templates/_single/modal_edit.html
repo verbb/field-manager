@@ -22,7 +22,11 @@
 		<div class="elements">
 			<form>
 				<input type="hidden" name="redirect" value="fieldmanager">
-				<input type="hidden" name="fieldId" value="{{ field.id }}">
+
+				{% if field is defined %}
+					<input type="hidden" name="fieldId" value="{{ field.id }}">
+				{% endif %}
+
 				{{ getCsrfInput() }}
 
 				{% set groupOptions = [] %}
@@ -37,7 +41,7 @@
 				    id: 'group',
 				    name: 'group',
 				    options: groupOptions,
-				    value: group.id,
+				    value: (group is defined ? group.id : null),
 				}) }}
 
 				{{ forms.textField({
@@ -47,7 +51,7 @@
 				    name: 'name',
 				    required: true,
 				    autofocus: true,
-				    value: field.name,
+				    value: (field is defined ? field.name : null),
 				    errors: (field is defined ? field.getErrors('name') : null),
 				}) }}
 
@@ -58,7 +62,7 @@
 				    class: 'code',
 				    name: 'handle',
 				    required: true,
-				    value: field.handle,
+				    value: (field is defined ? field.handle : null),
 				    errors: (field is defined ? field.getErrors('handle') : null),
 				}) }}
 
@@ -81,27 +85,54 @@
 					}) }}
 				{% endif %}
 
-				{{ forms.selectField({
-					label: "Field Type"|t,
-					instructions: "What type of field is this?"|t,
-					warning: (field.id is defined ? "Changing this may result in data loss."|t),
-					id: 'type',
-					name: 'type',
-					options: fieldTypes,
-					value: field.fieldType.getClassHandle(),
-					errors: (isFieldTypeMissing ? ["The fieldtype class “{class}” could not be found."|t({ class: field.type })] : null),
-					toggle: true
-				}) }}
+				{% if field is defined %}
+					{{ forms.selectField({
+						label: "Field Type"|t,
+						instructions: "What type of field is this?"|t,
+						warning: (field.id is defined ? "Changing this may result in data loss."|t),
+						id: 'type',
+						name: 'type',
+						options: fieldTypes,
+					    value: (field is defined ? field.fieldType.getClassHandle() : null),
+						errors: (isFieldTypeMissing ? ["The fieldtype class “{class}” could not be found."|t({ class: field.type })] : null),
+						toggle: true
+					}) }}
+				{% else %}
 
+					<hr>
+
+					{{ forms.selectField({
+						label: "Field Type"|t,
+						instructions: "What type of field is this?"|t,
+						id: 'type',
+						name: 'type',
+						options: fieldTypes,
+						value: fieldType.getClassHandle(),
+						toggle: true
+					}) }}
+
+					{% for _fieldType in fieldTypes %}
+						{% set isCurrent = (_fieldType.getClassHandle() == fieldType.getClassHandle()) %}
+						<div id="{{ _fieldType.getClassHandle() }}"{% if not isCurrent %} class="hidden"{% endif %}>
+							{% namespace 'types['~_fieldType.getClassHandle()~']' %}
+								{% if isCurrent %}
+									{{ fieldType.getSettingsHtml()|raw }}
+								{% else %}
+									{{ _fieldType.getSettingsHtml()|raw }}
+								{% endif %}
+							{% endnamespace %}
+						</div>
+					{% endfor %}
+				{% endif %}
 
 				{# Namespaced due to issues with JS (mostly EditableTables) either not firing, or binding multiple times #}
 
-				{% if field.fieldType %}
-					{% namespace 'types['~field.fieldType.getClassHandle()~']' %}
-						{{ field.fieldType.getSettingsHtml() | raw }}
-					{% endnamespace %}
-				{% else %}
-					
+				{% if field is defined %}
+					{% if field.fieldType %}
+						{% namespace 'types['~field.fieldType.getClassHandle()~']' %}
+							{{ field.fieldType.getSettingsHtml() | raw }}
+						{% endnamespace %}
+					{% endif %}
 				{% endif %}
 				
 			</form>
@@ -112,7 +143,9 @@
 		</div>
 	</div>
 </div>
-
+{% if field is not defined or not field.handle %}
+	{% includejs "new Craft.HandleGenerator('#name', '#handle');" %}
+{% endif %}
 {% if field is not defined or not field.handle %}
 	{% includeJs "new Craft.HandleGenerator('#name', '#handle');" %}
 {% endif %}

@@ -66,9 +66,11 @@ body.ltr .rightalign {
 	color: rgba(0, 0, 0, 0.2);
 }
 
-
-
-
+.unused-field {
+	color: #e78640;
+	font-size: 11px;
+	margin-left: 5px;
+}
 
 
 

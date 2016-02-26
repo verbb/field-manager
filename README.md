@@ -29,6 +29,18 @@ One thing to note for field group cloning, is that fields are required to have u
 You may also set this yourself if you choose to, using the `Prefix` field when cloning a field group. Please note that it needs to be a valid handle (no spaces, no hyphens, underscores only).
 
 
+## Export
+
+You can export multiple fields, including their groups by simply using the checkboxes against each field or field group. The fields will be combined into a JSON document and downloaded through your browser. You can store this for later, or use the contents for your import.
+
+
+## Import
+
+Using the Import tab, you paste in your JSON file contents that you created through Field Managers export process. Once done so, you can configure the which fields to import, which group to add them to, and their name/handle.
+
+<img src="https://raw.githubusercontent.com/engram-design/FieldManager/master/screenshots/import.png" />
+
+
 ## Supported FieldTypes
 
 **Craft**

@@ -226,18 +226,18 @@ class FieldManagerService extends BaseApplicationComponent
         // All fields
         $query = craft()->db->createCommand();
         $allFieldIds = $query
-            ->select('craft_fields.id')
+            ->select(craft()->db->tablePrefix . 'fields.id')
             ->from('fields')
-            ->order('craft_fields.id')
+            ->order(craft()->db->tablePrefix . 'fields.id')
             ->queryColumn();
         
         // Fields in-use
         $query = craft()->db->createCommand();
         $query->distinct = true;
         $usedFieldIds = $query
-            ->select('craft_fieldlayoutfields.fieldId')
+            ->select(craft()->db->tablePrefix . 'fieldlayoutfields.fieldId')
             ->from('fieldlayoutfields')
-            ->order('craft_fieldlayoutfields.fieldId')
+            ->order(craft()->db->tablePrefix . 'fieldlayoutfields.fieldId')
             ->queryColumn();
 
         // Get only the unused fields

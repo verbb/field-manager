@@ -195,10 +195,8 @@ $(function() {
 	                delete this.hud;
 	            }, this));
 
-	            this.addListener(this.$form, 'submit', 'saveGroupField');
-	            this.addListener($cancelBtn, 'click', function() {
-	                this.hud.hide()
-	            });
+	            this.addListener($saveBtn, 'activate', 'saveGroupField');
+	            this.addListener($cancelBtn, 'activate', 'closeHud');
 
 	            new Craft.HandleGeneratorWithSuffix('#name', '#prefix');
 	        }
@@ -288,10 +286,8 @@ $(function() {
 	                delete this.hud;
 	            }, this));
 
-	            this.addListener(this.$form, 'submit', 'saveGroupField');
-	            this.addListener($cancelBtn, 'click', function() {
-	                this.hud.hide()
-	            });
+	            this.addListener($saveBtn, 'activate', 'saveGroupField');
+	            this.addListener($cancelBtn, 'activate', 'closeHud');
 
 	            new Craft.HandleGeneratorWithSuffix('#name', '#prefix');
 	        }
@@ -309,6 +305,8 @@ $(function() {
 
                 if (textStatus == 'success' && response.success) {
                     location.href = Craft.getUrl('fieldmanager');
+
+                    Craft.cp.displayNotice(Craft.t('Field group updated.'));
 
                     this.closeHud();
                 } else {
@@ -551,9 +549,6 @@ $(function() {
 					Craft.cp.displayError(Craft.t('Could not clone field'));
 				}
 
-				//this.hide();
-				//this.$container.empty();
-
 			}, this));
 
 			this.removeListener(this.$saveBtn, 'click');
@@ -647,8 +642,11 @@ $(function() {
 			Craft.postActionRequest('fields/saveField', params, $.proxy(function(response, textStatus) {
 				this.$footerSpinner.addClass('hidden');
 
+                location.href = Craft.getUrl('fieldmanager');
+
+                Craft.cp.displayNotice(Craft.t('Field updated.'));
+
 				this.onFadeOut();
-				Craft.cp.displayNotice(Craft.t('Field saved.'));
 
 			}, this));
 

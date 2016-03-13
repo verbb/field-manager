@@ -1,5 +1,13 @@
 [
     {
+        "version": "1.4.4",
+        "downloadUrl": "https://github.com/engram-design/FieldManager/archive/1.4.4.zip",
+        "date": "2016-03-14 10:20:00",
+        "notes": [
+            "[Fixed] Normalise all modal save/cancel/clone event handlers."
+        ]
+    },
+    {
         "version": "1.4.3",
         "downloadUrl": "https://github.com/engram-design/FieldManager/archive/1.4.3.zip",
         "date": "2016-02-21 18:20:00",

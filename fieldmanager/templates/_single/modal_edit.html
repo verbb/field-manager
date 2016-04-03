@@ -31,39 +31,39 @@
 
 				{% set groupOptions = [] %}
 				{% for group in groups %}
-				    {% set groupOptions = groupOptions|merge([{ label: group.name, value: group.id }]) %}
+					{% set groupOptions = groupOptions|merge([{ label: group.name, value: group.id }]) %}
 				{% endfor %}
 
 				{{ forms.selectField({
-				    first: true,
-				    label: "Group"|t,
-				    instructions: "Which group should this field be displayed in?"|t,
-				    id: 'group',
-				    name: 'group',
-				    options: groupOptions,
-				    value: (group is defined ? group.id : null),
+					first: true,
+					label: "Group"|t,
+					instructions: "Which group should this field be displayed in?"|t,
+					id: 'group',
+					name: 'group',
+					options: groupOptions,
+					value: (group is defined ? group.id : null),
 				}) }}
 
 				{{ forms.textField({
-				    label: "Name"|t,
-				    instructions: 'What this field will be called in the CP.'|t,
-				    id: 'name',
-				    name: 'name',
-				    required: true,
-				    autofocus: true,
-				    value: (field is defined ? field.name : null),
-				    errors: (field is defined ? field.getErrors('name') : null),
+					label: "Name"|t,
+					instructions: 'What this field will be called in the CP.'|t,
+					id: 'name',
+					name: 'name',
+					required: true,
+					autofocus: true,
+					value: (field is defined ? field.name : null),
+					errors: (field is defined ? field.getErrors('name') : null),
 				}) }}
 
 				{{ forms.textField({
-				    label: "Handle"|t,
-				    instructions: "How you’ll refer to this field in the templates."|t,
-				    id: 'handle',
-				    class: 'code',
-				    name: 'handle',
-				    required: true,
-				    value: (field is defined ? field.handle : null),
-				    errors: (field is defined ? field.getErrors('handle') : null),
+					label: "Handle"|t,
+					instructions: "How you’ll refer to this field in the templates."|t,
+					id: 'handle',
+					class: 'code',
+					name: 'handle',
+					required: true,
+					value: (field is defined ? field.handle : null),
+					errors: (field is defined ? field.getErrors('handle') : null),
 				}) }}
 
 				{{ forms.textareaField({
@@ -93,7 +93,7 @@
 						id: 'type',
 						name: 'type',
 						options: fieldTypes,
-					    value: (field is defined ? field.fieldType.getClassHandle() : null),
+						value: (field is defined ? field.fieldType.getClassHandle() : null),
 						errors: (isFieldTypeMissing ? ["The fieldtype class “{class}” could not be found."|t({ class: field.type })] : null),
 						toggle: true
 					}) }}

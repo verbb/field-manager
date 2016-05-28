@@ -100,16 +100,25 @@ $(function() {
 	});
 
 	$('tr.group .go a').on('click', function(e) {
+		if (e.metaKey) {
+			return;
+		}
 		e.preventDefault();
 		new Craft.FieldManagerEditGroupField($(this), $(this).parents('tr.group'));
 	});
 
 	$('tr.field .go a').on('click', function(e) {
+		if (e.metaKey) {
+			return;
+		}
 		e.preventDefault();
 		new Craft.SingleFieldEditModal($(this), $(this).parents('tr.field'));
 	});
 
 	$('.new-field-btn').on('click', function(e) {
+		if (e.metaKey) {
+			return;
+		}
 		e.preventDefault();
 		new Craft.SingleFieldAddModal($(this));
 	});

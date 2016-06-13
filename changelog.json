@@ -1,5 +1,23 @@
 [
     {
+        "version": "1.5.0",
+        "downloadUrl": "https://github.com/engram-design/FieldManager/archive/1.5.0.zip",
+        "date": "2016-06-14T22:40:00+10:00",
+        "notes": [
+            "[Added] Added clone, import/export support for Matrix > SuperTable > Matrix field configuration (phew!).",
+            "[Improved] Changed export/import structure for better consistency, readability and for Matrix/SuperTable support. Supports older exports with deprecation notice.",
+            "[Improved] Allow `metaKey` (cmd+click) functionality. Thanks to [@timkelty](https://github.com/timkelty)",
+            "[Improved] Refactored cloning logic for all fields (now much simpler)",
+            "[Improved] Better logging and UI feedback for various tasks",
+            "[Improved] Better clone, import/export support for Matrix-SuperTable combination",
+            "[Improved] Better logging and flow for import - doesn't die so much when things go wrong",
+            "[Fixed] Fix issue for Matrix and SuperTable fields not being created properly on import/clone.",
+            "[Fixed] Fix where field modals disappeared when failing validation.",
+            "[Fixed] Fix for reordering dropdown fields (and other option fields) and not persisting order.",
+            "[Fixed] Fix field options not updating when changing field type."
+        ]
+    },
+    {
         "version": "1.4.5",
         "downloadUrl": "https://github.com/engram-design/FieldManager/archive/1.4.5.zip",
         "date": "2016-03-15T22:40:00+10:00",

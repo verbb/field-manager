@@ -6,170 +6,161 @@ class FieldManager_ImportService extends BaseApplicationComponent
     // Public Methods
     // =========================================================================
 
-    public function import($fieldDefs)
+    public function import($fields)
     {
-        $fields     = craft()->fields->getAllFields('handle');
         $fieldTypes = craft()->fields->getAllFieldTypes();
+        $errors = array();
 
-        foreach ($fieldDefs as $fieldHandle => $fieldDef) {
-            if (array_key_exists($fieldDef['type'], $fieldTypes)) {
+        foreach ($fields as $fieldInfo) {
+            if (array_key_exists($fieldInfo['type'], $fieldTypes)) {
                 $field = new FieldModel();
 
                 $field->setAttributes(array(
-                    'handle'       => $fieldHandle,
-                    'groupId'      => $fieldDef['groupId'],
-                    'name'         => $fieldDef['name'],
-                    'context'      => $fieldDef['context'],
-                    'instructions' => $fieldDef['instructions'],
-                    'translatable' => $fieldDef['translatable'],
-                    'type'         => $fieldDef['type'],
-                    'settings'     => $fieldDef['settings']
+                    'groupId' => $fieldInfo['groupId'],
+                    'name' => $fieldInfo['name'],
+                    'handle' => $fieldInfo['handle'],
+                    'instructions' => $fieldInfo['instructions'],
+                    'translatable' => $fieldInfo['translatable'],
+                    'required' => $fieldInfo['required'],
+                    'type' => $fieldInfo['type'],
+                    'settings' => $fieldInfo['settings']
                 ));
 
-                if ($field->type == 'PositionSelect') {
-                    $this->handlePositionSelect($fieldDef, $field);
-                }
-
-                if (!craft()->fields->saveField($field)) {
-                    return $field->getAllErrors();
-                }
-
-                if ($field->type == 'Matrix') {
-                    $this->handleMatrixImport($fieldDef, $field);
-                }
-
-                if ($field->type == 'SuperTable') {
-                    $this->handleSuperTableImport($fieldDef, $field);
+                // Send off to Craft's native fieldSave service for heavy lifting.
+                if (craft()->fields->saveField($field)) {
+                    FieldManagerPlugin::log($field->name . ' imported successfully.');
+                } else {
+                    $errors[$fieldInfo['handle']] = $field;
+                    FieldManagerPlugin::log('Could not import ' . $field->name . ' - ' . print_r($field->getErrors(), true), LogLevel::Error);
                 }
             }
         }
 
-        return true;
+        return $errors;
     }
 
-    public function handleMatrixImport($fieldDef, $field)
+    public function getData($json)
     {
-        $blockTypes = craft()->matrix->getBlockTypesByFieldId($field->id, 'handle');
+        $data = json_decode($json, true);
 
-        if (!array_key_exists('blockTypes', $fieldDef)) {
-            return $result->error('`fields[handle].blockTypes` must exist');
-        }
+        if ($data !== null) {
+            // Check for pre v1.5 export format - fix it up and log deprecation.
+            $keys = array_keys($data);
 
-        foreach ($fieldDef['blockTypes'] as $blockTypeHandle => $blockTypeDef) {
-            $settings = new MatrixSettingsModel($field);
-
-            $blockType = array_key_exists($blockTypeHandle, $blockTypes) ? $blockTypes[$blockTypeHandle] : new MatrixBlockTypeModel();
-            $blockType->fieldId = $field->id;
-            $blockType->name    = $blockTypeDef['name'];
-            $blockType->handle  = $blockTypeHandle;
-
-            if (!array_key_exists('fields', $blockTypeDef)) {
-                return $result->error('`fields[handle].blockTypes[handle].fields` must exist');
+            if (is_string($keys[0])) {
+                $data = $this->_importFromPre15($data);
             }
 
-            $blockTypeFields = array();
-
-            foreach ($blockType->getFields() as $blockTypeField) {
-                $blockTypeFields[$blockTypeField->handle] = $blockTypeField;
-            }
-
-            $newBlockTypeFields = array();
-            $extraFields = array();
-            foreach ($blockTypeDef['fields'] as $blockTypeFieldHandle => $blockTypeFieldDef) {
-                $blockTypeField = array_key_exists($blockTypeFieldHandle, $blockTypeFields) ? $blockTypeFields[$blockTypeFieldHandle] : new FieldModel();
-                $blockTypeField->name           = $blockTypeFieldDef['name'];
-                $blockTypeField->handle         = $blockTypeFieldHandle;
-                $blockTypeField->required       = $blockTypeFieldDef['required'];
-                $blockTypeField->instructions   = isset($blockTypeFieldDef['instructions']) ? $blockTypeFieldDef['instructions'] : '';
-                $blockTypeField->translatable   = $blockTypeFieldDef['translatable'];
-                $blockTypeField->type           = $blockTypeFieldDef['type'];
-                $blockTypeField->settings       = $blockTypeFieldDef['settings'];
-
-                $newBlockTypeFields[] = $blockTypeField;
-
-                if ($blockTypeField->type == 'SuperTable') {
-                    $extraFields[] = array($blockTypeFieldDef, $blockTypeField);
-                }
-
-                if ($blockTypeField->type == 'PositionSelect') {
-                    $this->handlePositionSelect($blockTypeFieldDef, $blockTypeField);
-                }
-            }
-
-            $blockType->setFields($newBlockTypeFields);
-
-            craft()->matrix->saveBlockType($blockType);
-
-            if ($extraFields) {
-                //$settings->setBlockTypes(array($blockType));
-                //$success = craft()->matrix->saveSettings($settings);
-
-                foreach ($extraFields as $options) {
-                    $this->handleSuperTableImport($options[0], $options[1]);
-                }
-            }
+            return $data;
+        } else {
+            FieldManagerPlugin::log('Could not parse JSON data - ' . $this->_getJsonError(), LogLevel::Error);
         }
     }
 
-    public function handleSuperTableImport($fieldDef, $field)
+
+
+    // Private Methods
+    // =========================================================================
+
+    private function _getJsonError()
     {
-        $blockTypes = craft()->superTable->getBlockTypesByFieldId($field->id, 'id');
+        if (!function_exists('json_last_error_msg')) {
+            $errors = array(
+                JSON_ERROR_NONE             => null,
+                JSON_ERROR_DEPTH            => 'Maximum stack depth exceeded',
+                JSON_ERROR_STATE_MISMATCH   => 'Underflow or the modes mismatch',
+                JSON_ERROR_CTRL_CHAR        => 'Unexpected control character found',
+                JSON_ERROR_SYNTAX           => 'Syntax error, malformed JSON',
+                JSON_ERROR_UTF8             => 'Malformed UTF-8 characters, possibly incorrectly encoded'
+            );
 
-        foreach ($fieldDef['blockTypes'] as $blockTypeFields) {
-            $settings = new SuperTable_SettingsModel($field);
-
-            $blockType = new SuperTable_BlockTypeModel();
-            $blockType->fieldId = $field->id;
-
-            $newBlockTypeFields = array();
-            $extraFields = array();
-            foreach ($blockTypeFields as $blockTypeFieldHandle => $blockTypeFieldDef) {
-                $blockTypeField = new FieldModel();
-                $blockTypeField->name           = $blockTypeFieldDef['name'];
-                $blockTypeField->handle         = $blockTypeFieldHandle;
-                $blockTypeField->required       = $blockTypeFieldDef['required'];
-                $blockTypeField->instructions   = isset($blockTypeFieldDef['instructions']) ? $blockTypeFieldDef['instructions'] : '';
-                $blockTypeField->translatable   = $blockTypeFieldDef['translatable'];
-                $blockTypeField->type           = $blockTypeFieldDef['type'];
-                $blockTypeField->settings       = $blockTypeFieldDef['settings'];
-
-                $newBlockTypeFields[] = $blockTypeField;
-
-                if ($blockTypeField->type == 'Matrix') {
-                    $extraFields[] = array($blockTypeFieldDef, $blockTypeField);
-                }
-
-                if ($blockTypeField->type == 'PositionSelect') {
-                    $this->handlePositionSelect($blockTypeFieldDef, $blockTypeField);
-                }
-            }
-
-            $blockType->setFields($newBlockTypeFields);
-
-            craft()->superTable->saveBlockType($blockType);
-
-            if ($extraFields) {
-                //$settings->setBlockTypes(array($blockType));
-                //$success = craft()->superTable->saveSettings($settings);
-
-                foreach ($extraFields as $options) {
-                    $this->handleMatrixImport($options[0], $options[1]);
-                }
-            }
+            $error = json_last_error();
+            return array_key_exists($error, $errors) ? $errors[$error] : "Unknown error ({$error})";
+        } else {
+            return json_last_error_msg();
         }
     }
 
-    public function handlePositionSelect($fieldDef, &$field)
+    private function _importFromPre15($data)
     {
-        // This is a little bit strange...
-        // Imports as { settings: { options: { 0: left, 1: right } } } but should be
-        // { settings: { options: { left: 1, right: 1 } } }
+        craft()->deprecator->log('FieldManager JSON', 'The provided JSON structure has been deprecated. Re-export your fields to stay up to date.');
+        
+        $newData = array();
 
-        $settings = $fieldDef['settings'];
-        $settings['options'] = array_fill_keys($settings['options'], '1');
+        foreach ($data as $handle => $field) {
+            $field['handle'] = $handle;
+            $field['required'] = false;
 
-        $field->settings = $settings;
+            // Matrix/Super Table had the most changes
+            if ($field['type'] == 'Matrix') {
+                $fieldSettings = array();
+                $blockTypes = $field['blockTypes'];
+
+                $blockCount = 1;
+                foreach ($blockTypes as $blockHandle => $blockType) {
+                    $fieldSettings['new' . $blockCount] = array(
+                        'name' => $blockType['name'],
+                        'handle' => $blockHandle,
+                        'fields' => array(),
+                    );
+
+                    $fieldCount = 1;
+                    foreach ($blockType['fields'] as $blockFieldHandle => $blockField) {
+                        $fieldSettings['new' . $blockCount]['fields']['new' . $fieldCount] = array(
+                            'name' => $blockField['name'],
+                            'handle' => $blockFieldHandle,
+                            'required' => $blockField['required'],
+                            'instructions' => $blockField['instructions'],
+                            'translatable' => $blockField['translatable'],
+                            'type' => $blockField['type'],
+                            'typesettings' => $blockField['settings'],
+                        );
+
+                        $fieldCount++;
+                    }
+
+                    $blockCount++;
+                }
+
+                $field['settings']['blockTypes'] = $fieldSettings;
+                unset($field['blockTypes']);
+            }
+
+            if ($field['type'] == 'SuperTable') {
+                $fieldSettings = array();
+                $blockTypes = $field['blockTypes'];
+
+                $blockCount = 1;
+                foreach ($blockTypes as $blockHandle => $blockType) {
+                    $fieldSettings['new' . $blockCount] = array(
+                        'fields' => array(),
+                    );
+
+                    $fieldCount = 1;
+                    foreach ($blockType['fields'] as $blockFieldHandle => $blockField) {
+                        $fieldSettings['new' . $blockCount]['fields']['new' . $fieldCount] = array(
+                            'name' => $blockField['name'],
+                            'handle' => $blockFieldHandle,
+                            'required' => $blockField['required'],
+                            'instructions' => $blockField['instructions'],
+                            'translatable' => $blockField['translatable'],
+                            'type' => $blockField['type'],
+                            'typesettings' => $blockField['settings'],
+                        );
+
+                        $fieldCount++;
+                    }
+
+                    $blockCount++;
+                }
+
+                $field['settings']['blockTypes'] = $fieldSettings;
+                unset($field['blockTypes']);
+            }
+
+            $newData[] = $field;
+        }
+
+        return $newData;
     }
-
-
 }

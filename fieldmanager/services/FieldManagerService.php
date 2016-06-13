@@ -12,212 +12,63 @@ class FieldManagerService extends BaseApplicationComponent
         return isset( $settings[ 'cpSectionEnabled' ] ) && $settings[ 'cpSectionEnabled' ];
     }
 
-    public function saveField($settings, $useOriginalSettings = true)
+    public function saveField($field, $originField)
     {
-        $newField = new FieldModel();
+        // If this is a Matrix or Super Table field, we need to do some pre-processing.
+        // Because we're essentially editing a current field, we need to remove ID's for blocks and inner fields.
+        // Not doing this will move all fields from one Matrix to another - instead of creating new ones.
+        if ($field->type == 'Matrix') {
+            $field->settings = craft()->fieldManager->processMatrix($originField);
+        }
 
-        // We're provided a new name, handle and group...
-        $newField->groupId      = $settings['group'];
-        $newField->name         = $settings['name'];
-        $newField->handle       = $settings['handle'];
+        if ($field->type == 'SuperTable') {
+            $field->settings = craft()->fieldManager->processSuperTable($originField);
+        }
 
-        // But we also need to fetch all other field settings from the original field
-        $originField = craft()->fields->getFieldById($settings['fieldId']);
-        $newField->type = $originField->type;
-
-        if ($useOriginalSettings) {
-            // Only used when cloning group - cannot feasibly custom-set any per-field settngs
-            $newField->instructions = $originField->instructions;
-            $newField->translatable = $originField->translatable;
-            $newField->settings     = $originField->settings;
+        // Send off to Craft's native fieldSave service for heavy lifting.
+        if (craft()->fields->saveField($field)) {
+            FieldManagerPlugin::log($field->name . ' cloned successfully.');
+            return true;
         } else {
-            $newField->instructions = $settings['instructions'];
-            $newField->translatable = $settings['translatable'];
+            FieldManagerPlugin::log('Could not clone ' . $field->name . ' - ' . print_r($field->getErrors(), true), LogLevel::Error);
+            return false;
+        }
+    }
 
-            // TODO: fix this
-            if ($newField->type == 'Matrix') {
-                $newField->settings = $originField->settings;
-            } else if ($newField->type == 'SuperTable') {
-                $newField->settings = $originField->settings;
+    public function saveGroup($group, $prefix, $originGroup)
+    {
+        if (craft()->fields->saveGroup($group)) {
+            $errors = array();
+
+            foreach (craft()->fields->getFieldsByGroupId($originGroup->id) as $originField) {
+                $field = new FieldModel();
+                $field->groupId = $group->id;
+                $field->name = $originField->name;
+                $field->handle = $prefix . $originField->handle;
+                $field->required = $originField->required;
+                $field->instructions = $originField->instructions;
+                $field->translatable = $originField->translatable;
+                $field->type = $originField->type;
+                $field->settings = $originField->settings;
+
+                if (!craft()->fieldManager->saveField($field, $originField)) {
+                    $errors[] = $field;
+                }
+            }
+
+            if ($errors) {
+                foreach ($errors as $error) {
+                    FieldManagerPlugin::log('Could not clone ' . $error->name . ' in ' . $originGroup->name . ' group - ' . print_r($group->getErrors(), true), LogLevel::Error);
+                }
+
+                return false;
             } else {
-                if (isset($settings['types'][$newField->type])) {
-                    $newField->settings = $settings['types'][$newField->type];
-                }
-            }
-        }
-
-        // PositionSelect? Who knew?
-        /*if ($newField->type == 'PositionSelect') {
-            // for some reason, the PositionSelect options are keyed numerically, so they end up being saved wrong
-            // They get saved as - {"options":[0,1,2,3]}
-            // But should be - {"options":["left","center","right","full"]}
-            $options = array();
-            foreach ($originField->settings['options'] as $key => $value) { $options[$value] = 1; }
-            $newField->settings = array('options' => $options);
-        }*/
-
-        // Save the field
-        if (craft()->fields->saveField($newField)) {
-
-            // Matrix, you sly dog!
-            if ($newField->type == 'Matrix') {
-                $this->processMatrix($originField, $newField);
-            }
-
-            // SuperTable, you sly dog!
-            if ($newField->type == 'SuperTable') {
-                $this->processSuperTable($originField, $newField);
-            }
-
-            Craft::log($originField->name . ' field cloned successfully.');
-            return array('success' => true, 'fieldId' => $newField->id);
-        } else {
-            Craft::log('Could not clone the '.$originField->name.' field.', LogLevel::Error);
-            return array('success' => false, 'error' => $newField->getErrors());
-        }
-    }
-
-
-    public function saveGroup($settings)
-    {
-        $newGroup = new FieldGroupModel();
-        $newGroup->name = $settings['name'];
-
-        $prefix = $settings['prefix'];
-
-        $originGroup = craft()->fields->getGroupById($settings['groupId']);
-
-        if (craft()->fields->saveGroup($newGroup)) {
-            Craft::log($originGroup->name . ' field group cloned successfully.');
-
-            // Now we've got our new field group, clone all the field in the old field into the new one
-            $originFields = craft()->fields->getFieldsByGroupId($originGroup->id);
-
-            // Create our own settings for these new fields for name/handle.
-            // Will look something like GroupName_FieldName
-            foreach ($originFields as $originField) {
-                $handle = $prefix . $originField->handle;
-
-                $settings = array(
-                    'fieldId'   => $originField->id,
-                    'group'     => $newGroup->id,
-                    'name'      => $originField->name,
-                    'handle'    => $handle,
-                );
-
-                $this->saveField($settings);
+                FieldManagerPlugin::log($originGroup->name . ' group cloned successfully.');
+                return true;
             }
         } else {
-            Craft::log('Could not save the '.$originGroup->name.' field group.', LogLevel::Error);
-        }
-    }
-
-    public function generateHandle($string) {
-        $str = str_replace(' ', '', ucwords(str_replace(' ', ' ', $string)));
-        $str = lcfirst($str);
-        return $str;
-    }
-
-
-    public function processMatrix($originField, $field) {
-        $settings = new MatrixSettingsModel($field);
-
-        // Get the original Matrix Blocks
-        $blockTypes = craft()->matrix->getBlockTypesByFieldId($originField->id);
-
-        $newBlockTypes = array();
-        $extraFields = array();
-        foreach ($blockTypes as $originBlockType) {
-            $newBlockType = new MatrixBlockTypeModel();
-
-            // New Matrix Block
-            $newBlockType->fieldId = $field->id;
-            $newBlockType->name = $originBlockType->name;
-            $newBlockType->handle = $originBlockType->handle;
-
-            $newBlockFields = array();
-            foreach ($originBlockType->fields as $originField) {
-                $newBlockField = new FieldModel();
-
-                // New Matrix Block field
-                $newBlockField->name         = $originField->name;
-                $newBlockField->handle       = $originField->handle;
-                $newBlockField->required     = $originField->required;
-                $newBlockField->instructions = $originField->instructions;
-                $newBlockField->translatable = $originField->translatable;
-                $newBlockField->type         = $originField->type;
-                $newBlockField->settings     = $originField->settings;
-
-                $newBlockFields[] = $newBlockField;
-
-                if ($newBlockField->type == 'SuperTable') {
-                    $extraFields[] = array($originField, $newBlockField);
-                }
-            }
-
-            $newBlockType->setFields($newBlockFields);
-
-            craft()->matrix->saveBlockType($newBlockType);
-            $newBlockTypes[] = $newBlockType;
-        }
-
-        //$settings->setBlockTypes($newBlockTypes);
-        //craft()->matrix->saveSettings($settings);
-
-        if ($extraFields) {
-            foreach ($extraFields as $options) {
-                $this->processSuperTable($options[0], $options[1]);
-            }
-        }
-    }
-
-    public function processSuperTable($originField, $field) {
-        $settings = new SuperTable_SettingsModel($field);
-
-        // Get the original SuperTable Blocks
-        $blockTypes = craft()->superTable->getBlockTypesByFieldId($originField->id);
-
-        $newBlockTypes = array();
-        $extraFields = array();
-        foreach ($blockTypes as $originBlockType) {
-            $newBlockType = new SuperTable_BlockTypeModel();
-
-            // New SuperTable Block
-            $newBlockType->fieldId = $field->id;
-
-            $newBlockFields = array();
-            foreach ($originBlockType->fields as $originField) {
-                $newBlockField = new FieldModel();
-
-                // New SuperTable Block field
-                $newBlockField->name         = $originField->name;
-                $newBlockField->handle       = $originField->handle;
-                $newBlockField->required     = $originField->required;
-                $newBlockField->instructions = $originField->instructions;
-                $newBlockField->translatable = $originField->translatable;
-                $newBlockField->type         = $originField->type;
-                $newBlockField->settings     = $originField->settings;
-
-                $newBlockFields[] = $newBlockField;
-
-                if ($newBlockField->type == 'Matrix') {
-                    $extraFields[] = array($originField, $newBlockField);
-                }
-            }
-
-            $newBlockType->setFields($newBlockFields);
-
-            craft()->superTable->saveBlockType($newBlockType);
-            $newBlockTypes[] = $newBlockType;
-        }
-
-        //$settings->setBlockTypes($newBlockTypes);
-        //craft()->superTable->saveSettings($settings);
-
-        if ($extraFields) {
-            foreach ($extraFields as $options) {
-                $this->processMatrix($options[0], $options[1]);
-            }
+            FieldManagerPlugin::log('Could not clone ' . $originGroup->name . ' group - ' . print_r($group->getErrors(), true), LogLevel::Error);
+            return false;
         }
     }
 
@@ -244,5 +95,85 @@ class FieldManagerService extends BaseApplicationComponent
         return array_diff($allFieldIds, $usedFieldIds);
     }
 
+    public function processMatrix($field)
+    {
+        $fieldSettings = $field->settings;
 
+        $blockTypes = craft()->matrix->getBlockTypesByFieldId($field->id);
+
+        $blockCount = 1;
+        foreach ($blockTypes as $blockType) {
+            $fieldSettings['blockTypes']['new' . $blockCount] = array(
+                'name' => $blockType->name,
+                'handle' => $blockType->handle,
+                'fields' => array(),
+            );
+
+            $fieldCount = 1;
+            foreach ($blockType->fields as $blockField) {
+                // Case for nested Super Table
+                if ($blockField->type == 'SuperTable') {
+                    $settings = craft()->fieldManager->processSuperTable($blockField);
+                } else {
+                    $settings = $blockField->settings;
+                }
+
+                $fieldSettings['blockTypes']['new' . $blockCount]['fields']['new' . $fieldCount] = array(
+                    'name' => $blockField->name,
+                    'handle' => $blockField->handle,
+                    'required' => $blockField->required,
+                    'instructions' => $blockField->instructions,
+                    'translatable' => $blockField->translatable,
+                    'type' => $blockField->type,
+                    'typesettings' => $settings,
+                );
+
+                $fieldCount++;
+            }
+
+            $blockCount++;
+        }
+
+        return $fieldSettings;
+    }
+
+    public function processSuperTable($field)
+    {
+        $fieldSettings = $field->settings;
+
+        $blockTypes = craft()->superTable->getBlockTypesByFieldId($field->id);
+
+        $blockCount = 1;
+        foreach ($blockTypes as $blockType) {
+            $fieldSettings['blockTypes']['new' . $blockCount] = array(
+                'fields' => array(),
+            );
+
+            $fieldCount = 1;
+            foreach ($blockType->fields as $blockField) {
+                // Case for nested Matrix
+                if ($blockField->type == 'Matrix') {
+                    $settings = craft()->fieldManager->processMatrix($blockField);
+                } else {
+                    $settings = $blockField->settings;
+                }
+
+                $fieldSettings['blockTypes']['new' . $blockCount]['fields']['new' . $fieldCount] = array(
+                    'name' => $blockField->name,
+                    'handle' => $blockField->handle,
+                    'required' => $blockField->required,
+                    'instructions' => $blockField->instructions,
+                    'translatable' => $blockField->translatable,
+                    'type' => $blockField->type,
+                    'typesettings' => $settings,
+                );
+
+                $fieldCount++;
+            }
+
+            $blockCount++;
+        }
+
+        return $fieldSettings;
+    }
 }

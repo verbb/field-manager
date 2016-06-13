@@ -17,7 +17,7 @@ class FieldManagerController extends BaseController
 
         $variables = array(
             'group' => $group,
-            'prefix' => craft()->fieldManager->generateHandle($group->name) . '_',
+            'prefix' => StringHelper::toCamelCase($group->name) . '_',
         );
 
         $returnData['html'] = $this->renderTemplate('fieldmanager/_group/' . $template, $variables, true);
@@ -30,35 +30,17 @@ class FieldManagerController extends BaseController
         $this->requirePostRequest();
 
         $json = craft()->request->getParam('data', '{}');
-        $data = json_decode($json, true);
+        $data = craft()->fieldManager_import->getData($json);
 
-        if ($data !== null) {
+        if ($data) {
             $this->renderTemplate('fieldmanager/import/map', array(
-                'fields'  => $data,
+                'fields' => $data,
+                'errors' => array(),
             ));
         } else {
             craft()->userSession->setError(Craft::t('Could not parse JSON data.'));
         }
-
     }
-
-    /*public function actionGetSingleFieldHtml()
-    {
-        $this->requirePostRequest();
-        $this->requireAjaxRequest();
-
-        $fieldId = craft()->request->getRequiredPost('fieldId');
-        $groupId = craft()->request->getRequiredPost('groupId');
-
-        $variables = array(
-            'field' => craft()->fields->getFieldById($fieldId),
-            'group' => craft()->fields->getGroupById($groupId),
-        );
-
-        $returnData['html'] = $this->renderTemplate('fieldmanager/_single/single', $variables, true);
-
-        $this->returnJson($returnData);
-    }*/
 
     public function actionGetModalBody()
     {
@@ -87,54 +69,53 @@ class FieldManagerController extends BaseController
         $this->returnJson($returnData);
     }
 
-
-    public function actionSaveSingleField()
+    public function actionCloneField()
     {
         $this->requirePostRequest();
         $this->requireAjaxRequest();
 
-        $settings = array(
-            'fieldId' => craft()->request->getPost('fieldId'),
-            'group' => craft()->request->getRequiredPost('group'),
-            'name' => craft()->request->getPost('name'),
-            'handle' => craft()->request->getPost('handle'),
-            'instructions' => craft()->request->getPost('instructions'),
-            'translatable' => (bool)craft()->request->getPost('translatable'),
-            'type' => craft()->request->getRequiredPost('type'),
-            'types' => craft()->request->getPost('types'),
-        );
+        $fieldId = craft()->request->getRequiredPost('fieldId');
 
-        $originField = craft()->fields->getFieldById($settings['fieldId']);
+        $field = new FieldModel();
+        $field->groupId = craft()->request->getRequiredPost('group');
+        $field->name = craft()->request->getPost('name');
+        $field->handle = craft()->request->getPost('handle');
+        $field->instructions = craft()->request->getPost('instructions');
+        $field->translatable = (bool)craft()->request->getPost('translatable');
+        $field->type = craft()->request->getRequiredPost('type');
 
-        $returnData = craft()->fieldManager->saveField($settings, false);
-
-        $this->returnJson($returnData);
-    }
-
-    public function actionSaveGroupField()
-    {
-        $this->requirePostRequest();
-        $this->requireAjaxRequest();
-
-        $settings = array(
-            'groupId' => craft()->request->getRequiredPost('groupId'),
-            'name' => craft()->request->getRequiredPost('name'),
-            'prefix' => craft()->request->getRequiredPost('prefix'),
-        );
-
-        $originGroup = craft()->fields->getGroupById($settings['groupId']);
-
-        if ((craft()->fieldManager->saveGroup($settings)) !== false) {
-            $returnData = array('success' => true);
-
-            craft()->userSession->setNotice(Craft::t($originGroup->name . ' field group cloned successfully.'));
-        } else {
-            $returnData = array('success' => false);
-
-            //craft()->userSession->setError(Craft::t('Could not clone the '.$originGroup->name.' field group.'));
+        $typeSettings = craft()->request->getPost('types');
+        if (isset($typeSettings[$field->type])) {
+            $field->settings = $typeSettings[$field->type];
         }
 
-        $this->returnJson($returnData);
+        $originField = craft()->fields->getFieldById($fieldId);
+
+        if (craft()->fieldManager->saveField($field, $originField)) {
+            $this->returnJson(array('success' => true, 'fieldId' => $field->id));
+        } else {
+            $this->returnJson(array('success' => false, 'error' => $field->getErrors()));
+        }
+    }
+
+    public function actionCloneGroup()
+    {
+        $this->requirePostRequest();
+        $this->requireAjaxRequest();
+
+        $groupId = craft()->request->getRequiredPost('groupId');
+        $prefix = craft()->request->getRequiredPost('prefix');
+
+        $group = new FieldGroupModel();
+        $group->name = craft()->request->getRequiredPost('name');
+
+        $originGroup = craft()->fields->getGroupById($groupId);
+
+        if (craft()->fieldManager->saveGroup($group, $prefix, $originGroup)) {
+            $this->returnJson(array('success' => true, 'groupId' => $group->id));
+        } else {
+            $this->returnJson(array('success' => false, 'error' => $group->getErrors()));
+        }
     }
 
     public function actionExport()
@@ -160,34 +141,67 @@ class FieldManagerController extends BaseController
 
         $fields = craft()->request->getParam('fields', '');
         $json = craft()->request->getParam('data', '{}');
-        $data = json_decode($json, true);
+        $data = craft()->fieldManager_import->getData($json);
 
         // First - remove any field we're not importing
         $fieldsToImport = array();
         foreach ($fields as $key => $field) {
-            if ($field['groupId'] != 'noimport') {
+            if (isset($field['groupId'])) {
+                if ($field['groupId'] != 'noimport') {
 
-                // Get the field data from our imported JSON data
-                $fieldsToImport[$field['handle']] = $data[$field['origHandle']];
+                    // Get the field data from our imported JSON data
+                    $fieldsToImport[$key] = $data[$key];
 
-                // But then remove the Name value - the user may have changed this!
-                $fieldsToImport[$field['handle']]['name'] = $field['name'];
-
-                // Then add the Group ID
-                $fieldsToImport[$field['handle']]['groupId'] = $field['groupId'];
+                    $fieldsToImport[$key]['name'] = $field['name'];
+                    $fieldsToImport[$key]['handle'] = $field['handle'];
+                    $fieldsToImport[$key]['groupId'] = $field['groupId'];
+                }
             }
         }
 
         if (count($fieldsToImport) > 0) {
-            $fieldImportResult = craft()->fieldManager_import->import($fieldsToImport);
+            $importErrors = craft()->fieldManager_import->import($fieldsToImport);
 
-            if ($fieldImportResult === true) {
+            if (!$importErrors) {
                 craft()->userSession->setNotice('Imported successfully.');
             } else {
-                craft()->userSession->setError(implode(', ', $fieldImportResult));
+                craft()->userSession->setError('Error importing fields.');
+
+                $this->renderTemplate('fieldmanager/import/map', array(
+                    'fields' => $fieldsToImport,
+                    'errors' => $importErrors,
+                ));
             }
         } else {
             craft()->userSession->setNotice('No fields imported.');
+        }
+    }
+
+    // From Craft's native saveField, which doesn't really support Ajax...
+    public function actionSaveField()
+    {
+        $this->requirePostRequest();
+
+        $field = new FieldModel();
+
+        $field->id           = craft()->request->getPost('fieldId');
+        $field->groupId      = craft()->request->getRequiredPost('group');
+        $field->name         = craft()->request->getPost('name');
+        $field->handle       = craft()->request->getPost('handle');
+        $field->instructions = craft()->request->getPost('instructions');
+        $field->translatable = (bool) craft()->request->getPost('translatable');
+
+        $field->type = craft()->request->getRequiredPost('type');
+
+        $typeSettings = craft()->request->getPost('types');
+        if (isset($typeSettings[$field->type])) {
+            $field->settings = $typeSettings[$field->type];
+        }
+
+        if (craft()->fields->saveField($field)) {
+            $this->returnJson(array('success' => true));
+        } else {
+            $this->returnJson(array('success' => false, 'error' => $field->getErrors()));
         }
     }
 

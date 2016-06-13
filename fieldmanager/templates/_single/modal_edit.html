@@ -85,56 +85,30 @@
 					}) }}
 				{% endif %}
 
-				{% if field is defined %}
-					{{ forms.selectField({
-						label: "Field Type"|t,
-						instructions: "What type of field is this?"|t,
-						warning: (field.id is defined ? "Changing this may result in data loss."|t),
-						id: 'type',
-						name: 'type',
-						options: fieldTypes,
-						value: (field is defined ? field.fieldType.getClassHandle() : null),
-						errors: (isFieldTypeMissing ? ["The fieldtype class “{class}” could not be found."|t({ class: field.type })] : null),
-						toggle: true
-					}) }}
-				{% else %}
+				{{ forms.selectField({
+					label: "Field Type"|t,
+					instructions: "What type of field is this?"|t,
+					warning: (fieldId is defined ? "Changing this may result in data loss."|t),
+					id: 'type',
+					name: 'type',
+					options: fieldTypes,
+					value: fieldType.getClassHandle(),
+					errors: (isFieldTypeMissing ? ["The fieldtype class “{class}” could not be found."|t({ class: field.type })] : null),
+					toggle: true
+				}) }}
 
-					<hr>
-
-					{{ forms.selectField({
-						label: "Field Type"|t,
-						instructions: "What type of field is this?"|t,
-						id: 'type',
-						name: 'type',
-						options: fieldTypes,
-						value: fieldType.getClassHandle(),
-						toggle: true
-					}) }}
-
-					{% for _fieldType in fieldTypes %}
-						{% set isCurrent = (_fieldType.getClassHandle() == fieldType.getClassHandle()) %}
-						<div id="{{ _fieldType.getClassHandle() }}"{% if not isCurrent %} class="hidden"{% endif %}>
-							{% namespace 'types['~_fieldType.getClassHandle()~']' %}
-								{% if isCurrent %}
-									{{ fieldType.getSettingsHtml()|raw }}
-								{% else %}
-									{{ _fieldType.getSettingsHtml()|raw }}
-								{% endif %}
-							{% endnamespace %}
-						</div>
-					{% endfor %}
-				{% endif %}
-
-				{# Namespaced due to issues with JS (mostly EditableTables) either not firing, or binding multiple times #}
-
-				{% if field is defined %}
-					{% if field.fieldType %}
-						{% namespace 'types['~field.fieldType.getClassHandle()~']' %}
-							{{ field.fieldType.getSettingsHtml() | raw }}
+				{% for _fieldType in fieldTypes %}
+					{% set isCurrent = (_fieldType.getClassHandle() == fieldType.getClassHandle()) %}
+					<div id="{{ _fieldType.getClassHandle() }}"{% if not isCurrent %} class="hidden"{% endif %}>
+						{% namespace 'types['~_fieldType.getClassHandle()~']' %}
+							{% if isCurrent %}
+								{{ fieldType.getSettingsHtml()|raw }}
+							{% else %}
+								{{ _fieldType.getSettingsHtml()|raw }}
+							{% endif %}
 						{% endnamespace %}
-					{% endif %}
-				{% endif %}
-				
+					</div>
+				{% endfor %}
 			</form>
 		</div>
 
@@ -143,9 +117,7 @@
 		</div>
 	</div>
 </div>
+
 {% if field is not defined or not field.handle %}
 	{% includejs "new Craft.HandleGenerator('#name', '#handle');" %}
-{% endif %}
-{% if field is not defined or not field.handle %}
-	{% includeJs "new Craft.HandleGenerator('#name', '#handle');" %}
 {% endif %}

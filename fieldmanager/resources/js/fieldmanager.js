@@ -103,6 +103,7 @@ $(function() {
 		if (e.metaKey) {
 			return;
 		}
+
 		e.preventDefault();
 		new Craft.FieldManagerEditGroupField($(this), $(this).parents('tr.group'));
 	});
@@ -111,6 +112,7 @@ $(function() {
 		if (e.metaKey) {
 			return;
 		}
+
 		e.preventDefault();
 		new Craft.SingleFieldEditModal($(this), $(this).parents('tr.field'));
 	});
@@ -119,6 +121,7 @@ $(function() {
 		if (e.metaKey) {
 			return;
 		}
+
 		e.preventDefault();
 		new Craft.SingleFieldAddModal($(this));
 	});
@@ -218,15 +221,22 @@ $(function() {
 
 			var data = this.$form.serialize()
 
-			Craft.postActionRequest('fieldManager/saveGroupField', data, $.proxy(function(response, textStatus) {
+			Craft.postActionRequest('fieldManager/cloneGroup', data, $.proxy(function(response, textStatus) {
 				this.$spinner.addClass('hidden');
 
-				if (textStatus == 'success' && response.success) {
+				if (response.error) {
+					Garnish.shake(this.hud.$hud);
+
+					$.each(response.error, function(index, value) {
+						Craft.cp.displayError(value);
+					});
+				} else if (response.success) {
+					Craft.cp.displayNotice(Craft.t('Group cloned.'));
 					location.href = Craft.getUrl('fieldmanager');
 
-					this.closeHud();
+					this.onFadeOut();
 				} else {
-					Garnish.shake(this.hud.$hud);
+					Craft.cp.displayError(Craft.t('Could not clone group'));
 				}
 			}, this));
 		},
@@ -543,7 +553,7 @@ $(function() {
 
 			this.$footerSpinner.removeClass('hidden');
 
-			Craft.postActionRequest('fieldManager/saveSingleField', params, $.proxy(function(response, textStatus) {
+			Craft.postActionRequest('fieldManager/cloneField', params, $.proxy(function(response, textStatus) {
 				this.$footerSpinner.addClass('hidden');
 
 				if (response.error) {
@@ -551,6 +561,7 @@ $(function() {
 						Craft.cp.displayError(value);
 					});
 				} else if (response.success) {
+					Craft.cp.displayNotice(Craft.t('Field cloned.'));
 					location.href = Craft.getUrl('fieldmanager');
 
 					this.onFadeOut();
@@ -643,19 +654,28 @@ $(function() {
 		},
 
 		saveSettings: function() {
-			var params = this.$body.find('form').serializeObject();
-			params.fieldId = this.fieldId;
+			var params = this.$body.find('form').serialize();
 
 			this.$footerSpinner.removeClass('hidden');
 
-			Craft.postActionRequest('fields/saveField', params, $.proxy(function(response, textStatus) {
+			Craft.postActionRequest('fieldManager/saveField', params, $.proxy(function(response, textStatus) {
 				this.$footerSpinner.addClass('hidden');
 
-				location.href = Craft.getUrl('fieldmanager');
+				if (response.error) {
+					Garnish.shake(this.$container);
 
-				Craft.cp.displayNotice(Craft.t('Field updated.'));
+					$.each(response.error, function(index, value) {
+						Craft.cp.displayError(value);
+					});
+				} else if (response.success) {
+					Craft.cp.displayNotice(Craft.t('Field updated.'));
+					location.href = Craft.getUrl('fieldmanager');
 
-				this.onFadeOut();
+					this.onFadeOut();
+				} else {
+					Garnish.shake(this.$container);
+					Craft.cp.displayError(Craft.t('Could not update field'));
+				}
 
 			}, this));
 
@@ -733,18 +753,28 @@ $(function() {
 		},
 
 		saveSettings: function() {
-			var params = this.$body.find('form').serializeObject();
-			params.fieldId = this.fieldId;
+			var params = this.$body.find('form').serialize();
 
 			this.$footerSpinner.removeClass('hidden');
 
-			Craft.postActionRequest('fields/saveField', params, $.proxy(function(response, textStatus) {
+			Craft.postActionRequest('fieldManager/saveField', params, $.proxy(function(response, textStatus) {
 				this.$footerSpinner.addClass('hidden');
 
-				this.onFadeOut();
-				Craft.cp.displayNotice(Craft.t('Field added.'));
+				if (response.error) {
+					Garnish.shake(this.$container);
 
-				location.href = Craft.getUrl('fieldmanager');
+					$.each(response.error, function(index, value) {
+						Craft.cp.displayError(value);
+					});
+				} else if (response.success) {
+					Craft.cp.displayNotice(Craft.t('Field added.'));
+					location.href = Craft.getUrl('fieldmanager');
+
+					this.onFadeOut();
+				} else {
+					Garnish.shake(this.$container);
+					Craft.cp.displayError(Craft.t('Could not add field'));
+				}
 
 			}, this));
 

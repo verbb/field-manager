@@ -33,10 +33,10 @@
 
     <table id="fieldmapping" class="data editable fullwidth collapsible">
         <thead>
-            <th>{{ "Field Name"|t }}</th>
-            <th>{{ "Field Handle"|t }}</th>
-            <th>{{ "Field Type"|t }}</th>
-            <th>
+            <th style="width: 40%;">{{ "Field Name"|t }}</th>
+            <th style="width: 40%;">{{ "Field Handle"|t }}</th>
+            <th style="width: 10%;">{{ "Field Type"|t }}</th>
+            <th style="width: 10%;">
                 {{ forms.selectField({
                     id: 'groupAll',
                     name: 'groupAll',
@@ -45,30 +45,33 @@
             </th>
         </thead>
         <tbody>
-            {% for handle, field in fields %}
+            {% for index, field in fields %}
                 <tr>
                     <td class="textarea">
-                        <textarea name="fields[{{ handle }}][name]" rows="1">{{ field.name }}</textarea>
+                        <textarea name="fields[{{ index }}][name]" rows="1">{{ field.name }}</textarea>
                     </td>
 
-                    <td class="code textarea">
-                        <textarea name="fields[{{ handle }}][handle]" rows="1">{{ handle }}</textarea>
+                    <td class="textarea {% if errors[field.handle] is defined %}has-error{% endif %}">
+                        <textarea class="code" name="fields[{{ index }}][handle]" rows="1">{{ field.handle }}</textarea>
+
+                        {% if errors[field.handle] is defined %}
+                            <span class="errors">
+                                {{ errors[field.handle].getError('handle') }}
+                            </span>
+                        {% endif %}
                     </td>
 
                     <td>
                         {{ field.type }}
                     </td>
 
-                    <td class="hidden">
-                        <input type="hidden" name="fields[{{ handle }}][origHandle]" value="{{ handle }}">
-                    </td>
-
                     <td class="thin">
                         {{ forms.selectField({
-                            id: 'group'~handle,
+                            id: 'group' ~ index,
                             class: 'groupSelect',
-                            name: 'fields['~handle~'][groupId]',
+                            name: 'fields[' ~ index ~ '][groupId]',
                             options: groupOptions,
+                            value: field.groupId | default(''),
                         }) }}
                     </td>
                 </tr>

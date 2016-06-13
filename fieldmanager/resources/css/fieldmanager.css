@@ -119,10 +119,14 @@ body.ltr .rightalign {
 }
 
 
-
+#fieldmapping {
+	width: auto;
+	table-layout: fixed;
+}
 
 #fieldmapping thead tr th {
 	vertical-align: middle;
+	border: none;
 }
 
 #fieldmapping tbody tr td {
@@ -130,7 +134,18 @@ body.ltr .rightalign {
 }
 
 #fieldmapping tbody tr td.textarea {
-	padding-left: 0;
+	padding: 4px 10px !important;
+	vertical-align: top;
+}
+
+#fieldmapping tbody tr td.textarea.has-error textarea {
+	border: 1px solid #da5a47 !important;
+}
+
+#fieldmapping tbody tr td.textarea.has-error .errors {
+	color: #da5a47;
+	padding: 5px 10px 2px;
+	display: block;
 }
 
 #fieldmapping textarea {

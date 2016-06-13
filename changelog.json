@@ -5,7 +5,7 @@
         "date": "2016-06-14T22:40:00+10:00",
         "notes": [
             "[Added] Added clone, import/export support for Matrix > SuperTable > Matrix field configuration (phew!).",
-            "[Improved] Changed export/import structure for better consistency, readability and for Matrix/SuperTable support. Supports older exports with deprecation notice.",
+            "[Improved] Changed export/import JSON structure for better consistency, readability and for Matrix/SuperTable support. Supports older exports with deprecation notice.",
             "[Improved] Allow `metaKey` (cmd+click) functionality. Thanks to [@timkelty](https://github.com/timkelty)",
             "[Improved] Refactored cloning logic for all fields (now much simpler)",
             "[Improved] Better logging and UI feedback for various tasks",

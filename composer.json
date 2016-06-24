@@ -1,0 +1,14 @@
+{
+    "name": "engram-design/fieldmanager",
+    "description": "Field Manager is a Craft CMS plugin to help make it easy to manage your fields and field groups.",
+    "authors": [
+        {
+            "name": "Josh Crawford",
+            "email": "joshua@sgroup.com.au"
+        }
+    ],
+    "type": "craft-plugin",
+    "require": {
+        "composer/installers": "~1.0"
+    }
+}

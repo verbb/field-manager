@@ -18,11 +18,11 @@ class FieldManagerService extends BaseApplicationComponent
         // Because we're essentially editing a current field, we need to remove ID's for blocks and inner fields.
         // Not doing this will move all fields from one Matrix to another - instead of creating new ones.
         if ($field->type == 'Matrix') {
-            $field->settings = craft()->fieldManager->processMatrix($fioriginFieldeld);
+            $field->settings = craft()->fieldManager->processMatrix($field);
         }
 
         if ($field->type == 'SuperTable') {
-            $field->settings = craft()->fieldManager->processSuperTable($originField);
+            $field->settings = craft()->fieldManager->processSuperTable($field);
         }
 
         // Send off to Craft's native fieldSave service for heavy lifting.
@@ -99,39 +99,21 @@ class FieldManagerService extends BaseApplicationComponent
     {
         $fieldSettings = $field->settings;
 
-        $blockTypes = craft()->matrix->getBlockTypesByFieldId($field->id);
+        // Strip out all the IDs from the origin field
+        foreach ($fieldSettings->blockTypes as $blockType) {
+            $blockType->id = null;
 
-        $blockCount = 1;
-        foreach ($blockTypes as $blockType) {
-            $fieldSettings['blockTypes']['new' . $blockCount] = array(
-                'name' => $blockType->name,
-                'handle' => $blockType->handle,
-                'fields' => array(),
-            );
-
-            $fieldCount = 1;
             foreach ($blockType->fields as $blockField) {
+                $blockField->id = null;
+
                 // Case for nested Super Table
                 if ($blockField->type == 'SuperTable') {
-                    $settings = craft()->fieldManager->processSuperTable($blockField);
-                } else {
-                    $settings = $blockField->settings;
+                    // Ensure FieldTypes have a chance to prepare their settings properly
+                    $blockField->settings = $blockField->fieldType->prepSettings($blockField->settings);
+
+                    $blockField->settings = craft()->fieldManager->processSuperTable($blockField);
                 }
-
-                $fieldSettings['blockTypes']['new' . $blockCount]['fields']['new' . $fieldCount] = array(
-                    'name' => $blockField->name,
-                    'handle' => $blockField->handle,
-                    'required' => $blockField->required,
-                    'instructions' => $blockField->instructions,
-                    'translatable' => $blockField->translatable,
-                    'type' => $blockField->type,
-                    'typesettings' => $settings,
-                );
-
-                $fieldCount++;
             }
-
-            $blockCount++;
         }
 
         return $fieldSettings;
@@ -141,37 +123,21 @@ class FieldManagerService extends BaseApplicationComponent
     {
         $fieldSettings = $field->settings;
 
-        $blockTypes = craft()->superTable->getBlockTypesByFieldId($field->id);
+        // Strip out all the IDs from the origin field
+        foreach ($fieldSettings->blockTypes as $blockType) {
+            $blockType->id = null;
 
-        $blockCount = 1;
-        foreach ($blockTypes as $blockType) {
-            $fieldSettings['blockTypes']['new' . $blockCount] = array(
-                'fields' => array(),
-            );
-
-            $fieldCount = 1;
             foreach ($blockType->fields as $blockField) {
+                $blockField->id = null;
+
                 // Case for nested Matrix
                 if ($blockField->type == 'Matrix') {
-                    $settings = craft()->fieldManager->processMatrix($blockField);
-                } else {
-                    $settings = $blockField->settings;
+                    // Ensure FieldTypes have a chance to prepare their settings properly
+                    $blockField->settings = $blockField->fieldType->prepSettings($blockField->settings);
+
+                    $blockField->settings = craft()->fieldManager->processMatrix($blockField);
                 }
-
-                $fieldSettings['blockTypes']['new' . $blockCount]['fields']['new' . $fieldCount] = array(
-                    'name' => $blockField->name,
-                    'handle' => $blockField->handle,
-                    'required' => $blockField->required,
-                    'instructions' => $blockField->instructions,
-                    'translatable' => $blockField->translatable,
-                    'type' => $blockField->type,
-                    'typesettings' => $settings,
-                );
-
-                $fieldCount++;
             }
-
-            $blockCount++;
         }
 
         return $fieldSettings;

@@ -86,7 +86,8 @@ class FieldManagerController extends BaseController
 
         $typeSettings = craft()->request->getPost('types');
         if (isset($typeSettings[$field->type])) {
-            $field->settings = $typeSettings[$field->type];
+            // Ensure FieldTypes have a chance to prepare their settings properly
+            $field->settings = $field->fieldType->prepSettings($typeSettings[$field->type]);
         }
 
         $originField = craft()->fields->getFieldById($fieldId);

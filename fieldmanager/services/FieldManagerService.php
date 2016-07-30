@@ -18,11 +18,11 @@ class FieldManagerService extends BaseApplicationComponent
         // Because we're essentially editing a current field, we need to remove ID's for blocks and inner fields.
         // Not doing this will move all fields from one Matrix to another - instead of creating new ones.
         if ($field->type == 'Matrix') {
-            $field->settings = craft()->fieldManager->processMatrix($field);
+            $field->settings = craft()->fieldManager->processMatrix($fioriginFieldeld);
         }
 
         if ($field->type == 'SuperTable') {
-            $field->settings = craft()->fieldManager->processSuperTable($field);
+            $field->settings = craft()->fieldManager->processSuperTable($originField);
         }
 
         // Send off to Craft's native fieldSave service for heavy lifting.

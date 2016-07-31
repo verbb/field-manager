@@ -341,102 +341,6 @@ $(function() {
 	});
 
 
-
-/*
-	// Provide HUD functionality for cloning a single field
-	Craft.FieldManagerCloneSingleField = Garnish.Base.extend({
-		$element: null,
-		fieldId: null,
-		groupId: null,
-
-		$form: null,
-		$spinner: null,
-
-		hud: null,
-
-		init: function($element, $data) {
-			this.$element = $element;
-			this.fieldId = $data.data('id');
-			this.groupId = $data.data('groupid');
-
-			this.$element.addClass('loading');
-
-			var data = {
-				fieldId: this.fieldId,
-				groupId: this.groupId,
-			};
-
-			Craft.postActionRequest('fieldManager/getSingleFieldHtml', data, $.proxy(this, 'showHud'));
-		},
-
-		showHud: function(response, textStatus) {
-			this.$element.removeClass('loading');
-
-			if (textStatus == 'success') {
-				var $hudContents = $();
-
-				this.$form = $('<form/>');
-				$('<input type="hidden" name="fieldId" value="'+this.fieldId+'">').appendTo(this.$form);
-				$fieldsContainer = $('<div class="fields"/>').appendTo(this.$form);
-
-				$fieldsContainer.html(response.html)
-				Craft.initUiElements($fieldsContainer);
-
-				var $buttonsOuterContainer = $('<div class="footer"/>').appendTo(this.$form);
-
-				this.$spinner = $('<div class="spinner hidden"/>').appendTo($buttonsOuterContainer);
-
-				var $buttonsContainer = $('<div class="buttons right"/>').appendTo($buttonsOuterContainer);
-				$cancelBtn = $('<div class="btn">'+Craft.t('Cancel')+'</div>').appendTo($buttonsContainer);
-				$saveBtn = $('<input class="btn submit" type="submit" value="'+Craft.t('Save')+'"/>').appendTo($buttonsContainer);
-
-				$hudContents = $hudContents.add(this.$form);
-
-				this.hud = new Garnish.HUD(this.$element, $hudContents, {
-					bodyClass: 'body elementeditor',
-					closeOtherHUDs: false
-				});
-
-				this.hud.on('hide', $.proxy(function() {
-					delete this.hud;
-				}, this));
-
-				this.addListener(this.$form, 'submit', 'saveSingleField');
-				this.addListener($cancelBtn, 'click', function() {
-					this.hud.hide()
-				});
-
-				new Craft.HandleGenerator('#name', '#handle');
-			}
-		},
-
-		saveSingleField: function(ev) {
-			ev.preventDefault();
-
-			this.$spinner.removeClass('hidden');
-
-			var data = this.$form.serialize()
-
-			Craft.postActionRequest('fieldManager/saveSingleField', data, $.proxy(function(response, textStatus) {
-				this.$spinner.addClass('hidden');
-
-				if (textStatus == 'success' && response.success) {
-					location.href = Craft.getUrl('fieldmanager');
-
-					this.closeHud();
-				} else {
-					Garnish.shake(this.hud.$hud);
-				}
-			}, this));
-		},
-
-		closeHud: function() {
-			this.hud.hide();
-			delete this.hud;
-		}
-	});*/
-
-
 	Craft.HandleGeneratorWithSuffix = Craft.BaseInputGenerator.extend({
 		generateTargetValue: function(sourceVal)
 		{
@@ -579,13 +483,6 @@ $(function() {
 			this.base();
 		},
 	});
-
-
-
-
-
-
-
 
 
 

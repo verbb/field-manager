@@ -91,9 +91,18 @@
                                 label: label
                             }) }}
                         </td>
+
                         <td><code>{{ field.handle }}</code></td>
-                        <td>{{ field.type }}</td>
-                        <td class="thin"><div class="btn small clone-btn element">Clone</div></td>
+
+                        {% set fieldType = field.getFieldType() %}
+                        {% if fieldType %}
+                            <td>{{ fieldType.name }}</td>
+                            <td class="thin"><div class="btn small clone-btn element">Clone</div></td>
+                        {% else %}
+                            <td><span class="error">{{ field.type }}</span></td>
+                            <td class="thin"></td>
+                        {% endif %}
+
                         <td class="thin delete-row"><a class="delete icon" title="{{ 'Delete'|t }}" role="button"></a></td>
                     </tr>
                 {% endfor %}

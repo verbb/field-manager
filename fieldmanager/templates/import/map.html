@@ -48,11 +48,11 @@
             {% for index, field in fields %}
                 <tr>
                     <td class="textarea">
-                        <textarea name="fields[{{ index }}][name]" rows="1">{{ field.name }}</textarea>
+                        <textarea id="name-{{ index }}" name="fields[{{ index }}][name]" rows="1">{{ field.name }}</textarea>
                     </td>
 
                     <td class="textarea {% if errors[field.handle] is defined %}has-error{% endif %}">
-                        <textarea class="code" name="fields[{{ index }}][handle]" rows="1">{{ field.handle }}</textarea>
+                        <textarea id="handle-{{ index }}" class="code" name="fields[{{ index }}][handle]" rows="1">{{ field.handle }}</textarea>
 
                         {% if errors[field.handle] is defined %}
                             <span class="errors">
@@ -61,20 +61,26 @@
                         {% endif %}
                     </td>
 
-                    <td>
-                        {{ field.type }}
-                    </td>
+                    {% set fieldType = craft.fields.getFieldType(field.type) %}
+                    {% if fieldType %}
+                        <td>{{ field.type }}</td>
 
-                    <td class="thin">
-                        {{ forms.selectField({
-                            id: 'group' ~ index,
-                            class: 'groupSelect',
-                            name: 'fields[' ~ index ~ '][groupId]',
-                            options: groupOptions,
-                            value: field.groupId | default(''),
-                        }) }}
-                    </td>
+                        <td class="thin">
+                            {{ forms.selectField({
+                                id: 'group' ~ index,
+                                class: 'groupSelect',
+                                name: 'fields[' ~ index ~ '][groupId]',
+                                options: groupOptions,
+                                value: field.groupId | default(''),
+                            }) }}
+                        </td>
+                    {% else %}
+                        <td><span class="error">{{ field.type }}</span></td>
+                        <td class="thin"></td>
+                    {% endif %}
                 </tr>
+
+                {% includeJs "new Craft.HandleGenerator('#name-" ~ index ~ "', '#handle-" ~ index ~ "');" %}
             {% endfor %}
         </tbody>
     </table>
@@ -88,4 +94,3 @@
 </form>
 
 {% endset %}
-

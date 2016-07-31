@@ -32,6 +32,11 @@ class FieldManager_ExportService extends BaseApplicationComponent
                     $newField['settings'] = $this->processSuperTable($field);
                 }
 
+                // Position Select - you sly dog!
+                if ($field->type == 'PositionSelect') {
+                    $newField['settings'] = $this->processPositionSelect($field);
+                }
+
                 $fields[] = $newField;
             }
         }
@@ -58,6 +63,8 @@ class FieldManager_ExportService extends BaseApplicationComponent
                 // Case for nested Super Table
                 if ($blockField->type == 'SuperTable') {
                     $settings = $this->processSuperTable($blockField);
+                } else if ($blockField->type == 'PositionSelect') {
+                    $settings = $this->processPositionSelect($blockField);
                 } else {
                     $settings = $blockField->settings;
                 }
@@ -98,6 +105,8 @@ class FieldManager_ExportService extends BaseApplicationComponent
                 // Case for nested Matrix
                 if ($blockField->type == 'Matrix') {
                     $settings = $this->processMatrix($blockField);
+                } else if ($blockField->type == 'PositionSelect') {
+                    $settings = $this->processPositionSelect($blockField);
                 } else {
                     $settings = $blockField->settings;
                 }
@@ -117,6 +126,20 @@ class FieldManager_ExportService extends BaseApplicationComponent
 
             $blockCount++;
         }
+
+        return $fieldSettings;
+    }
+
+    public function processPositionSelect($field)
+    {
+        $fieldSettings = $field->settings;
+        $options = array();
+        
+        foreach ($fieldSettings['options'] as $value) {
+            $options[$value] = true;
+        }
+
+        $fieldSettings['options'] = $options;
 
         return $fieldSettings;
     }

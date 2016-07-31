@@ -1,5 +1,17 @@
 [
     {
+        "version": "1.5.2",
+        "downloadUrl": "https://github.com/engram-design/FieldManager/archive/1.5.2.zip",
+        "date": "2016-07-31T12:40:00+10:00",
+        "notes": [
+            "[Improved] Now checks for installed fieldtypes on import/clone.",
+            "[Improved] Added auto-handle generation on mapping screen when importing.",
+            "[Improved] Now uses `fieldType->prepSettings` when cloning fields. Ensures fields are setup correctly when cloning.",
+            "[Fixed] Fixed issue with Position Select not importing properly",
+            "[Fixed] Fixed issue with Matrix / Super Table fields moving fields to new cloned fields"
+        ]
+    },
+    {
         "version": "1.5.1",
         "downloadUrl": "https://github.com/engram-design/FieldManager/archive/1.5.1.zip",
         "date": "2016-07-16T00:00:00+10:00",

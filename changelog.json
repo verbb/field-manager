@@ -1,5 +1,13 @@
 [
     {
+        "version": "1.5.3",
+        "downloadUrl": "https://github.com/engram-design/FieldManager/archive/1.5.3.zip",
+        "date": "2016-09-05T10:40:00+10:00",
+        "notes": [
+            "[Added] Added import support for Smart Map, which needs a special-case."
+        ]
+    },
+    {
         "version": "1.5.2",
         "downloadUrl": "https://github.com/engram-design/FieldManager/archive/1.5.2.zip",
         "date": "2016-07-31T12:40:00+10:00",

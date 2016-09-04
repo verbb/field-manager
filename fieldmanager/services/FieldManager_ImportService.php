@@ -23,8 +23,20 @@ class FieldManager_ImportService extends BaseApplicationComponent
                     'translatable' => $fieldInfo['translatable'],
                     'required' => $fieldInfo['required'],
                     'type' => $fieldInfo['type'],
-                    'settings' => $fieldInfo['settings']
+                    'settings' => $fieldInfo['settings'],
                 ));
+
+                // Special case for Smart Map - expects a json string for field settings. Craft's model class will 
+                // automatically convert the entire field settings into an object, which Smart Map doesn't want - it expects
+                // a json string for its layout options, which it decodes itself.
+                if ($field->type == 'SmartMap_Address') {
+                    if (isset($field->settings['layout'])) {
+                        $preppedSettings = $field->settings;
+                        $preppedSettings['layout'] = JsonHelper::encode($field->settings['layout']);
+
+                        $field->settings = $preppedSettings;
+                    }
+                }
 
                 // Send off to Craft's native fieldSave service for heavy lifting.
                 if (craft()->fields->saveField($field)) {

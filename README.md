@@ -77,6 +77,13 @@ Using the Import tab, you paste in your JSON file contents that you created thro
 ...and many more. Field Manager can handle just about any FieldType, the above are simply those that have been tested.
 
 
+## Known Issues
+
+* **Neo Fields** - although *cloning* of Neo fields appears to work, import and export is not currently supported. [#37](https://github.com/engram-design/FieldManager/issues/37)
+
+Why not help out with this functionality and send a pull request? [Learn how](https://help.github.com/articles/about-pull-requests/).
+
+
 ## Bugs, feature requests, support
 
 Found a bug? Have a suggestion? [Submit an issue](https://github.com/engram-design/FieldManager/issues)

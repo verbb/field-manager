@@ -14,7 +14,7 @@ class FieldManagerPlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '1.5.3';
+        return '1.5.4';
     }
 
     public function getSchemaVersion()
@@ -24,17 +24,17 @@ class FieldManagerPlugin extends BasePlugin
 
     public function getDeveloper()
     {
-        return 'S. Group';
+        return 'Verbb';
     }
 
     public function getDeveloperUrl()
     {
-        return 'http://sgroup.com.au';
+        return 'https://verbb.io';
     }
 
     public function getPluginUrl()
     {
-        return 'https://github.com/engram-design/FieldManager';
+        return 'https://github.com/verbb/field-manager';
     }
 
     public function getDocumentationUrl()
@@ -44,7 +44,7 @@ class FieldManagerPlugin extends BasePlugin
 
     public function getReleaseFeedUrl()
     {
-        return 'https://raw.githubusercontent.com/engram-design/FieldManager/master/changelog.json';
+        return 'https://raw.githubusercontent.com/verbb/field-manager/master/changelog.json';
     }
 
     public function hasCpSection()

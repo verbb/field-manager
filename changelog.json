@@ -1,5 +1,14 @@
 [
     {
+        "version": "1.5.4",
+        "downloadUrl": "https://github.com/engram-design/FieldManager/archive/1.5.4.zip",
+        "date": "2017-10-18T00:00:00+10:00",
+        "notes": [
+            "[Added] Verbb marketing (new plugin icon, readme, etc).",
+            "[Fixed] Fix for handle generation overriding import handle changes"
+        ]
+    },
+    {
         "version": "1.5.3",
         "downloadUrl": "https://github.com/engram-design/FieldManager/archive/1.5.3.zip",
         "date": "2016-09-05T10:40:00+10:00",

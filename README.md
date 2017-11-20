@@ -8,6 +8,8 @@
 
 Field Manager is a Craft CMS plugin to help make it easy to manage your fields and field groups. 
 
+<img src="https://raw.githubusercontent.com/verbb/field-manager/craft-2/screenshots/main.png" />
+
 ## Documentation
 
 Visit the [Field Manager Plugin page](https://verbb.io/craft-plugins/field-manager) for all documentation, guides, pricing and developer resources.

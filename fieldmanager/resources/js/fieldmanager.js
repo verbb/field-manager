@@ -30,10 +30,8 @@ $(function() {
 			Craft.postActionRequest('fields/saveGroup', data, $.proxy(function(response, textStatus) {
 				if (textStatus == 'success') {
 					if (response.success) {
-						var newGroupOption = $('<option value="'+response.group.id+'">'+response.group.name+'</option>');
-
-						$('#fieldmapping .groupSelect select').append(newGroupOption);
-						$('#fieldmapping select#groupAll').append(newGroupOption);
+						$('#fieldmapping .groupSelect select').append($('<option value="'+response.group.id+'">'+response.group.name+'</option>'));
+						$('#fieldmapping select#groupAll').append($('<option value="'+response.group.id+'">'+response.group.name+'</option>'));
 					} else if (response.errors) {
 						var errors = this.flattenErrors(response.errors);
 						alert(Craft.t('Could not create the group:')+"\n\n"+errors.join("\n"));

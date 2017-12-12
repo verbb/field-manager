@@ -4,7 +4,8 @@
         "downloadUrl": "https://github.com/verbb/field-manager/archive/1.5.5.zip",
         "date": "2017-11-05T00:00:00+10:00",
         "notes": [
-            "[Fixed] Minor fix for sidebar icon."
+            "[Fixed] Minor fix for sidebar icon.",
+            "[Fixed] Fixed import issue where last group dropdown wasn't being set"
         ]
     },
     {

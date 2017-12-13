@@ -39,12 +39,12 @@ class FieldManagerPlugin extends BasePlugin
 
     public function getDocumentationUrl()
     {
-        return $this->getPluginUrl() . '/blob/master/README.md';
+        return 'https://verbb.io/craft-plugins/field-manager/docs';
     }
 
     public function getReleaseFeedUrl()
     {
-        return 'https://raw.githubusercontent.com/verbb/field-manager/master/changelog.json';
+        return 'https://raw.githubusercontent.com/verbb/field-manager/craft-2/changelog.json';
     }
 
     public function hasCpSection()

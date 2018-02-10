@@ -1,0 +1,38 @@
+{% extends "_layouts/cp" %}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("verbb\\fieldmanager\\assetbundles\\FieldManagerAsset") %}
+
+{% set title = 'Field Manager' %}
+
+{% set tabs = {
+    fields: { label: "Fields" | t('field-manager'), url: url('field-manager') },
+    import: { label: "Import" | t('field-manager'), url: url('field-manager/import') },
+} %}
+
+{% set selectedTab = 'import' %}
+
+{% set content %}
+
+<form method="POST" accept-charset="UTF-8">
+    <input type="hidden" name="action" value="field-manager/base/map-fields">
+    {{ csrfInput() }}
+
+    {{ forms.textareaField({
+        label: 'Data',
+        instructions: 'Paste the JSON data to import.',
+        name: 'data',
+        class: 'code',
+        rows: 20,
+        value: craft.app.request.param('data')
+    }) }}
+
+    <div class="buttons">
+        <input type="submit" class="btn submit" value="{{ 'Configure Import' | t('field-manager') }}">
+    </div>
+</form>
+
+{% endset %}
+
+

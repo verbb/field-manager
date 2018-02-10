@@ -8,7 +8,19 @@
 
 Field Manager is a Craft CMS plugin to help make it easy to manage your fields and field groups. 
 
-<img src="https://raw.githubusercontent.com/verbb/field-manager/craft-2/screenshots/main.png" />
+## Download
+
+While Craft 3 is still in beta, you'll need to use Composer to download and install the plugin.
+
+1. Open your terminal and go to your Craft project:
+
+        cd /path/to/project
+
+2. Then tell Composer to load the plugin:
+
+        composer require verbb/field-manager
+
+3. In the Control Panel, go to Settings → Plugins and click the “Install” button for Field Manager.
 
 ## Documentation
 

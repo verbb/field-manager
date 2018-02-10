@@ -1,0 +1,25 @@
+{% import "_includes/forms" as forms %}
+
+{{ forms.textField({
+    label: "Name" | t('field-manager'),
+    instructions: 'What do you want to name your group?' | t('field-manager'),
+    id: 'name',
+    name: 'name',
+    required: true,
+    autofocus: true,
+    value: group.name,
+}) }}
+
+{% if clone %}
+    {{ forms.textField({
+        label: "Field Prefix" | t('field-manager'),
+        instructions: 'A prefix for each field\'s handle in this group. <br> Field handles must be unique.' | t('field-manager'),
+        id: 'prefix',
+        name: 'prefix',
+        required: true,
+        value: prefix,
+    }) }}
+{% endif %}
+
+<input type="hidden" name="id" value="{{ group.id }}" style="display: none;" />
+

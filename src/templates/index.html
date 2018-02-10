@@ -1,0 +1,125 @@
+{% extends "_layouts/cp" %}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("verbb\\fieldmanager\\assetbundles\\FieldManagerAsset") %}
+
+{% set title = 'Field Manager' %}
+
+{% set tabs = {
+    fields: { label: "Fields" | t('field-manager'), url: url('field-manager') },
+    import: { label: "Import" | t('field-manager'), url: url('field-manager/import') },
+} %}
+
+{% set groups = craft.app.fields.allGroups %}
+
+{% set sidebar %}
+    <nav class="sidebar-nav">
+        <ul>
+            <li class="heading"><span>{{ 'Field Groups' | t('field-manager') }}</span></li>
+            <li class="active"><a href="#" data-groupid="all">{{ 'All' | t('field-manager') }}</a></li>
+            {% for group in groups %}
+                <li><a href="#" data-groupid="{{ group.id }}">{{ group.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </nav>
+{% endset %}
+
+{% block actionButton %}
+    {% if groups %}
+        <a href="{{ url('settings/fields/new') }}" class="submit btn add icon new-field-btn">{{ "New field" | t('field-manager') }}</a>
+    {% endif %}
+{% endblock %}
+
+{% set content %}
+
+<form method="POST" accept-charset="UTF-8">
+    <input type="hidden" name="action" value="field-manager/base/export">
+    {{ csrfInput() }}
+
+    <table id="fieldmanager" class="data fullwidth collapsible">
+        <thead>
+            <th>{{ "Group Name" | t('field-manager') }}</th>
+            <th>{{ "Handle" | t('field-manager') }}</th>
+            <th>{{ "Type" | t('field-manager') }}</th>
+            <th></th>
+            <th></th>
+        </thead>
+        <tbody>
+            {% for group in groups %}
+                {% set fields = craft.app.fields.getFieldsByGroupId(group.id) %}
+
+                <tr class="group" data-groupid="{{ group.id }}">
+                    <th scope="row">
+                        {% set label %}
+                            <span class="go">
+                                <a href="{{ url('settings/fields/' ~ group.id) }}">{{ group.name }}</a>
+                            </span>
+                        {% endset %}
+
+                        {{ forms.checkboxField({
+                            label: label
+                        }) }}
+                    </th>
+                    <td></td>
+                    <td></td>
+                    <td class="thin"><div class="btn small clone-btn element">Clone Group</div></td>
+                    <td class="thin delete-row"><a class="delete-group icon" title="{{ 'Delete' | t('field-manager') }}" role="button"></a></td>
+                </tr>
+
+                {% for field in fields %}
+                    <tr class="field" data-id="{{ field.id }}" data-groupid="{{ group.id }}" data-name="{{ field.name }}">
+                        <th scope="row" class="name">
+                            {% set label %}
+                                <span class="go">
+                                    <a href="{{ url('settings/fields/edit/' ~ field.id) }}">{{ field.name }}</a>
+
+                                    {% if field.id in unusedFieldIds %}
+                                        <span class="unused-field">Unused</span>
+                                    {% endif %}
+                                </span>
+                            {% endset %}
+
+                            {{ forms.checkboxField({
+                                name: 'selectedFields[]',
+                                value: field.id,
+                                label: label
+                            }) }}
+                        </th>
+
+                        <td><code>{{ field.handle }}</code></td>
+
+                        {% if field is missing %}
+                            <td><span class="error">{{ field.expectedType }}</span></td>
+                            <td class="thin"></td>
+                        {% else %}
+                            <td>{{ field.displayName() }}</td>
+                            <td class="thin"><div class="btn small clone-btn element">Clone</div></td>
+                        {% endif %}
+
+                        <td class="thin delete-row">
+                            <a class="delete icon" title="{{ 'Delete' | t('field-manager') }}" role="button"></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <hr>
+
+    <div class="buttons">
+        <input type="submit" class="btn submit disabled export-btn" disabled value="Export selected">
+    </div>
+</form>
+
+{% endset %}
+
+{% js %}
+    new Craft.AdminTable({
+        tableSelector: '#fieldmanager',
+        noObjectsSelector: '#nofields',
+        deleteAction: 'fields/delete-field'
+    });
+{% endjs %}
+

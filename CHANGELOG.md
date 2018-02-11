@@ -5,6 +5,12 @@
 ### Added
 - Craft 3 initial release.
 
+## 1.5.5 - 2017-11-04
+
+### Fixed
+- Minor fix for sidebar icon.
+- Fixed import issue where last group dropdown wasn't being set
+
 ## 1.5.4 - 2017-10-17
 
 ### Added
@@ -66,11 +72,11 @@
 ## 1.4.3 - 2016-02-21
 
 ### Added
-- Create new fields directly from the Field Manager page [#16](https://github.com/engram-design/FieldManager/issues/16).
-- Fields are shown if they are unused - handy to keep your fields clean [#16](https://github.com/engram-design/FieldManager/issues/16).
+- Create new fields directly from the Field Manager page [#16](https://github.com/verbb/field-manager/issues/16).
+- Fields are shown if they are unused - handy to keep your fields clean [#16](https://github.com/verbb/field-manager/issues/16).
 
 ### Fixed
-- Fixed issue when cloning Matrix field and not carrying over instructions [#17](https://github.com/engram-design/FieldManager/issues/17).
+- Fixed issue when cloning Matrix field and not carrying over instructions [#17](https://github.com/verbb/field-manager/issues/17).
 - Instructions were missing when importing/exporting Matrix & Super Table field.
 - Additional fixes for Matrix/Super Table nested cloning and importing.
 
@@ -82,7 +88,7 @@
 ## 1.4.1 - 2015-12-27
 
 ### Fixed
-- Better support for SuperTable cloning [#13](https://github.com/engram-design/FieldManager/issues/13).
+- Better support for SuperTable cloning [#13](https://github.com/verbb/field-manager/issues/13).
 - Fixed issue with Matrix and SuperTable fields not properly setting their content columns after import.
 
 ## 1.4.0 - 2015-12-02
@@ -93,7 +99,7 @@
 ## 1.3.5 - 2015-12-02
 
 ### Fixed
-- Fixed import/export issue with Position Select field - [#9](https://github.com/engram-design/FieldManager/issues/9).
+- Fixed import/export issue with Position Select field - [#9](https://github.com/verbb/field-manager/issues/9).
 
 ## 1.3.4 - 2015-12-02
 
@@ -107,8 +113,8 @@
 - Added support for [SuperTable](https://github.com/engram-design/SuperTable).
 
 ### Fixed
-- Fix for 'Show in CP Nav' setting - [#5](https://github.com/engram-design/FieldManager/issues/5).
-- Fix when exporting Matrix fields, field settings weren't getting exported - [#6](https://github.com/engram-design/FieldManager/issues/6).
+- Fix for 'Show in CP Nav' setting - [#5](https://github.com/verbb/field-manager/issues/5).
+- Fix when exporting Matrix fields, field settings weren't getting exported - [#6](https://github.com/verbb/field-manager/issues/6).
 - Minor cosmetic fixes.
 
 ## 1.3.2 - 2015-12-02

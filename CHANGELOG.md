@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.1 - 2018-02-12
+
+### Fixed
+- Fix plugin icon in some circumstances
+
 ## 2.0.0 - 2017-12-12
 
 ### Added

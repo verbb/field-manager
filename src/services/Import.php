@@ -32,6 +32,18 @@ class Import extends Component
             }
 
             if (\in_array($fieldInfo['type'], $fieldTypes, false)) {
+                if ($fieldInfo['type'] == 'craft\fields\Matrix') {
+                    $fieldInfo['settings'] = $this->processMatrix($fieldInfo);
+                }
+
+                if ($fieldInfo['type'] == 'verbb\supertable\fields\SuperTableField') {
+                    $fieldInfo['settings'] = $this->processSuperTable($fieldInfo);
+                }
+
+                if ($fieldInfo['type'] == 'rias\positionfieldtype\fields\Position') {
+                    $fieldInfo['settings'] = $this->processPosition($fieldInfo);
+                }
+
                 $field = Craft::$app->fields->createField([
                     'groupId'              => $fieldInfo['groupId'],
                     'name'                 => $fieldInfo['name'],
@@ -74,6 +86,59 @@ class Import extends Component
         }
 
         return $errors;
+    }
+
+    public function processMatrix($fieldInfo)
+    {
+        $settings = $fieldInfo['settings'];
+
+        if (isset($settings['blockTypes'])) {
+            foreach ($settings['blockTypes'] as $i => $blockType) {
+                foreach ($blockType['fields'] as $j => $blockTypeField) {
+                    $preppedSettings['settings'] = $blockTypeField['typesettings'];
+
+                    if ($blockTypeField['type'] == 'rias\positionfieldtype\fields\Position') {
+                        $settings['blockTypes'][$i]['fields'][$j]['typesettings'] = $this->processPosition($preppedSettings);
+                    }
+                }
+            }
+        }
+
+        return $settings;
+    }
+
+    public function processSuperTable($fieldInfo)
+    {
+        $settings = $fieldInfo['settings'];
+
+        if (isset($settings['blockTypes'])) {
+            foreach ($settings['blockTypes'] as $i => $blockType) {
+                foreach ($blockType['fields'] as $j => $blockTypeField) {
+                    $preppedSettings['settings'] = $blockTypeField['typesettings'];
+
+                    if ($blockTypeField['type'] == 'rias\positionfieldtype\fields\Position') {
+                        $settings['blockTypes'][$i]['fields'][$j]['typesettings'] = $this->processPosition($preppedSettings);
+                    }
+                }
+            }
+        }
+
+        return $settings;
+    }
+
+    public function processPosition($fieldInfo)
+    {
+        $settings = $fieldInfo['settings'];
+
+        // Position field can't handle numbers for the toggle switches (this is probably incorrect in the plugin)
+        // but lets be nice and fix it here. This is also the format in the export.
+        if (isset($settings['options'])) {
+            foreach ($settings['options'] as $key => $value) {
+                $settings['options'][$key] = (string)$value;
+            }
+        }
+
+        return $settings;
     }
 
     /**

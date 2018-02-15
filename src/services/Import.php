@@ -46,11 +46,24 @@ class Import extends Component
                 
                 // Send off to Craft's native fieldSave service for heavy lifting.
                 if (!Craft::$app->fields->saveField($field)) {
-                    $errors[$fieldInfo['handle']] = $field;
+                    $fieldErrors = $field->getErrors();
+
+                    // Handle Matrix/Super Table errors
+                    if ($fieldInfo['type'] == 'craft\fields\Matrix' || $fieldInfo['type'] == 'verbb\supertable\fields\SuperTableField') {
+                        foreach ($field->getBlockTypes() as $blockType) {
+                            foreach ($blockType->getFields() as $blockTypeField) {
+                                if ($blockTypeField->hasErrors()) {
+                                    $errors[$fieldInfo['handle']][$blockTypeField->handle] = $blockTypeField->getErrors();
+                                }
+                            }
+                        } 
+                    } else {
+                        $errors[$fieldInfo['handle']] = $field;
+                    }
 
                     FieldManager::error('Could not import {name} - {errors}.', [
                         'name' => $fieldInfo['name'],
-                        'errors' => print_r($field->getErrors(), true)
+                        'errors' => print_r($fieldErrors, true),
                     ]);
                 }
             } else {

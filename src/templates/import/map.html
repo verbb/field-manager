@@ -56,7 +56,11 @@
 
                         {% if errors[field.handle] is defined %}
                             <span class="errors">
-                                {{ errors[field.handle].getFirstError('handle') }}
+                                {% if errors[field.handle] is iterable %}
+                                    <code>{{ errors[field.handle] | json_encode }}</code>
+                                {% else %}
+                                    {{ errors[field.handle].getFirstError('handle') }}
+                                {% endif %}
                             </span>
                         {% endif %}
                     </td>

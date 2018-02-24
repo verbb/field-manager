@@ -162,16 +162,38 @@ class Import extends Component
     private function _processCraft2Fields(&$fieldInfo)
     {
         // There are (likely) a bunch of cases to deal with for Craft 2 - Craft 3 fields. Add them here...
-        if ($fieldInfo['type'] == 'Categories') {
-            // This field setting will mess things up!
+        // If we don't convert them to the new counterparts, we'll get critical CP errors
+
+        if (isset($fieldInfo['settings']['targetLocale'])) {
             unset($fieldInfo['settings']['targetLocale']);
+        }
+
+        if (isset($fieldInfo['typesettings']['targetLocale'])) {
             unset($fieldInfo['typesettings']['targetLocale']);
         }
 
-        if ($fieldInfo['type'] == 'PlainText') {
-            // This field setting will mess things up!
+
+        if (isset($fieldInfo['settings']['maxLength'])) {
+            $fieldInfo['settings']['charLimit'] = $fieldInfo['settings']['maxLength'];
             unset($fieldInfo['settings']['maxLength']);
+        }
+
+        if (isset($fieldInfo['typesettings']['maxLength'])) {
+            $fieldInfo['typesettings']['charLimit'] = $fieldInfo['typesettings']['maxLength'];
             unset($fieldInfo['typesettings']['maxLength']);
+        }
+
+
+        if ($fieldInfo['type'] == 'Categories') {
+            if (isset($fieldInfo['settings']['limit'])) {
+                $fieldInfo['settings']['branchLimit'] = $fieldInfo['settings']['limit'];
+                unset($fieldInfo['settings']['limit']);
+            }
+
+            if (isset($fieldInfo['typesettings']['limit'])) {
+                $fieldInfo['typesettings']['branchLimit'] = $fieldInfo['typesettings']['limit'];
+                unset($fieldInfo['typesettings']['limit']);
+            }
         }
 
         // Matrix needs to loop through each blocktype's field to update the type
@@ -182,10 +204,21 @@ class Import extends Component
                     $fieldInfo['settings']['blockTypes'][$blockHandle]['fields'][$key] = $this->_processCraft2Fields($field);
                 }
             }
+
+            if (isset($fieldInfo['translatable']) && $fieldInfo['translatable']) {
+                $fieldInfo['settings']['localizeBlocks'] = 1;
+                unset($fieldInfo['translatable']);
+            }
         }
 
         // Use the namespaced format for the type, which is Craft 3
         $fieldInfo['type'] = 'craft\\fields\\' . $fieldInfo['type'];
+
+        // If the field is translatable, we set the Translation Method to each language
+        if (isset($fieldInfo['translatable']) && $fieldInfo['translatable']) {
+            $fieldInfo['translationMethod'] = 'language';
+            unset($fieldInfo['translatable']);
+        }
 
         return $fieldInfo;
     }

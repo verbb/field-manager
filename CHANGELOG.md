@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.2 - 2018-02-25
+
+### Changed
+- Improve import support for `rias\positionfieldtype\fields\Position`
+- Improve SuperTable/Matrix validation for import
+- Improve Craft 2 migration of importing (caused fatal errors in some cases)
+- Set minimum requirement to `^3.0.0-RC11`
+
 ## 2.0.1 - 2018-02-12
 
 ### Fixed

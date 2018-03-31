@@ -1,6 +1,8 @@
 <?php
 namespace verbb\fieldmanager\services;
 
+use verbb\supertable\SuperTable;
+
 use Craft;
 
 use yii\base\Component;
@@ -91,7 +93,7 @@ class Export extends Component
     {
         $fieldSettings = $field->settings;
 
-        $blockTypes = Craft::$app->superTable->getBlockTypesByFieldId($field->id);
+        $blockTypes = SuperTable::$plugin->service->getBlockTypesByFieldId($field->id);
 
         $blockCount = 1;
         foreach ($blockTypes as $blockType) {

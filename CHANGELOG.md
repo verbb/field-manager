@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.3 - 2018-02-25
+
+### Fixed
+- Fix Super Table parsing causing errors
+- Updated field modal with the latest changes from Craft base. Helps with translation/site and field changes.
+
 ## 2.0.2 - 2018-02-25
 
 ### Changed

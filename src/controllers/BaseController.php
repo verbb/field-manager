@@ -1,5 +1,4 @@
 <?php
-
 namespace verbb\fieldmanager\controllers;
 
 use verbb\fieldmanager\FieldManager;
@@ -12,6 +11,7 @@ use craft\helpers\StringHelper;
 use craft\models\FieldGroup;
 use craft\web\Controller;
 
+use yii\web\NotFoundHttpException;
 
 class BaseController extends Controller
 {
@@ -67,8 +67,8 @@ class BaseController extends Controller
         $fieldsService = Craft::$app->getFields();
         $request = Craft::$app->getRequest();
 
-        $fieldId = $request->getBodyParam('fieldId');
-        $groupId = $request->getBodyParam('groupId');
+        $fieldId = (int)$request->getBodyParam('fieldId');
+        $groupId = (int)$request->getBodyParam('groupId');
 
         // The field
         // ---------------------------------------------------------------------
@@ -78,10 +78,6 @@ class BaseController extends Controller
 
         if ($field === null && $fieldId !== null) {
             $field = $fieldsService->getFieldById($fieldId);
-
-            if ($field === null) {
-                throw new NotFoundHttpException('Field not found');
-            }
 
             if ($field instanceof MissingField) {
                 $missingFieldPlaceholder = $field->getPlaceholderHtml();
@@ -145,10 +141,6 @@ class BaseController extends Controller
         }
 
         $fieldGroup = $fieldsService->getGroupById($groupId);
-
-        if ($fieldGroup === null) {
-            throw new NotFoundHttpException('Field group not found');
-        }
 
         $groupOptions = [];
 

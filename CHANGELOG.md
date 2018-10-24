@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.4 - 2018-10-24
+
+### Fixed
+- Fix errors thrown when creating a new field
+
 ## 2.0.3 - 2018-02-25
 
 ### Fixed

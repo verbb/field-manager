@@ -20,39 +20,4 @@ You can export multiple fields, including their groups by simply using the check
 
 Using the Import tab, you paste in your JSON file contents that you created through Field Managers export process. Once done so, you can configure the which fields to import, which group to add them to, and their name/handle.
 
-![](/docs/screenshots/import.png)
-
-## Supported FieldTypes
-
-**Craft**
-
-- Assets
-- Categories
-- Checkboxes
-- Color
-- Date/Time
-- Dropdown
-- Entries
-- Lightswitch
-- Matrix
-- Multi-select
-- Number
-- Plain Text
-- Position Select
-- Radio Buttons
-- Rich Text
-- Table
-- Tags
-- Users
-
-**[ButtonBox](https://github.com/supercool/Button-Box)**
-
-- Buttons
-- Colours
-- Text Size
-- Stars
-- Width
-
-**[SuperTable](https://github.com/engram-design/SuperTable)**
-
-...and many more. Field Manager can handle just about any FieldType, the above are simply those that have been tested.
+![](/uploads/plugins/field-manager/import.png)

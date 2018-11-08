@@ -20,4 +20,4 @@ You can export multiple fields, including their groups by simply using the check
 
 Using the Import tab, you paste in your JSON file contents that you created through Field Managers export process. Once done so, you can configure the which fields to import, which group to add them to, and their name/handle.
 
-![](/uploads/plugins/field-manager/import.png)
+![](/docs/screenshots/import.png)

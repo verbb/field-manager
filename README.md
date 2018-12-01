@@ -25,17 +25,15 @@ Visit the [Field Manager Plugin page](https://verbb.io/craft-plugins/field-manag
 
 Get in touch with us via the [Field Manager Support page](https://verbb.io/craft-plugins/field-manager/support) or by [creating a Github issue](https://github.com/verbb/field-manager/issues)
 
+## Show your Support
+
+Field Manager is licensed under the MIT license meaning it will always be free and open source – we love free stuff! If you'd like to show your support to the plugin regardless, buy us a :beers:. Please note that this does not entitle you to any form of support, and is completely optional.
+
+[![Beerpay](https://beerpay.io/verbb/field-manager/badge.svg?style=beer-square)](https://beerpay.io/verbb/field-manager)
+
+
 <h2></h2>
 
 <a href="https://verbb.io" target="_blank">
   <img width="100" src="https://verbb.io/assets/img/verbb-pill.svg">
 </a>
-
-
-
-
-
-## Support on Beerpay
-Hey dude! Help me out for a couple of :beers:!
-
-[![Beerpay](https://beerpay.io/verbb/field-manager/badge.svg?style=beer-square)](https://beerpay.io/verbb/field-manager)  [![Beerpay](https://beerpay.io/verbb/field-manager/make-wish.svg?style=flat-square)](https://beerpay.io/verbb/field-manager?focus=wish)

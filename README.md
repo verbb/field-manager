@@ -34,3 +34,8 @@ Get in touch with us via the [Field Manager Support page](https://verbb.io/craft
 
 
 
+
+## Support on Beerpay
+Hey dude! Help me out for a couple of :beers:!
+
+[![Beerpay](https://beerpay.io/verbb/field-manager/badge.svg?style=beer-square)](https://beerpay.io/verbb/field-manager)  [![Beerpay](https://beerpay.io/verbb/field-manager/make-wish.svg?style=flat-square)](https://beerpay.io/verbb/field-manager?focus=wish)

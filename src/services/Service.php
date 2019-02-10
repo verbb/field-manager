@@ -97,10 +97,6 @@ class Service extends Component
             }
         }
 
-        // var_dump($field);
-
-        // exit();
-
         if ($errors) {
             foreach ($errors as $error) {
                 FieldManager::error('Could not clone {errorName} in {name} group - {errors}.', [
@@ -108,8 +104,6 @@ class Service extends Component
                     'name'      => $originGroup->name,
                     'errors'    => print_r($group->getErrors(), true),
                 ]);
-
-                // var_dump($error->getErrors());
 
                 $group->addError($error->name, 'Could not clone group.');
             }
@@ -153,6 +147,7 @@ class Service extends Component
         // Strip out all the IDs from the origin field
         foreach ($blockTypes as $blockType) {
             $blockType->id = null;
+            $blockType->fieldLayoutId = null;
 
             foreach ($blockType->fields as $blockField) {
                 $blockField->id = null;
@@ -208,6 +203,7 @@ class Service extends Component
         // Strip out all the IDs from the origin field
         foreach ($blockTypes as $blockType) {
             $blockType->id = null;
+            $blockType->fieldLayoutId = null;
 
             foreach ($blockType->fields as $blockField) {
                 $blockField->id = null;

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.5 - 2019-02-10
+
+### Fixed
+- Neo fields no longer clone (not supported yet).
+- Fix Matrix/Super Table blocktypes not creating new field layouts.
+
 ## 2.0.4 - 2018-10-24
 
 ### Fixed

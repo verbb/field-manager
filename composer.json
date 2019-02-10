@@ -2,7 +2,7 @@
     "name": "verbb/field-manager",
     "description": "Manage your fields and field groups with ease with simple field or group cloning and quicker overall management.",
     "type": "craft-plugin",
-    "version": "2.0.4",
+    "version": "2.0.5",
     "keywords": [
         "craft",
         "cms",

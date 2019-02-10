@@ -16,4 +16,4 @@ return [
 
 ## Control Panel
 
-You can also make change and configuration settings through the Control Panel by visiting Settings → Field Manager.
+You can also manage configuration settings through the Control Panel by visiting Settings → Field Manager.

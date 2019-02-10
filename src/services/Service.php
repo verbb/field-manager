@@ -45,6 +45,13 @@ class Service extends Component
             $field->blockTypes = $this->processSuperTable($field);
         }
 
+        // Most fields are supported, but Neo is an exception
+        if (get_class($field) == 'benf\neo\Field') {
+            FieldManager::error('Neo fields are currently unsupported.');
+
+            return false;
+        }
+
         // Send off to Craft's native fieldSave service for heavy lifting.
         if (!Craft::$app->fields->saveField($field)) {
             FieldManager::error('Could not clone {name} - {errors}.', ['name' => $field->name, 'errors' => print_r($field->getErrors(), true)]);

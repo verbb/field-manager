@@ -20,8 +20,8 @@
     {{ csrfInput() }}
 
     {{ forms.textareaField({
-        label: 'Data',
-        instructions: 'Paste the JSON data to import.',
+        label: 'Data' | t('field-manager'),
+        instructions: 'Paste the JSON data to import.' | t('field-manager'),
         name: 'data',
         class: 'code',
         rows: 20,

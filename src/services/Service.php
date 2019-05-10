@@ -32,17 +32,17 @@ class Service extends Component
      *
      * @return bool
      */
-    public function saveField(FieldInterface $field, FieldInterface $originField): bool
+    public function cloneField(FieldInterface $field, FieldInterface $originField): bool
     {
         // If this is a Matrix or Super Table field, we need to do some pre-processing.
         // Because we're essentially editing a current field, we need to remove ID's for blocks and inner fields.
         // Not doing this will move all fields from one Matrix to another - instead of creating new ones.
         if (get_class($field) == 'craft\fields\Matrix') {
-            $field->blockTypes = $this->processMatrix($field);
+            $field->blockTypes = $this->processCloneMatrix($field);
         }
 
         if (get_class($field) == 'verbb\supertable\fields\SuperTableField') {
-            $field->blockTypes = $this->processSuperTable($field);
+            $field->blockTypes = $this->processCloneSuperTable($field);
         }
 
         // Most fields are supported, but Neo is an exception
@@ -69,7 +69,7 @@ class Service extends Component
      *
      * @return bool
      */
-    public function saveGroup(FieldGroup $group, $prefix, FieldGroup $originGroup): bool
+    public function cloneGroup(FieldGroup $group, $prefix, FieldGroup $originGroup): bool
     {
         if (!Craft::$app->fields->saveGroup($group)) {
             FieldManager::error('Could not clone {name} group - {errors}.', ['name' => $originGroup->name, 'errors' => print_r($group->getErrors(), true)]);
@@ -99,7 +99,7 @@ class Service extends Component
                 $field->blockTypes = $this->processCloneSuperTable($originField);
             }
 
-            if (!FieldManager::$plugin->service->saveField($field, $originField)) {
+            if (!FieldManager::$plugin->service->cloneField($field, $originField)) {
                 $errors[] = $field;
             }
         }

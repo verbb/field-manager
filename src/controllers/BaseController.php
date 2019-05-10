@@ -200,7 +200,7 @@ class BaseController extends Controller
 
         $originField = $fieldsService->getFieldById($fieldId);
 
-        if (!FieldManager::$plugin->service->saveField($field, $originField)) {
+        if (!FieldManager::$plugin->service->cloneField($field, $originField)) {
             return $this->asJson(['success' => false, 'error' => $field->getErrors()]);
         }
 
@@ -220,7 +220,7 @@ class BaseController extends Controller
 
         $originGroup = Craft::$app->fields->getGroupById($groupId);
 
-        if (!FieldManager::$plugin->service->saveGroup($group, $prefix, $originGroup)) {
+        if (!FieldManager::$plugin->service->cloneGroup($group, $prefix, $originGroup)) {
             return $this->asJson(['success' => false, 'error' => $group->getErrors()]);
         }
 

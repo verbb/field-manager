@@ -1,5 +1,4 @@
 <?php
-
 namespace verbb\fieldmanager\services;
 
 use verbb\fieldmanager\FieldManager;
@@ -14,11 +13,6 @@ class Import extends Component
     // Public Methods
     // =========================================================================
 
-    /**
-     * @param array $fields
-     *
-     * @return array
-     */
     public function import(array $fields): array
     {
         $fieldTypes = Craft::$app->fields->getAllFieldTypes();
@@ -141,11 +135,6 @@ class Import extends Component
         return $settings;
     }
 
-    /**
-     * @param json $json
-     *
-     * @return false|array
-     */
     public function getData($json)
     {
         $data = json_decode($json, true);

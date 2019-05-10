@@ -1,5 +1,4 @@
 <?php
-
 namespace verbb\fieldmanager\services;
 
 use verbb\fieldmanager\FieldManager;
@@ -16,9 +15,6 @@ class Service extends Component
     // Public Methods
     // =========================================================================
 
-    /**
-     * @return bool
-     */
     public function isCpSectionEnabled(): bool
     {
         $settings = FieldManager::$plugin->getSettings();
@@ -26,12 +22,6 @@ class Service extends Component
         return isset($settings['cpSectionEnabled']) && $settings['cpSectionEnabled'];
     }
 
-    /**
-     * @param FieldInterface $field
-     * @param FieldInterface $originField
-     *
-     * @return bool
-     */
     public function cloneField(FieldInterface $field, FieldInterface $originField): bool
     {
         // If this is a Matrix or Super Table field, we need to do some pre-processing.
@@ -62,13 +52,6 @@ class Service extends Component
         return true;
     }
 
-    /**
-     * @param FieldGroup $group
-     * @param string     $prefix
-     * @param FieldGroup $originGroup
-     *
-     * @return bool
-     */
     public function cloneGroup(FieldGroup $group, $prefix, FieldGroup $originGroup): bool
     {
         if (!Craft::$app->fields->saveGroup($group)) {
@@ -121,9 +104,6 @@ class Service extends Component
         return true;
     }
 
-    /**
-     * @return array
-     */
     public function getUnusedFieldIds(): array
     {
         // All fields
@@ -141,12 +121,7 @@ class Service extends Component
         // Get only the unused fields
         return array_diff($allFieldIds, $usedFieldIds);
     }
-
-    /**
-     * @param FieldInterface $field
-     *
-     * @return mixed
-     */
+    
     public function processMatrix(FieldInterface $field)
     {
         $blockTypes = $field->blockTypes;

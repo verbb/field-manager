@@ -1,0 +1,28 @@
+{% extends "_layouts/cp" %}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("verbb\\fieldmanager\\assetbundles\\FieldManagerAsset") %}
+
+{% set title = 'Field Manager' %}
+
+{% set tabs = {
+    fields: { label: "Fields" | t('field-manager'), url: url('field-manager') },
+    export: { label: "Export" | t('field-manager'), url: url('field-manager/export') },
+} %}
+
+{% set selectedTab = 'export' %}
+
+{% set content %}
+
+{{ forms.textareaField({
+    label: 'Export Data' | t('field-manager'),
+    name: 'data',
+    class: 'code',
+    rows: 30,
+    value: json,
+}) }}
+
+{% endset %}
+
+

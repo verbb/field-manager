@@ -108,8 +108,16 @@
 
     <hr>
 
-    <div class="buttons">
+    <div class="buttons field-manager-buttons">
         <input type="submit" class="btn submit disabled export-btn" disabled value="Export selected">
+
+        {{ forms.checkboxField({
+            label: 'Download export file' | t('field-manager'),
+            id: 'download',
+            name: 'download',
+            value: 1,
+            checked: true,
+        }) }}
     </div>
 </form>
 

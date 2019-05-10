@@ -259,7 +259,10 @@ class BaseController extends Controller
     {
         $this->requirePostRequest();
 
-        $fields = Craft::$app->request->getBodyParam('selectedFields');
+        $request = Craft::$app->getRequest();
+
+        $fields = $request->getParam('selectedFields');
+        $download = $request->getParam('download');
 
         if (\count($fields) > 0) {
             $fieldsObj = FieldManager::$plugin->export->export($fields);
@@ -267,8 +270,14 @@ class BaseController extends Controller
             // Support PHP <5.4, JSON_PRETTY_PRINT = 128, JSON_NUMERIC_CHECK = 32
             $json = json_encode($fieldsObj, 128 | 32);
 
-            Craft::$app->getResponse()->sendContentAsFile($json, 'export.json');
-            Craft::$app->end();
+            if ($download) {
+                Craft::$app->getResponse()->sendContentAsFile($json, 'export.json');
+                Craft::$app->end();
+            } else {
+                return $this->renderTemplate('field-manager/export', [
+                    'json' => $json,
+                ]);
+            }
         }
 
         Craft::$app->session->setError(Craft::t('field-manager', 'Could not export data.'));

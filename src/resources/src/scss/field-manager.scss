@@ -42,6 +42,15 @@
 	padding-right: 10px !important;
 }
 
+.field-manager-buttons {
+    display: flex;
+    align-items: center;
+
+    .field {
+        margin: 0 0 0 20px;
+    }
+}
+
 
 
 .sidebar-nav .active a {

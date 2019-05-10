@@ -3,6 +3,7 @@ namespace verbb\fieldmanager;
 
 use verbb\fieldmanager\base\PluginTrait;
 use verbb\fieldmanager\models\Settings;
+use verbb\fieldmanager\twigextensions\Extension;
 
 use Craft;
 use craft\base\Plugin;
@@ -37,6 +38,7 @@ class FieldManager extends Plugin
         $this->_setPluginComponents();
         $this->_setLogging();
         $this->_registerCpRoutes();
+        $this->_registerTwigExtensions();
 
         $this->hasCpSection = $this->getService()->isCpSectionEnabled();
 
@@ -65,6 +67,11 @@ class FieldManager extends Plugin
 
     // Private Methods
     // =========================================================================
+
+    private function _registerTwigExtensions()
+    {
+        Craft::$app->view->registerTwigExtension(new Extension);
+    }
 
     private function _registerCpRoutes()
     {

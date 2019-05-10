@@ -1,13 +1,6 @@
 {% extends 'field-manager/_layouts' %}
 {% import '_includes/forms' as forms %}
-
-{% set title = 'Field Manager' %}
-
-{% set tabs = {
-    fields: { label: "Fields" | t('field-manager'), url: url('field-manager') },
-    import: { label: "Import" | t('field-manager'), url: url('field-manager/import') },
-    audit: { label: "Audit" | t('field-manager'), url: url('field-manager/audit') },
-} %}
+{% import _self as fieldManagerMacros %}
 
 {% set title = 'Import' %}
 {% set selectedTab = 'import' %}
@@ -15,9 +8,13 @@
 {% set fullPageForm = true %}
 
 {% set groups = craft.app.fields.allGroups %}
-{% set groupOptions = [{ label: "Don't Import", value: "noImport" }] %}
+
+{% set groupOptions = [
+    { label: 'Don\'t Import' | t('field-manager'), value: 'noimport' },
+] %}
+
 {% for group in groups %}
-    {% set groupOptions = groupOptions|merge([{ label: group.name, value: group.id }]) %}
+    {% set groupOptions = groupOptions | merge([{ label: group.name, value: group.id }]) %}
 {% endfor %}
 
 {% block blockContent %}
@@ -45,42 +42,77 @@
     </thead>
     <tbody>
         {% for index, field in fields %}
-            <tr>
-                <td class="textarea">
-                    <textarea id="name-{{ index }}" name="fields[{{ index }}][name]" rows="1">{{ field.name }}</textarea>
-                </td>
-
-                <td class="textarea {% if errors[field.handle] is defined %}has-error{% endif %}">
-                    <textarea id="handle-{{ index }}" class="code" name="fields[{{ index }}][handle]" rows="1">{{ field.handle }}</textarea>
-
-                    {% if errors[field.handle] is defined %}
-                        <span class="errors">
-                            {% if errors[field.handle] is iterable %}
-                                <code>{{ errors[field.handle] | json_encode }}</code>
-                            {% else %}
-                                {{ errors[field.handle].getFirstError('handle') }}
-                            {% endif %}
-                        </span>
-                    {% endif %}
-                </td>
-
-                {% if field.type and field.type != 'craft\\fields\\MissingField' %}
-                    <td>{{ field.type }}</td>
-
-                    <td class="thin">
-                        {{ forms.selectField({
-                            id: 'group' ~ index,
-                            class: 'groupSelect',
-                            name: 'fields[' ~ index ~ '][groupId]',
-                            options: groupOptions,
-                            value: field.groupId | default(''),
+            {% namespace 'fields[' ~ index ~ ']' %}
+                <tr data-row-id="{{ index }}">
+                    <td class="textarea icon-arrow">
+                        {{ forms.textField({
+                            id: 'name',
+                            name: 'name',
+                            value: field.name,
                         }) }}
                     </td>
-                {% else %}
-                    <td><span class="error">{{ field.type }}</span></td>
-                    <td class="thin"></td>
+
+                    <td class="textarea {% if errors[field.handle] is defined %}has-error{% endif %}">
+                        {{ forms.textField({
+                            id: 'handle',
+                            name: 'handle',
+                            class: 'code',
+                            value: field.handle,
+                        }) }}
+
+                        {% if errors[field.handle] is defined %}
+                            <span class="errors">
+                                {% if errors[field.handle] is iterable %}
+                                    <code>{{ errors[field.handle] | json_encode }}</code>
+                                {% else %}
+                                    {{ errors[field.handle].getFirstError('handle') }}
+                                {% endif %}
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    {% if field.type and field.type != 'craft\\fields\\MissingField' %}
+                        <td>{{ displayName(field.type) }}</td>
+
+                        {% set hasNestedFields = '' %}
+
+                        {% if field.type == 'craft\\fields\\Matrix' %}
+                            {% set hasNestedFields = 'select-type-matrix' %}
+                        {% elseif field.type == 'benf\\neo\\Field' %}
+                            {% set hasNestedFields = 'select-type-neo' %}
+                        {% elseif field.type == 'verbb\\supertable\\fields\\SuperTableField' %}
+                            {% set hasNestedFields = 'select-type-super-table' %}
+                        {% endif %}
+
+                        <td class="thin">
+                            {{ forms.selectField({
+                                id: 'groupId',
+                                class: 'groupSelect ' ~ hasNestedFields,
+                                name: 'groupId',
+                                options: groupOptions,
+                                value: field.groupId | default(''),
+                            }) }}
+                        </td>
+                    {% else %}
+                        <td><span class="error">{{ field.type }}</span></td>
+                        <td class="thin"></td>
+                    {% endif %}
+                </tr>
+
+                {% if field.type == 'craft\\fields\\Matrix' %}
+
+                    {{ fieldManagerMacros.matrixField(index, field) }}
+
+                {% elseif field.type == 'benf\\neo\\Field' %}
+
+                    {#{{ fieldManagerMacros.neoField(index, field) }}#}
+
+                {% elseif field.type == 'verbb\\supertable\\fields\\SuperTableField' %}
+
+                    {{ fieldManagerMacros.superTableField(index, field) }}
+
                 {% endif %}
-            </tr>
+            {% endnamespace %}
         {% endfor %}
     </tbody>
 </table>
@@ -92,3 +124,164 @@
 </div>
 
 {% endblock %}
+
+{% macro superTableField(index, field) %}
+    {% import '_includes/forms' as forms %}
+    {% import _self as fieldManagerMacros %}
+
+    {% set options = [
+        { label: 'Don\'t Import' | t('field-manager'), value: 'noimport' },
+        { label: 'Include' | t('field-manager'), value: 'include' },
+    ] %}
+
+    {% for blockType in field.settings.blockTypes %}
+        {% set blockIndex = loop.index %}
+
+        {% for blockTypeField in blockType.fields %}
+            {% namespace 'settings[blockTypes][new' ~ blockIndex ~ '][fields][new' ~ loop.index ~ ']' %}
+                {{ fieldManagerMacros.nestedField(index, blockTypeField) }}
+            {% endnamespace %}
+        {% endfor %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro matrixField(index, field) %}
+    {% import '_includes/forms' as forms %}
+    {% import _self as fieldManagerMacros %}
+
+    {% set options = [
+        { label: 'Don\'t Import' | t('field-manager'), value: 'noimport' },
+        { label: 'Include' | t('field-manager'), value: 'include' },
+    ] %}
+
+    {% for blockType in field.settings.blockTypes %}
+        {% set blockIndex = loop.index %}
+
+        <tr data-row-id="{{ index }}" class="row-blocktype">
+            <td class="textarea icon-arrow">
+                {{ forms.textField({
+                    id: 'name',
+                    name: 'settings[blockTypes][new' ~ blockIndex ~ '][name]',
+                    value: blockType.name,
+                }) }}
+            </td>
+
+            <td class="textarea">
+                {{ forms.textField({
+                    id: 'handle',
+                    name: 'settings[blockTypes][new' ~ blockIndex ~ '][handle]',
+                    class: 'code',
+                    value: blockType.handle,
+                }) }}
+            </td>
+
+            <td></td>
+
+            <td class="thin">
+                {{ forms.selectField({
+                    id: 'groupId',
+                    class: 'groupSelect groupSelectNested select-blocktype',
+                    name: 'settings[blockTypes][new' ~ blockIndex ~ '][groupId]',
+                    options: options,
+                }) }}
+            </td>
+        </tr>
+
+        {% for blockTypeField in blockType.fields %}
+            {% namespace 'settings[blockTypes][new' ~ blockIndex ~ '][fields][new' ~ loop.index ~ ']' %}
+                {{ fieldManagerMacros.nestedField(index, blockTypeField) }}
+            {% endnamespace %}
+        {% endfor %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro neoField(index, field) %}
+    {% import '_includes/forms' as forms %}
+    {% import _self as fieldManagerMacros %}
+
+    {% set options = [
+        { label: 'Don\'t Import' | t('field-manager'), value: 'noimport' },
+        { label: 'Include' | t('field-manager'), value: 'include' },
+    ] %}
+
+    {% for blockType in field.settings.blockTypes %}
+        <tr data-row-id="{{ index }}" class="row-blocktype">
+            <td class="textarea icon-arrow">
+                {{ forms.textField({
+                    id: 'name',
+                    name: 'name',
+                    value: blockType.name,
+                }) }}
+            </td>
+
+            <td class="textarea">
+                {{ forms.textField({
+                    id: 'handle',
+                    name: 'handle',
+                    class: 'code',
+                    value: blockType.handle,
+                }) }}
+            </td>
+
+            <td></td>
+
+            <td class="thin">
+                {{ forms.selectField({
+                    id: 'groupId',
+                    class: 'groupSelect groupSelectNested select-blocktype',
+                    name: 'groupId',
+                    options: options,
+                }) }}
+            </td>
+        </tr>
+
+        {% for blockTypeField in blockType.fields %}
+            {{ fieldManagerMacros.nestedField(index, blockTypeField) }}
+        {% endfor %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro nestedField(index, field) %}
+    {% import '_includes/forms' as forms %}
+    {% import _self as fieldManagerMacros %}
+
+    {% set options = [
+        { label: 'Don\'t Import' | t('field-manager'), value: 'noimport' },
+        { label: 'Include' | t('field-manager'), value: 'include' },
+    ] %}
+
+    <tr data-row-id="{{ index }}" class="row-blocktype-field">
+        <td class="textarea icon-arrow">
+            {{ forms.textField({
+                id: 'name',
+                name: 'name',
+                value: field.name,
+            }) }}
+        </td>
+
+        <td class="textarea">
+            {{ forms.textField({
+                id: 'handle',
+                name: 'handle',
+                class: 'code',
+                value: field.handle,
+            }) }}
+        </td>
+
+        {% if field.type and field.type != 'craft\\fields\\MissingField' %}
+            <td>{{ displayName(field.type) }}</td>
+
+            <td class="thin">
+                {{ forms.selectField({
+                    id: 'groupId',
+                    class: 'groupSelect groupSelectNested',
+                    name: 'groupId',
+                    options: options,
+                }) }}
+            </td>
+        {% else %}
+            <td><span class="error">{{ field.type }}</span></td>
+            <td class="thin"></td>
+        {% endif %}
+    </tr>
+{% endmacro %}

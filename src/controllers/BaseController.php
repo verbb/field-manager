@@ -309,23 +309,9 @@ class BaseController extends Controller
         $json = Craft::$app->request->getBodyParam('data', '{}');
         $data = FieldManager::$plugin->import->getData($json);
 
-        // First - remove any field we're not importing
-        $fieldsToImport = [];
-        foreach ($fields as $key => $field) {
-            if (isset($field['groupId'])) {
-                if ($field['groupId'] != 'noImport') {
+        $fieldsToImport = FieldManager::$plugin->import->prepFieldsForImport($fields, $data);
 
-                    // Get the field data from our imported JSON data
-                    $fieldsToImport[$key] = $data[$key];
-
-                    $fieldsToImport[$key]['name'] = $field['name'];
-                    $fieldsToImport[$key]['handle'] = $field['handle'];
-                    $fieldsToImport[$key]['groupId'] = $field['groupId'];
-                }
-            }
-        }
-
-        if (\count($fieldsToImport) > 0) {
+        if ($fieldsToImport) {
             $importErrors = FieldManager::$plugin->import->import($fieldsToImport);
 
             if (!$importErrors) {

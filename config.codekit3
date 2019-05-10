@@ -385,6 +385,14 @@
 		"oA": 1,
 		"oAP": "/build/src/templates",
 		"oF": 0
+		},
+	"/src/twigextensions/Extension.php": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/src/twigextensions/Extension.php",
+		"oF": 0
 		}
 	},
 "hooks": [

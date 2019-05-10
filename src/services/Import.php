@@ -4,6 +4,7 @@ namespace verbb\fieldmanager\services;
 use verbb\fieldmanager\FieldManager;
 
 use Craft;
+use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
 
 use yii\base\Component;
@@ -12,6 +13,90 @@ class Import extends Component
 {
     // Public Methods
     // =========================================================================
+
+    public function prepFieldsForImport($fields, $data)
+    {
+        $fieldsToImport = [];
+        
+        foreach ($fields as $key => $field) {
+            if (isset($field['groupId'])) {
+                if ($field['groupId'] != 'noimport') {
+
+                    // Get the field data from our imported JSON data
+                    $fieldsToImport[$key] = $data[$key];
+
+                    // Handle overrides
+                    $fieldsToImport[$key]['name'] = $field['name'];
+                    $fieldsToImport[$key]['handle'] = $field['handle'];
+                    $fieldsToImport[$key]['groupId'] = $field['groupId'];
+
+                    // Handle Matrix
+                    if ($data[$key]['type'] === 'craft\fields\Matrix') {
+                        $blockTypes = $field['settings']['blockTypes'] ?? [];
+
+                        foreach ($blockTypes as $blockTypeKey => $blockType) {
+                            $blockTypeImport = ArrayHelper::remove($blockType, 'groupId');
+
+                            // Remove the whole block if not importing
+                            if ($blockTypeImport === 'noimport') {
+                                unset($fieldsToImport[$key]['settings']['blockTypes'][$blockTypeKey]);
+
+                                continue;
+                            }
+
+                            // Update name and handles for blocktype
+                            $fieldsToImport[$key]['settings']['blockTypes'][$blockTypeKey]['name'] = $blockType['name'];
+                            $fieldsToImport[$key]['settings']['blockTypes'][$blockTypeKey]['handle'] = $blockType['handle'];
+
+                            $blockTypeFields = $blockType['fields'] ?? [];
+
+                            foreach ($blockTypeFields as $blockTypeFieldKey => $blockTypeField) {
+                                $blockTypeFieldImport = ArrayHelper::remove($blockTypeField, 'groupId');
+
+                                // Remove the whole field if not importing
+                                if ($blockTypeFieldImport === 'noimport') {
+                                    unset($fieldsToImport[$key]['settings']['blockTypes'][$blockTypeKey]['fields'][$blockTypeFieldKey]);
+
+                                    continue;
+                                }
+
+                                // Update name and handles for blocktype
+                                $fieldsToImport[$key]['settings']['blockTypes'][$blockTypeKey]['fields'][$blockTypeFieldKey]['name'] = $blockTypeField['name'];
+                                $fieldsToImport[$key]['settings']['blockTypes'][$blockTypeKey]['fields'][$blockTypeFieldKey]['handle'] = $blockTypeField['handle'];
+                            }
+                        }
+                    }
+
+                    // Handle Super Table
+                    if ($data[$key]['type'] === 'verbb\supertable\fields\SuperTableField') {
+                        $blockTypes = $field['settings']['blockTypes'] ?? [];
+
+                        foreach ($blockTypes as $blockTypeKey => $blockType) {
+                            $blockTypeFields = $blockType['fields'] ?? [];
+
+                            foreach ($blockTypeFields as $blockTypeFieldKey => $blockTypeField) {
+                                $blockTypeFieldImport = ArrayHelper::remove($blockTypeField, 'groupId');
+
+                                // Remove the whole field if not importing
+                                if ($blockTypeFieldImport === 'noimport') {
+                                    unset($fieldsToImport[$key]['settings']['blockTypes'][$blockTypeKey]['fields'][$blockTypeFieldKey]);
+
+                                    continue;
+                                }
+
+                                // Update name and handles for blocktype
+                                $fieldsToImport[$key]['settings']['blockTypes'][$blockTypeKey]['fields'][$blockTypeFieldKey]['name'] = $blockTypeField['name'];
+                                $fieldsToImport[$key]['settings']['blockTypes'][$blockTypeKey]['fields'][$blockTypeFieldKey]['handle'] = $blockTypeField['handle'];
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
+        return $fieldsToImport;
+    }
 
     public function import(array $fields): array
     {

@@ -39,6 +39,11 @@ class FieldManager extends Plugin
         $this->_registerCpRoutes();
 
         $this->hasCpSection = $this->getService()->isCpSectionEnabled();
+
+        // Enforce if `allowAdminChanges` is set
+        if (!Craft::$app->getConfig()->getGeneral()->allowAdminChanges) {
+            $this->hasCpSection = false;
+        }
     }
 
 

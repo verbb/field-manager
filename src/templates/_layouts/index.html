@@ -1,0 +1,43 @@
+{% extends '_layouts/cp' %}
+
+{% do view.registerAssetBundle('verbb\\fieldmanager\\assetbundles\\FieldManagerAsset') %}
+
+{% if title is not defined %}
+    {% set title = 'Field Manager' %}
+{% endif %}
+
+{% set tabs = {
+    fields: { label: 'Fields' | t('field-manager'), url: url('field-manager') },
+    import: { label: 'Import' | t('field-manager'), url: url('field-manager/import') },
+    audit: { label: 'Audit' | t('field-manager'), url: url('field-manager/audit') },
+} %}
+
+{% set content %}
+    {% block blockContent %}
+
+    {% endblock %}
+
+    <hr>
+    
+    <div id="plugin-footer">
+        <div class="footer-left">
+            {% block footerButton %}
+
+            {% endblock %}
+        </div>
+
+        <div class="footer-right">
+            <a class="plugin-credit" href="https://verbb.io" target="_blank">
+                <span class="credit-love">Made with <span style="color: #e25555;">&#9829;</span> by</span>
+
+                <div class="credit-pill">
+                    <div class="credit-mask">
+                        <div class="credit-wrap">
+                            {% include 'navigation/_svg/verbb-logo.svg' %}
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+{% endset %}

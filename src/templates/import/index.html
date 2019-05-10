@@ -1,38 +1,31 @@
-{% extends "_layouts/cp" %}
+{% extends 'field-manager/_layouts' %}
+{% import '_includes/forms' as forms %}
 
-{% import "_includes/forms" as forms %}
+{% set crumbs = [
+    { label: 'Field Manager' | t('field-manager'), url: url('field-manager') },
+    { label: 'Import' | t('field-manager'), url: url('field-manager/import') },
+] %}
 
-{% do view.registerAssetBundle("verbb\\fieldmanager\\assetbundles\\FieldManagerAsset") %}
-
-{% set title = 'Field Manager' %}
-
-{% set tabs = {
-    fields: { label: "Fields" | t('field-manager'), url: url('field-manager') },
-    import: { label: "Import" | t('field-manager'), url: url('field-manager/import') },
-} %}
-
+{% set title = 'Import' %}
 {% set selectedTab = 'import' %}
 
-{% set content %}
+{% set fullPageForm = true %}
 
-<form method="POST" accept-charset="UTF-8">
-    <input type="hidden" name="action" value="field-manager/base/map-fields">
-    {{ csrfInput() }}
+{% block blockContent %}
 
-    {{ forms.textareaField({
-        label: 'Data' | t('field-manager'),
-        instructions: 'Paste the JSON data to import.' | t('field-manager'),
-        name: 'data',
-        class: 'code',
-        rows: 20,
-        value: craft.app.request.param('data')
-    }) }}
+<input type="hidden" name="action" value="field-manager/base/map-fields">
 
-    <div class="buttons">
-        <input type="submit" class="btn submit" value="{{ 'Configure Import' | t('field-manager') }}">
-    </div>
-</form>
+{{ forms.textareaField({
+    label: 'Data' | t('field-manager'),
+    instructions: 'Paste the JSON data to import.' | t('field-manager'),
+    name: 'data',
+    class: 'code',
+    rows: 20,
+    value: craft.app.request.param('data')
+}) }}
 
-{% endset %}
+<div class="buttons">
+    <input type="submit" class="btn submit" value="{{ 'Configure Import' | t('field-manager') }}">
+</div>
 
-
+{% endblock %}

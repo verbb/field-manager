@@ -2,6 +2,7 @@
 namespace verbb\fieldmanager\base;
 
 use verbb\fieldmanager\FieldManager;
+use verbb\fieldmanager\services\Audit;
 use verbb\fieldmanager\services\Service;
 use verbb\fieldmanager\services\Import;
 use verbb\fieldmanager\services\Export;
@@ -22,6 +23,11 @@ trait PluginTrait
     // Public Methods
     // =========================================================================
 
+    public function getAudit()
+    {
+        return $this->get('audit');
+    }
+
     public function getImport()
     {
         return $this->get('import');
@@ -40,6 +46,7 @@ trait PluginTrait
     private function _setPluginComponents()
     {
         $this->setComponents([
+            'audit' => Audit::class,
             'service' => Service::class,
             'import' => Import::class,
             'export' => Export::class,

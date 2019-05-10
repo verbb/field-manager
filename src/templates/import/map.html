@@ -1,17 +1,18 @@
-{% extends "_layouts/cp" %}
-
-{% import "_includes/forms" as forms %}
-
-{% do view.registerAssetBundle("verbb\\fieldmanager\\assetbundles\\FieldManagerAsset") %}
+{% extends 'field-manager/_layouts' %}
+{% import '_includes/forms' as forms %}
 
 {% set title = 'Field Manager' %}
 
 {% set tabs = {
     fields: { label: "Fields" | t('field-manager'), url: url('field-manager') },
     import: { label: "Import" | t('field-manager'), url: url('field-manager/import') },
+    audit: { label: "Audit" | t('field-manager'), url: url('field-manager/audit') },
 } %}
 
+{% set title = 'Import' %}
 {% set selectedTab = 'import' %}
+
+{% set fullPageForm = true %}
 
 {% set groups = craft.app.fields.allGroups %}
 {% set groupOptions = [{ label: "Don't Import", value: "noImport" }] %}
@@ -19,78 +20,75 @@
     {% set groupOptions = groupOptions|merge([{ label: group.name, value: group.id }]) %}
 {% endfor %}
 
-{% set content %}
+{% block blockContent %}
 
 <p>{{ 'Choose how you want to import your fields. You can modify the Name and Handle for each field, along with assigning it to a Field Group.' | t('field-manager') }}</p>
 
-<form method="POST" accept-charset="UTF-8">
-    <input type="hidden" name="action" value="">
-    <input type="hidden" name="data" value="{{ craft.app.request.param('data') }}">
-    {{ csrfInput() }}
+<input type="hidden" name="action" value="">
+<input type="hidden" name="data" value="{{ craft.app.request.param('data') }}">
 
-    {% set groups = craft.app.fields.allGroups %}
+{% set groups = craft.app.fields.allGroups %}
 
-    <table id="fieldmapping" class="data editable fullwidth collapsible">
-        <thead>
-            <th style="width: 40%;">{{ "Field Name" | t('field-manager') }}</th>
-            <th style="width: 40%;">{{ "Field Handle" | t('field-manager') }}</th>
-            <th style="width: 10%;">{{ "Field Type" | t('field-manager') }}</th>
-            <th style="width: 10%;">
-                {{ forms.selectField({
-                    id: 'groupAll',
-                    name: 'groupAll',
-                    options: groupOptions,
-                    value: fields[0].groupId is defined ? fields[0].groupId : null
-                }) }}
-            </th>
-        </thead>
-        <tbody>
-            {% for index, field in fields %}
-                <tr>
-                    <td class="textarea">
-                        <textarea id="name-{{ index }}" name="fields[{{ index }}][name]" rows="1">{{ field.name }}</textarea>
-                    </td>
+<table id="fieldmapping" class="data editable fullwidth collapsible">
+    <thead>
+        <th style="width: 40%;">{{ 'Field Name' | t('field-manager') }}</th>
+        <th style="width: 40%;">{{ 'Field Handle' | t('field-manager') }}</th>
+        <th style="width: 10%;">{{ 'Field Type' | t('field-manager') }}</th>
+        <th style="width: 10%;">
+            {{ forms.selectField({
+                id: 'groupAll',
+                name: 'groupAll',
+                options: groupOptions,
+                value: fields[0].groupId is defined ? fields[0].groupId : null
+            }) }}
+        </th>
+    </thead>
+    <tbody>
+        {% for index, field in fields %}
+            <tr>
+                <td class="textarea">
+                    <textarea id="name-{{ index }}" name="fields[{{ index }}][name]" rows="1">{{ field.name }}</textarea>
+                </td>
 
-                    <td class="textarea {% if errors[field.handle] is defined %}has-error{% endif %}">
-                        <textarea id="handle-{{ index }}" class="code" name="fields[{{ index }}][handle]" rows="1">{{ field.handle }}</textarea>
+                <td class="textarea {% if errors[field.handle] is defined %}has-error{% endif %}">
+                    <textarea id="handle-{{ index }}" class="code" name="fields[{{ index }}][handle]" rows="1">{{ field.handle }}</textarea>
 
-                        {% if errors[field.handle] is defined %}
-                            <span class="errors">
-                                {% if errors[field.handle] is iterable %}
-                                    <code>{{ errors[field.handle] | json_encode }}</code>
-                                {% else %}
-                                    {{ errors[field.handle].getFirstError('handle') }}
-                                {% endif %}
-                            </span>
-                        {% endif %}
-                    </td>
-
-                    {% if field.type and field.type != 'craft\\fields\\MissingField' %}
-                        <td>{{ field.type }}</td>
-
-                        <td class="thin">
-                            {{ forms.selectField({
-                                id: 'group' ~ index,
-                                class: 'groupSelect',
-                                name: 'fields[' ~ index ~ '][groupId]',
-                                options: groupOptions,
-                                value: field.groupId | default(''),
-                            }) }}
-                        </td>
-                    {% else %}
-                        <td><span class="error">{{ field.type }}</span></td>
-                        <td class="thin"></td>
+                    {% if errors[field.handle] is defined %}
+                        <span class="errors">
+                            {% if errors[field.handle] is iterable %}
+                                <code>{{ errors[field.handle] | json_encode }}</code>
+                            {% else %}
+                                {{ errors[field.handle].getFirstError('handle') }}
+                            {% endif %}
+                        </span>
                     {% endif %}
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                </td>
 
-    <div class="buttons">
-        <a href="javascript: window.history.go(-1)" class="btn submit">{{ 'Back' | t('field-manager') }}</a>
-        <input type="submit" data-action="field-manager/base/import" class="btn submit" value="{{ 'Import' | t('field-manager') }}">
-        <div id="newgroupbtn" class="btn add icon submit right">{{ "New Field Group" | t('field-manager') }}</div>
-    </div>
-</form>
+                {% if field.type and field.type != 'craft\\fields\\MissingField' %}
+                    <td>{{ field.type }}</td>
 
-{% endset %}
+                    <td class="thin">
+                        {{ forms.selectField({
+                            id: 'group' ~ index,
+                            class: 'groupSelect',
+                            name: 'fields[' ~ index ~ '][groupId]',
+                            options: groupOptions,
+                            value: field.groupId | default(''),
+                        }) }}
+                    </td>
+                {% else %}
+                    <td><span class="error">{{ field.type }}</span></td>
+                    <td class="thin"></td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="buttons">
+    <a href="javascript: window.history.go(-1)" class="btn submit">{{ 'Back' | t('field-manager') }}</a>
+    <input type="submit" data-action="field-manager/base/import" class="btn submit" value="{{ 'Import' | t('field-manager') }}">
+    <div id="newgroupbtn" class="btn add icon submit right">{{ "New Field Group" | t('field-manager') }}</div>
+</div>
+
+{% endblock %}

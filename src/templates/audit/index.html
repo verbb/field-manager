@@ -1,0 +1,127 @@
+{% extends 'field-manager/_layouts' %}
+{% import '_includes/forms' as forms %}
+
+{% set crumbs = [
+    { label: 'Field Manager' | t('field-manager'), url: url('field-manager') },
+    { label: 'Audit' | t('field-manager'), url: url('field-manager/audit') },
+] %}
+
+{% set title = 'Audit' %}
+{% set selectedTab = 'audit' %}
+
+{% set sidebar %}
+    <nav class="sidebar-nav">
+        <ul>
+            <li class="heading"><span>{{ 'Element Groups' | t('field-manager') }}</span></li>
+            <li class="active"><a href="#" data-groupid="all">{{ 'All' | t('field-manager') }}</a></li>
+
+            {% for elementGroup, elementGroupData in elementInfo %}
+                <li><a href="#" data-groupid="{{ elementGroup }}">{{ elementGroup }}</a></li>
+            {% endfor %}
+        </ul>
+    </nav>
+{% endset %}
+
+{% block blockContent %}
+
+{% for elementGroup, elementGroupData in elementInfo %}
+    <div class="fieldmanager-audit-content" data-groupid="{{ elementGroup }}">
+        <h1>{{ elementGroup }}</h1>
+
+        {# Group orphaned fields at the top #}
+        {% set errors = [] %}
+
+        {% for info in elementGroupData %}
+            {% set error = info.error ?? '' %}
+
+            {% if error %}
+                {% set errors = errors | merge([ error ]) %}
+            {% endif %}
+        {% endfor %}
+
+        {% if errors %}
+            <div class="field">
+                <div class="heading">
+                    <label>{{ 'Orphaned Layouts' | t('field-manager') }}</label>
+
+                    <div class="instructions">
+                        <p>{{ 'The below layouts belong to {elementGroup} that no longer exist.' | t('field-manager', { elementGroup: elementGroup }) }}</p>
+                    </div>
+                </div>
+
+                <ul>
+                    {% for error in errors %}
+                        <li class="error">{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <table id="fieldmanager-audit" class="data fullwidth collapsible field-manager-table">
+            <thead>
+                <th>{{ 'Name' | t('field-manager') }}</th>
+                <th>{{ 'Handle' | t('field-manager') }}</th>
+                <th>{{ 'Type' | t('field-manager') }}</th>
+                <th>{{ 'Translatable' | t('field-manager') }}</th>
+                <th></th>
+            </thead>
+            <tbody>
+                {% for info in elementGroupData %}
+                    {% set error = info.error ?? '' %}
+
+                    {% if not error %}
+                        <tr class="group-heading">
+                            <th colspan="4">
+                                <span class="go">
+                                    <a href="{{ info.url }}">{{ info.name }}</a>
+                                </span>
+                            </th>
+                        </tr>
+
+                        {% for tab in info.tabs %}
+                            <tr class="tab-heading">
+                                <th colspan="4">
+                                    {{ tab.name }}
+                                </th>
+                            </tr>
+
+                            {% for field in tab.fields %}
+                                <tr class="fields">
+                                    <th>
+                                        <span class="go">
+                                            <a href="{{ url('settings/fields/edit/' ~ field.id) }}">{{ field.name }}</a>
+                                        </span>
+                                    </th>
+
+                                    <td>{{ field.handle }}</td>
+
+                                    {% if field is missing %}
+                                        <td><span class="error">{{ field.expectedType }}</span></td>
+                                    {% else %}
+                                        <td>{{ field.displayName() }}</td>
+                                    {% endif %}
+
+                                    <td><span class="status {{ field.getIsTranslatable() ? 'live' : 'disabled' }} }}"></span></td>
+                                </tr>
+                            {% else %}
+                                <tr class="fields">
+                                    <td>
+                                        <i>{{ 'No fields' | t('field-manager') }}</i>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr class="tab-heading">
+                                <th colspan="4">
+                                    <i>{{ 'No tabs' | t('field-manager') }}</i>
+                                </th>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endfor %}
+
+{% endblock %}

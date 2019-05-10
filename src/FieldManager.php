@@ -66,6 +66,7 @@ class FieldManager extends Plugin
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event) {
             $event->rules = array_merge($event->rules, [
                 'field-manager' => 'field-manager/base/index',
+                'field-manager/audit' => 'field-manager/audit/index',
             ]);
         });
     }

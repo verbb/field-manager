@@ -177,6 +177,39 @@ body.ltr .rightalign {
 }
 
 
+// ==========================================================================
+// Field Audit
+// ==========================================================================
 
+.fieldmanager-audit-content {
+    margin-bottom: 4rem;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+#fieldmanager-audit .fields > :first-child {
+    padding-left: 40px !important;
+}
+
+#fieldmanager-audit td,
+#fieldmanager-audit th {
+    padding-top: 6px !important;
+    padding-bottom: 5px !important;
+    font-size: 90%;
+}
+
+#fieldmanager-audit .group-heading a {
+    color: #333f4d;
+}
+
+#fieldmanager-audit .tab-heading th {
+    color: #333f4d;
+    text-transform: uppercase;
+    opacity: 0.6;
+    font-size: 11px;
+    padding: 2px 0 2px 20px !important;
+}
 
 

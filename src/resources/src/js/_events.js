@@ -96,6 +96,22 @@ $(function() {
         }
     });
 
+    $('.sidebar-nav a').on('click', function(e) {
+        e.preventDefault();
+        var groupId = $(this).attr('data-groupid');
+
+        $('.sidebar-nav li').removeClass('active');
+        $(this).parent().addClass('active');
+
+        $('.fieldmanager-audit-content').hide();
+
+        if (groupId == 'all') {
+            $('.fieldmanager-audit-content[data-groupid]').show();
+        } else {
+            $('.fieldmanager-audit-content[data-groupid="' + groupId + '"]').show();
+        }
+    });
+
     $('tr.group .clone-btn').on('click', function(e) {
         new Craft.FieldManager.CloneGroup($(this), $(this).parents('tr.group'));
     });

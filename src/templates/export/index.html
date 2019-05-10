@@ -1,19 +1,15 @@
-{% extends "_layouts/cp" %}
+{% extends 'field-manager/_layouts' %}
+{% import '_includes/forms' as forms %}
 
-{% import "_includes/forms" as forms %}
+{% set crumbs = [
+    { label: 'Field Manager' | t('field-manager'), url: url('field-manager') },
+    { label: 'Export' | t('field-manager'), url: url('field-manager/export') },
+] %}
 
-{% do view.registerAssetBundle("verbb\\fieldmanager\\assetbundles\\FieldManagerAsset") %}
-
-{% set title = 'Field Manager' %}
-
-{% set tabs = {
-    fields: { label: "Fields" | t('field-manager'), url: url('field-manager') },
-    export: { label: "Export" | t('field-manager'), url: url('field-manager/export') },
-} %}
-
+{% set title = 'Export' %}
 {% set selectedTab = 'export' %}
 
-{% set content %}
+{% block blockContent %}
 
 {{ forms.textareaField({
     label: 'Export Data' | t('field-manager'),
@@ -23,6 +19,6 @@
     value: json,
 }) }}
 
-{% endset %}
+{% endblock %}
 
 

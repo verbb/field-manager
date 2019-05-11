@@ -6,6 +6,7 @@ use verbb\fieldmanager\FieldManager;
 use Craft;
 use craft\base\FieldInterface;
 use craft\db\Query;
+use craft\helpers\Json;
 use craft\models\FieldGroup;
 
 use yii\base\Component;
@@ -35,11 +36,8 @@ class Service extends Component
             $field->blockTypes = $this->processCloneSuperTable($field);
         }
 
-        // Most fields are supported, but Neo is an exception
         if (get_class($field) == 'benf\neo\Field') {
-            FieldManager::error('Neo fields are currently unsupported.');
-
-            return false;
+            $field->blockTypes = $this->processCloneNeo($field);
         }
 
         // Send off to Craft's native fieldSave service for heavy lifting.
@@ -122,30 +120,30 @@ class Service extends Component
         return array_diff($allFieldIds, $usedFieldIds);
     }
     
-    public function processMatrix(FieldInterface $field)
-    {
-        $blockTypes = $field->blockTypes;
+    // public function processMatrix(FieldInterface $field)
+    // {
+    //     $blockTypes = $field->blockTypes;
 
-        // Strip out all the IDs from the origin field
-        foreach ($blockTypes as $blockType) {
-            $blockType->id = null;
-            $blockType->fieldLayoutId = null;
+    //     // Strip out all the IDs from the origin field
+    //     foreach ($blockTypes as $blockType) {
+    //         $blockType->id = null;
+    //         $blockType->fieldLayoutId = null;
 
-            foreach ($blockType->fields as $blockField) {
-                $blockField->id = null;
+    //         foreach ($blockType->fields as $blockField) {
+    //             $blockField->id = null;
 
-                // Case for nested Super Table
-                if (get_class($blockField) == 'verbb\supertable\fields\SuperTableField') {
-                    // Ensure FieldTypes have a chance to prepare their settings properly
-                    // $blockField->settings = $blockField->fieldType->prepSettings($blockField->settings);
+    //             // Case for nested Super Table
+    //             if (get_class($blockField) == 'verbb\supertable\fields\SuperTableField') {
+    //                 // Ensure FieldTypes have a chance to prepare their settings properly
+    //                 // $blockField->settings = $blockField->fieldType->prepSettings($blockField->settings);
 
-                    $blockField->blockTypes = $this->processSuperTable($blockField);
-                }
-            }
-        }
+    //                 $blockField->blockTypes = $this->processSuperTable($blockField);
+    //             }
+    //         }
+    //     }
 
-        return $blockTypes;
-    }
+    //     return $blockTypes;
+    // }
 
     public function processCloneMatrix(FieldInterface $originField)
     {
@@ -178,30 +176,75 @@ class Service extends Component
         return $blockTypes;
     }
 
-    public function processSuperTable(FieldInterface $field)
+    // public function processNeo(FieldInterface $field)
+    // {
+    //     $blockTypes = $field->blockTypes;
+
+    //     // Strip out all the IDs from the origin field
+    //     foreach ($blockTypes as $blockType) {
+    //         $blockType->id = null;
+    //         $blockType->fieldLayoutId = null;
+
+    //         foreach ($blockType->fields as $blockField) {
+    //             $blockField->id = null;
+    //         }
+    //     }
+
+    //     return $blockTypes;
+    // }
+
+    public function processCloneNeo(FieldInterface $originField)
     {
-        $blockTypes = $field->blockTypes;
+        $blockTypes = [];
 
-        // Strip out all the IDs from the origin field
-        foreach ($blockTypes as $blockType) {
-            $blockType->id = null;
-            $blockType->fieldLayoutId = null;
+        foreach ($originField->blockTypes as $i => $blockType) {
+            $fieldLayout = [];
 
-            foreach ($blockType->fields as $blockField) {
-                $blockField->id = null;
-
-                // Case for nested Matrix
-                if (get_class($blockField) == 'craft\fields\Matrix') {
-                    // Ensure FieldTypes have a chance to prepare their settings properly
-                    // $blockField->settings = $blockField->fieldType->prepSettings($blockField->settings);
-
-                    $blockField->blockTypes = $this->processMatrix($blockField);
+            foreach ($blockType->fieldLayout->getTabs() as $tab) {
+                foreach ($tab->getFields() as $field) {
+                    $fieldLayout[$tab['name']][] = $field->id;
                 }
             }
+
+            $blockTypes['new' . $i] = [
+                'name' => $blockType->name,
+                'handle' => $blockType->handle,
+                'sortOrder' => $blockType->sortOrder,
+                'maxBlocks' => $blockType->maxBlocks,
+                'maxChildBlocks' => $blockType->maxChildBlocks,
+                'childBlocks' => is_string($blockType->childBlocks) ? Json::decodeIfJson($blockType->childBlocks) : $blockType->childBlocks,
+                'topLevel' => (bool)$blockType->topLevel,
+                'fieldLayout' => $fieldLayout,
+            ];
         }
 
         return $blockTypes;
     }
+
+    // public function processSuperTable(FieldInterface $field)
+    // {
+    //     $blockTypes = $field->blockTypes;
+
+    //     // Strip out all the IDs from the origin field
+    //     foreach ($blockTypes as $blockType) {
+    //         $blockType->id = null;
+    //         $blockType->fieldLayoutId = null;
+
+    //         foreach ($blockType->fields as $blockField) {
+    //             $blockField->id = null;
+
+    //             // Case for nested Matrix
+    //             if (get_class($blockField) == 'craft\fields\Matrix') {
+    //                 // Ensure FieldTypes have a chance to prepare their settings properly
+    //                 // $blockField->settings = $blockField->fieldType->prepSettings($blockField->settings);
+
+    //                 $blockField->blockTypes = $this->processMatrix($blockField);
+    //             }
+    //         }
+    //     }
+
+    //     return $blockTypes;
+    // }
 
     public function processCloneSuperTable(FieldInterface $originField)
     {

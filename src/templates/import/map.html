@@ -105,7 +105,7 @@
 
                 {% elseif field.type == 'benf\\neo\\Field' %}
 
-                    {#{{ fieldManagerMacros.neoField(index, field) }}#}
+                    {{ fieldManagerMacros.neoField(index, field) }}
 
                 {% elseif field.type == 'verbb\\supertable\\fields\\SuperTableField' %}
 
@@ -139,7 +139,7 @@
 
         {% for blockTypeField in blockType.fields %}
             {% namespace 'settings[blockTypes][new' ~ blockIndex ~ '][fields][new' ~ loop.index ~ ']' %}
-                {{ fieldManagerMacros.nestedField(index, blockTypeField) }}
+                {{ fieldManagerMacros.nestedField(blockTypeField, index) }}
             {% endnamespace %}
         {% endfor %}
     {% endfor %}
@@ -154,10 +154,10 @@
         { label: 'Include' | t('field-manager'), value: 'include' },
     ] %}
 
-    {% for blockType in field.settings.blockTypes %}
+    {% for blockTypeId, blockType in field.settings.blockTypes %}
         {% set blockIndex = loop.index %}
 
-        <tr data-row-id="{{ index }}" class="row-blocktype">
+        <tr data-row-id="{{ index }}" data-blocktype-id="{{ blockTypeId }}" class="row-blocktype">
             <td class="textarea icon-arrow">
                 {{ forms.textField({
                     id: 'name',
@@ -175,7 +175,7 @@
                 }) }}
             </td>
 
-            <td></td>
+            <td>{{ 'Blocktype' | t('field-manager') }}</td>
 
             <td class="thin">
                 {{ forms.selectField({
@@ -189,7 +189,7 @@
 
         {% for blockTypeField in blockType.fields %}
             {% namespace 'settings[blockTypes][new' ~ blockIndex ~ '][fields][new' ~ loop.index ~ ']' %}
-                {{ fieldManagerMacros.nestedField(index, blockTypeField) }}
+                {{ fieldManagerMacros.nestedField(blockTypeField, index, blockTypeId) }}
             {% endnamespace %}
         {% endfor %}
     {% endfor %}
@@ -204,12 +204,14 @@
         { label: 'Include' | t('field-manager'), value: 'include' },
     ] %}
 
-    {% for blockType in field.settings.blockTypes %}
-        <tr data-row-id="{{ index }}" class="row-blocktype">
+    {% for blockTypeId, blockType in field.settings.blockTypes %}
+        {% set blockIndex = loop.index %}
+
+        <tr data-row-id="{{ index }}" data-blocktype-id="{{ blockTypeId }}" class="row-blocktype">
             <td class="textarea icon-arrow">
                 {{ forms.textField({
                     id: 'name',
-                    name: 'name',
+                    name: 'settings[blockTypes][new' ~ blockIndex ~ '][name]',
                     value: blockType.name,
                 }) }}
             </td>
@@ -217,31 +219,41 @@
             <td class="textarea">
                 {{ forms.textField({
                     id: 'handle',
-                    name: 'handle',
+                    name: 'settings[blockTypes][new' ~ blockIndex ~ '][handle]',
                     class: 'code',
                     value: blockType.handle,
                 }) }}
             </td>
 
-            <td></td>
+            <td>{{ 'Blocktype' | t('field-manager') }}</td>
 
             <td class="thin">
                 {{ forms.selectField({
                     id: 'groupId',
                     class: 'groupSelect groupSelectNested select-blocktype',
-                    name: 'groupId',
+                    name: 'settings[blockTypes][new' ~ blockIndex ~ '][groupId]',
                     options: options,
                 }) }}
             </td>
         </tr>
 
-        {% for blockTypeField in blockType.fields %}
-            {{ fieldManagerMacros.nestedField(index, blockTypeField) }}
+        {% for blockTypeFieldTab, blockTypeFieldTabs in blockType.fieldLayout %}
+            {% for blockTypeFieldIndex, blockTypeFieldHandle in blockTypeFieldTabs %}
+                {% set blockTypeField = craft.app.fields.getFieldByHandle(blockTypeFieldHandle) %}
+
+                {% if blockTypeField %}
+                    {% set blockTypeField = blockTypeField | merge({ type: className(blockTypeField) }) %}
+
+                    {% namespace 'settings[blockTypes][new' ~ blockIndex ~ '][fieldLayout][' ~ blockTypeFieldTab ~ '][' ~ blockTypeFieldIndex ~ ']' %}
+                        {{ fieldManagerMacros.nestedField(blockTypeField, index, blockTypeId, true) }}
+                    {% endnamespace %}
+                {% endif %}
+            {% endfor %}
         {% endfor %}
     {% endfor %}
 {% endmacro %}
 
-{% macro nestedField(index, field) %}
+{% macro nestedField(field, index, blockTypeId = '', readonly = false) %}
     {% import '_includes/forms' as forms %}
     {% import _self as fieldManagerMacros %}
 
@@ -250,12 +262,13 @@
         { label: 'Include' | t('field-manager'), value: 'include' },
     ] %}
 
-    <tr data-row-id="{{ index }}" class="row-blocktype-field">
+    <tr data-row-id="{{ index }}" {% if blockTypeId %}data-blocktype-id="{{ blockTypeId }}"{% endif %} class="row-blocktype-field">
         <td class="textarea icon-arrow">
             {{ forms.textField({
                 id: 'name',
                 name: 'name',
                 value: field.name,
+                readonly: readonly,
             }) }}
         </td>
 
@@ -265,6 +278,7 @@
                 name: 'handle',
                 class: 'code',
                 value: field.handle,
+                readonly: readonly,
             }) }}
         </td>
 

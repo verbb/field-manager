@@ -91,6 +91,41 @@ class Import extends Component
                         }
                     }
 
+                    // Handle Neo
+                    if ($data[$key]['type'] === 'benf\neo\Field') {
+                        $blockTypes = $field['settings']['blockTypes'] ?? [];
+
+                        foreach ($blockTypes as $blockTypeKey => $blockType) {
+                            $blockTypeImport = ArrayHelper::remove($blockType, 'groupId');
+
+                            // Remove the whole block if not importing
+                            if ($blockTypeImport === 'noimport') {
+                                unset($fieldsToImport[$key]['settings']['blockTypes'][$blockTypeKey]);
+
+                                continue;
+                            }
+
+                            // Update name and handles for blocktype
+                            $fieldsToImport[$key]['settings']['blockTypes'][$blockTypeKey]['name'] = $blockType['name'];
+                            $fieldsToImport[$key]['settings']['blockTypes'][$blockTypeKey]['handle'] = $blockType['handle'];
+
+                            $blockTypeTabs = $blockType['fieldLayout'] ?? [];
+
+                            foreach ($blockTypeTabs as $blockTypeTabKey => $blockTypeTab) {
+                                foreach ($blockTypeTab as $blockTypeFieldKey => $blockTypeField) {
+                                    $blockTypeFieldImport = ArrayHelper::remove($blockTypeField, 'groupId');
+
+                                    // Remove the whole field if not importing
+                                    if ($blockTypeFieldImport === 'noimport') {
+                                        unset($fieldsToImport[$key]['settings']['blockTypes'][$blockTypeKey]['fieldLayout'][$blockTypeTabKey][$blockTypeFieldKey]);
+
+                                        continue;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                 }
             }
         }
@@ -117,6 +152,10 @@ class Import extends Component
 
                 if ($fieldInfo['type'] == 'verbb\supertable\fields\SuperTableField') {
                     $fieldInfo['settings'] = $this->processSuperTable($fieldInfo);
+                }
+
+                if ($fieldInfo['type'] == 'benf\neo\Field') {
+                    $fieldInfo['settings'] = $this->processNeo($fieldInfo);
                 }
 
                 if ($fieldInfo['type'] == 'rias\positionfieldtype\fields\Position') {
@@ -197,6 +236,36 @@ class Import extends Component
 
                     if ($blockTypeField['type'] == 'rias\positionfieldtype\fields\Position') {
                         $settings['blockTypes'][$i]['fields'][$j]['typesettings'] = $this->processPosition($preppedSettings);
+                    }
+                }
+            }
+        }
+
+        return $settings;
+    }
+
+    public function processNeo($fieldInfo)
+    {
+        $settings = $fieldInfo['settings'];
+        $fieldsService = Craft::$app->fields;
+
+        if (isset($settings['blockTypes'])) {
+            foreach ($settings['blockTypes'] as $i => $blockType) {
+                foreach ($blockType['fieldLayout'] as $j => $blockTypeTab) {
+                    foreach ($blockTypeTab as $k => $blockTypeFieldHandle) {
+                        $blockTypeField = $fieldsService->getFieldByHandle($blockTypeFieldHandle);
+
+                        if ($blockTypeField) {
+                            $settings['blockTypes'][$i]['fieldLayout'][$j][$k] = $blockTypeField->id;
+                        }
+                    }
+                }
+
+                foreach ($blockType['requiredFields'] as $j => $fieldHandle) {
+                    $requiredField = $fieldsService->getFieldByHandle($fieldHandle);
+
+                    if ($requiredField) {
+                        $settings['blockTypes'][$i]['requiredFields'][$j] = $requiredField->id;
                     }
                 }
             }

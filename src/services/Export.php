@@ -1,11 +1,13 @@
 <?php
 namespace verbb\fieldmanager\services;
 
-use verbb\supertable\SuperTable;
-
 use Craft;
+use craft\helpers\Json;
 
 use yii\base\Component;
+
+use verbb\supertable\SuperTable;
+use benf\neo\Plugin as Neo;
 
 class Export extends Component
 {
@@ -30,6 +32,10 @@ class Export extends Component
                     'type' => \get_class($field),
                     'settings' => $field->settings,
                 );
+
+                if (get_class($field) == 'benf\neo\Field') {
+                    $newField['settings'] = $this->processNeo($field);
+                }
 
                 if (get_class($field) == 'craft\fields\Matrix') {
                     $newField['settings'] = $this->processMatrix($field);
@@ -84,6 +90,50 @@ class Export extends Component
             }
 
             $blockCount++;
+        }
+
+        return $fieldSettings;
+    }
+
+    public function processNeo($field)
+    {
+        $fieldSettings = $field->settings;
+
+        $blockTypes = Neo::$plugin->blockTypes->getByFieldId($field->id);
+        $groups = Neo::$plugin->blockTypes->getGroupsByFieldId($field->id);
+
+        foreach ($groups as $i => $group) {
+            $fieldSettings['groups'][] = [
+                'name' => $group->name,
+                'sortOrder' => $group->sortOrder,
+            ];
+        }
+
+        foreach ($blockTypes as $i => $blockType) {
+            $fieldLayout = [];
+            $requiredFields = [];
+
+            foreach ($blockType->fieldLayout->getTabs() as $tab) {
+                foreach ($tab->getFields() as $field) {
+                    $fieldLayout[$tab['name']][] = $field->handle;
+
+                    if ($field->required) {
+                        $requiredFields[] = $field->handle;
+                    }
+                }
+            }
+
+            $fieldSettings['blockTypes']['new' . ($i + 1)] = [
+                'name' => $blockType->name,
+                'handle' => $blockType->handle,
+                'sortOrder' => (int)$blockType->sortOrder,
+                'maxBlocks' => (int)$blockType->maxBlocks,
+                'maxChildBlocks' => (int)$blockType->maxChildBlocks,
+                'childBlocks' => Json::decodeIfJson((string)$blockType->childBlocks),
+                'topLevel' => (bool)$blockType->topLevel,
+                'fieldLayout' => $fieldLayout,
+                'requiredFields' => $requiredFields,
+            ];
         }
 
         return $fieldSettings;

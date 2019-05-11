@@ -17,11 +17,14 @@ $(function() {
         e.preventDefault();
 
         $('#fieldmapping .groupSelect select').val($(this).val());
-        $('#fieldmapping .groupSelectNested select').val('include');
+
+        var value = $(this).val() == 'noimport' ? 'noimport' : 'include';
+
+        $('#fieldmapping .groupSelectNested select').val(value);
     });
 
     // Enabling mapping on Matrix/Neo/SuperTable should enable all nested fields/blocks
-    $(document).on('change', '.select-type-matrix select, .select-type-neo select, .select-type-super-table select, .select-blocktype select', function(e) {
+    $(document).on('change', '.select-type-matrix select, .select-type-neo select, .select-type-super-table select', function(e) {
         e.preventDefault();
 
         var rowId = $(this).parents('tr').data('row-id');
@@ -29,6 +32,16 @@ $(function() {
 
         $('tr[data-row-id="' + rowId + '"].row-blocktype .groupSelectNested select').val(value);
         $('tr[data-row-id="' + rowId + '"].row-blocktype-field .groupSelectNested select').val(value);
+    });
+
+    $(document).on('change', '.select-blocktype select', function(e) {
+        e.preventDefault();
+        
+        var rowId = $(this).parents('tr').data('row-id');
+        var blockTypeId = $(this).parents('tr').data('blocktype-id');
+        var value = $(this).val() == 'noimport' ? 'noimport' : 'include';
+
+        $('tr[data-row-id="' + rowId + '"][data-blocktype-id="' + blockTypeId + '"].row-blocktype-field .groupSelectNested select').val(value);
     });
 
     $(document).on('click', '#newgroupbtn', function(e) {

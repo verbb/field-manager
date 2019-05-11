@@ -23,8 +23,10 @@ class Extension extends Twig_Extension
 
     public function displayName($value)
     {
-        $classNameParts = explode('\\', $value);
-        
-        return array_pop($classNameParts);
+        if (class_exists($value)) {
+            return $value::displayName();
+        }
+
+        return '';
     }
 }

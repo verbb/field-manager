@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.6 - 2019-05-11
+
+### Fixed
+- Fix cloning Matrix and Super Table fields, where fields weren’t getting their blocks and blocktypes correctly cloned.
+
 ## 2.0.5 - 2019-02-10
 
 ### Fixed

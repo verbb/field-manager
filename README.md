@@ -4,9 +4,6 @@
 
 Field Manager is a Craft CMS plugin to help make it easy to manage your fields and field groups. 
 
-## Neo Support
-Please note that [Neo](https://github.com/spicywebau/craft-neo/) is not currently supported by Field Manager. Trying to clone a field may result in unexpected loss of data. We'll provide further updates shortly.
-
 ## Features
 
 - Clone fields and field groups with the click of a button.

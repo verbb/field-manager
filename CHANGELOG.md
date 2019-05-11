@@ -1,5 +1,21 @@
 # Changelog
 
+## 2.1.0 - 2019-05-11
+
+### Added
+- Add Neo support for cloning, importing and exporting.
+- Add support for picking blocks and block fields for Super Table, Matrix and Neo fields when importing. This means you can choose specific fields or entire blocktypes to import, rename or exclude.
+- Add field audit functionality. See what elements are using what fields, and also if there are any orphaned field layouts (field layouts that belong to an element group no longer there).
+- Add translatable column to field index.
+- Add option to download export JSON, or view output.
+
+### Changed
+- Now requires Craft 3.1.x.
+
+### Fixed
+- Enforce plugin to be hidden when `allowAdminChanges` is set.
+- Fix some missing translations.
+
 ## 2.0.6 - 2019-05-11
 
 ### Fixed

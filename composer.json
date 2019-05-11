@@ -25,14 +25,8 @@
         }
     ],
     "require": {
-        "craftcms/cms": "^3.0.0-RC11"
+        "craftcms/cms": "^3.1.0"
     },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://asset-packagist.org"
-        }
-    ],
     "autoload": {
         "psr-4": {
           "verbb\\fieldmanager\\": "src/"
@@ -41,11 +35,6 @@
     "extra": {
         "name": "Field Manager",
         "handle": "field-manager",
-        "description": "Manage your fields and field groups with ease with simple field or group cloning and quicker overall management.",
-        "schemaVersion": "1.0.0",
-        "hasCpSettings": true,
-        "hasCpSection": true,
-        "documentationUrl": "https://github.com/verbb/field-manager",
         "changelogUrl": "https://raw.githubusercontent.com/verbb/field-manager/craft-3/CHANGELOG.md",
         "class": "verbb\\fieldmanager\\FieldManager"
     }

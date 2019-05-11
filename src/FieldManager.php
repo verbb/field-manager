@@ -14,16 +14,18 @@ use yii\base\Event;
 
 class FieldManager extends Plugin
 {
+    // Public Properties
+    // =========================================================================
+
+    public $schemaVersion = '1.0.0';
+    public $hasCpSettings = true;
+    public $hasCpSection = true;
+
+
     // Traits
     // =========================================================================
 
     use PluginTrait;
-
-
-    // Public Properties
-    // =========================================================================
-
-    public $hasCpSection = true;
 
 
     // Public Methods

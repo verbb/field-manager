@@ -44,14 +44,6 @@
 		"rFN": 0,
 		"uCM": 0
 		},
-	"/composer.json": {
-		"ft": 524288,
-		"oA": 1,
-		"oAP": "/composer-min.json",
-		"oF": 0,
-		"oO": 0,
-		"oS": 1
-		},
 	"/docs/.sidebar.json": {
 		"ft": 524288,
 		"oA": 1,

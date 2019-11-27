@@ -113,29 +113,26 @@ $(function() {
         $(this).parent().addClass('active');
 
         $('#fieldmanager tbody tr').hide();
+        $('.fieldmanager-audit-content').hide();
+
+        // Store the groupId in a session, so we can use it later
+        Cookies.set('fieldManager-groupId', groupId);
 
         if (groupId == 'all') {
             $('#fieldmanager tbody tr[data-groupid]').show();
-        } else {
-            $('#fieldmanager tbody tr[data-groupid="' + groupId + '"]').show();
-        }
-    });
-
-    $('.sidebar-nav a').on('click', function(e) {
-        e.preventDefault();
-        var groupId = $(this).attr('data-groupid');
-
-        $('.sidebar-nav li').removeClass('active');
-        $(this).parent().addClass('active');
-
-        $('.fieldmanager-audit-content').hide();
-
-        if (groupId == 'all') {
             $('.fieldmanager-audit-content[data-groupid]').show();
         } else {
+            $('#fieldmanager tbody tr[data-groupid="' + groupId + '"]').show();
             $('.fieldmanager-audit-content[data-groupid="' + groupId + '"]').show();
         }
     });
+
+    // On page-load, see if there's been a stored cookie for the sidebar
+    var groupId = Cookies.get('fieldManager-groupId');
+
+    if (groupId) {
+        $('.sidebar-nav a[data-groupid="' + groupId + '"]').trigger('click');
+    }
 
     $('tr.group .clone-btn').on('click', function(e) {
         new Craft.FieldManager.CloneGroup($(this), $(this).parents('tr.group'));

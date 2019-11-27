@@ -118,6 +118,9 @@ $(function() {
         // Store the groupId in a session, so we can use it later
         Cookies.set('fieldManager-groupId', groupId);
 
+        // Update the New Field button
+        $('.new-field-btn').data('groupid', groupId);
+
         if (groupId == 'all') {
             $('#fieldmanager tbody tr[data-groupid]').show();
             $('.fieldmanager-audit-content[data-groupid]').show();
@@ -166,7 +169,7 @@ $(function() {
         }
 
         e.preventDefault();
-        new Craft.FieldManager.EditField($(this));
+        new Craft.FieldManager.EditField($(this), $(this));
     });
 
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.1 - 2019-11-27
+
+### Added
+- Allow selected field group to be remembered on page-loads.
+- Update “New Field” button to populate the group based on the sidebar selection.
+
 ## 2.1.0 - 2019-05-11
 
 ### Added

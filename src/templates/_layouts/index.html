@@ -6,7 +6,7 @@
     {% set title = 'Field Manager' %}
 {% endif %}
 
-{% set tabs = {
+{% set tabs = tabs ?? {
     fields: { label: 'Fields' | t('field-manager'), url: url('field-manager') },
     import: { label: 'Import' | t('field-manager'), url: url('field-manager/import') },
     audit: { label: 'Audit' | t('field-manager'), url: url('field-manager/audit') },
@@ -33,7 +33,7 @@
                 <div class="credit-pill">
                     <div class="credit-mask">
                         <div class="credit-wrap">
-                            {% include 'field-manager/_svg/verbb-logo.svg' %}
+                            {% include 'verbb-base/_svg/verbb-logo.svg' %}
                         </div>
                     </div>
                 </div>

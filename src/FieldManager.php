@@ -8,6 +8,7 @@ use verbb\fieldmanager\twigextensions\Extension;
 use Craft;
 use craft\base\Plugin;
 use craft\events\RegisterUrlRulesEvent;
+use craft\helpers\UrlHelper;
 use craft\web\UrlManager;
 
 use yii\base\Event;
@@ -50,6 +51,11 @@ class FieldManager extends Plugin
         }
     }
 
+    public function getSettingsResponse()
+    {
+        Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('field-manager/settings'));
+    }
+
 
     // Protected Methods
     // =========================================================================
@@ -57,13 +63,6 @@ class FieldManager extends Plugin
     protected function createSettingsModel(): Settings
     {
         return new Settings();
-    }
-
-    protected function settingsHtml(): string
-    {
-        return Craft::$app->getView()->renderTemplate('field-manager/settings', [
-            'settings' => $this->getSettings(),
-        ]);
     }
 
 
@@ -81,6 +80,7 @@ class FieldManager extends Plugin
             $event->rules = array_merge($event->rules, [
                 'field-manager' => 'field-manager/base/index',
                 'field-manager/audit' => 'field-manager/audit/index',
+                'field-manager/settings' => 'field-manager/base/settings',
             ]);
         });
     }

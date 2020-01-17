@@ -25,6 +25,15 @@ class BaseController extends Controller
         return $this->renderTemplate('field-manager/index', $variables);
     }
 
+    public function actionSettings()
+    {
+        $settings = FieldManager::$plugin->getSettings();
+
+        return $this->renderTemplate('field-manager/settings', [
+            'settings' => $settings,
+        ]);
+    }
+
     public function actionGetGroupModalBody()
     {
         $this->requirePostRequest();

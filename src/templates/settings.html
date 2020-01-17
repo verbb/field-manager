@@ -1,7 +1,25 @@
+{% extends 'field-manager/_layouts' %}
 {% import '_includes/forms' as forms %}
-{% import 'field-manager/_macros' as macros %}
+{% import 'verbb-base/_macros' as macros %}
+
+{% set crumbs = [
+    { label: 'Field Manager' | t('field-manager'), url: url('field-manager') },
+    { label: 'Settings' | t('app'), url: url('field-manager/settings') }
+] %}
+
+{% set tabs = [] %}
+{% set selectedTab = 'settings' %}
+{% set fullPageForm = true %}
+
+{% block blockContent %}
+
+<input type="hidden" name="action" value="plugins/save-plugin-settings">
+<input type="hidden" name="pluginHandle" value="field-manager">
+
+{% namespace 'settings' %}
 
 {{ forms.lightswitchField({
+    first: true,
     id: 'cpSectionEnabled',
     name: 'cpSectionEnabled',
     label: 'Show in CP navigation' | t('field-manager'),
@@ -9,3 +27,7 @@
     instructions: 'Display Field Manager in the control panel navigation menu.' | t('field-manager'),
     warning: macros.configWarning('cpSectionEnabled', 'field-manager'),
 }) }}
+
+{% endnamespace %}
+
+{% endblock %}

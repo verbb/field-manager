@@ -5,6 +5,8 @@ use Craft;
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
+use verbb\base\assetbundles\CpAsset as VerbbCpAsset;
+
 class FieldManagerAsset extends AssetBundle
 {
     // Public Methods
@@ -15,6 +17,7 @@ class FieldManagerAsset extends AssetBundle
         $this->sourcePath = "@verbb/fieldmanager/resources/dist";
 
         $this->depends = [
+            VerbbCpAsset::class,
             CpAsset::class,
         ];
 

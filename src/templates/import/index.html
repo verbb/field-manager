@@ -11,11 +11,14 @@
 
 {% set fullPageForm = true %}
 
+{% block actionButton %}{% endblock %}
+
 {% block blockContent %}
 
 <input type="hidden" name="action" value="field-manager/base/map-fields">
 
 {{ forms.textareaField({
+    first: true,
     label: 'Data' | t('field-manager'),
     instructions: 'Paste the JSON data to import.' | t('field-manager'),
     name: 'data',

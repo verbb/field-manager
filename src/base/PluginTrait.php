@@ -71,10 +71,7 @@ trait PluginTrait
 
     private function _setLogging()
     {
-        Craft::getLogger()->dispatcher->targets[] = new FileTarget([
-            'logFile' => Craft::getAlias('@storage/logs/field-manager.log'),
-            'categories' => ['field-manager'],
-        ]);
+        BaseHelper::setFileLogging('field-manager');
     }
 
 }

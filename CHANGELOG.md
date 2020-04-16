@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.3 - 2020-04-16
+
+### Fixed
+- Fix logging error `Call to undefined method setFileLogging()`.
+
 ## 2.1.2 - 2020-04-15
 
 ### Added

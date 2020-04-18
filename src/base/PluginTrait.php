@@ -67,6 +67,8 @@ trait PluginTrait
             'import' => Import::class,
             'export' => Export::class,
         ]);
+
+        BaseHelper::registerModule();
     }
 
     private function _setLogging()

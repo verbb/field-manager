@@ -246,15 +246,16 @@ class BaseController extends Controller
         $type = $request->getRequiredBodyParam('type');
 
         $field = $fieldsService->createField([
-            'type'                 => $type,
-            'id'                   => $request->getBodyParam('fieldId'),
-            'groupId'              => $request->getRequiredBodyParam('group'),
-            'name'                 => $request->getBodyParam('name'),
-            'handle'               => $request->getBodyParam('handle'),
-            'instructions'         => $request->getBodyParam('instructions'),
-            'translationMethod'    => $request->getBodyParam('translationMethod', Field::TRANSLATION_METHOD_NONE),
+            'type' => $type,
+            'id' => $request->getBodyParam('fieldId'),
+            'groupId' => $request->getRequiredBodyParam('group'),
+            'name' => $request->getBodyParam('name'),
+            'handle' => $request->getBodyParam('handle'),
+            'instructions' => $request->getBodyParam('instructions'),
+            'searchable' => (bool)$request->getBodyParam('searchable', true),
+            'translationMethod' => $request->getBodyParam('translationMethod', Field::TRANSLATION_METHOD_NONE),
             'translationKeyFormat' => $request->getBodyParam('translationKeyFormat'),
-            'settings'             => $request->getBodyParam('types.' . $type),
+            'settings' => $request->getBodyParam('types.' . $type),
         ]);
 
         if (!$fieldsService->saveField($field)) {

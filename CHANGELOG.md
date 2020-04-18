@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.4 - 2020-04-18
+
+### Fixed
+- Fix error thrown when trying to resolve verbb-base resources.
+
 ## 2.1.3 - 2020-04-16
 
 ### Fixed

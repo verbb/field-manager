@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.5 - 2020-04-18
+
+### Fixed
+- Fix missing field attributes when editing a field.
+
 ## 2.1.4 - 2020-04-18
 
 ### Fixed

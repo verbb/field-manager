@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.6 - 2020-05-13
+
+### Fixed
+- Fix being unable to clone Matrix/Super Table/Neo fields correctly.
+- Fix `searchable` attribute on fields not cloning, importing or exporting.
+
 ## 2.1.5 - 2020-04-18
 
 ### Fixed

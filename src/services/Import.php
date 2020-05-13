@@ -163,15 +163,16 @@ class Import extends Component
                 }
 
                 $field = Craft::$app->fields->createField([
-                    'groupId'              => $fieldInfo['groupId'],
-                    'name'                 => $fieldInfo['name'],
-                    'handle'               => $fieldInfo['handle'],
-                    'instructions'         => $fieldInfo['instructions'],
-                    'translationMethod'    => $fieldInfo['translationMethod'] ?? '',
+                    'groupId' => $fieldInfo['groupId'],
+                    'name' => $fieldInfo['name'],
+                    'handle' => $fieldInfo['handle'],
+                    'instructions' => $fieldInfo['instructions'],
+                    'searchable' => $fieldInfo['searchable'],
+                    'translationMethod' => $fieldInfo['translationMethod'] ?? '',
                     'translationKeyFormat' => $fieldInfo['translationKeyFormat'] ?? '',
-                    'required'             => $fieldInfo['required'],
-                    'type'                 => $fieldInfo['type'],
-                    'settings'             => $fieldInfo['settings'],
+                    'required' => $fieldInfo['required'],
+                    'type' => $fieldInfo['type'],
+                    'settings' => $fieldInfo['settings'],
                 ]);
                 
                 // Send off to Craft's native fieldSave service for heavy lifting.

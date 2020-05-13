@@ -62,14 +62,15 @@ class Service extends Component
 
         foreach (Craft::$app->fields->getFieldsByGroupId($originGroup->id) as $originField) {
             $field = Craft::$app->fields->createField([
-                'type'                 => \get_class($originField),
-                'groupId'              => $group->id,
-                'name'                 => $originField->name,
-                'handle'               => $prefix . $originField->handle,
-                'instructions'         => $originField->instructions,
-                'translationMethod'    => $originField->translationMethod,
+                'type' => \get_class($originField),
+                'groupId' => $group->id,
+                'name' => $originField->name,
+                'handle' => $prefix . $originField->handle,
+                'instructions' => $originField->instructions,
+                'searchable' => $originField->searchable,
+                'translationMethod' => $originField->translationMethod,
                 'translationKeyFormat' => $originField->translationKeyFormat,
-                'settings'             => $originField->settings,
+                'settings' => $originField->settings,
             ]);
 
             if (get_class($field) == 'craft\fields\Matrix') {
@@ -128,19 +129,20 @@ class Service extends Component
             $fields = [];
 
             foreach ($blockType->getFields() as $j => $blockField) {
-                $fields['new' . $j] = [
+                $fields['new' . ($j + 1)] = [
                     'type' => get_class($blockField),
                     'name' => $blockField['name'],
                     'handle' => $blockField['handle'],
                     'instructions' => $blockField['instructions'],
                     'required' => (bool)$blockField['required'],
+                    'searchable' => (bool)$blockField['searchable'],
                     'translationMethod' => $blockField['translationMethod'],
                     'translationKeyFormat' => $blockField['translationKeyFormat'],
                     'typesettings' => $blockField['settings'],
                 ];
             }
 
-            $blockTypes['new' . $i] = [
+            $blockTypes['new' . ($i + 1)] = [
                 'name' => $blockType->name,
                 'handle' => $blockType->handle,
                 'sortOrder' => $blockType->sortOrder,
@@ -193,6 +195,7 @@ class Service extends Component
                     'handle' => $blockField['handle'],
                     'instructions' => $blockField['instructions'],
                     'required' => (bool)$blockField['required'],
+                    'searchable' => (bool)$blockField['searchable'],
                     'translationMethod' => $blockField['translationMethod'],
                     'translationKeyFormat' => $blockField['translationKeyFormat'],
                     'typesettings' => $blockField['settings'],

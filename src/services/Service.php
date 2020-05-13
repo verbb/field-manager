@@ -29,15 +29,15 @@ class Service extends Component
         // Because we're essentially editing a current field, we need to remove ID's for blocks and inner fields.
         // Not doing this will move all fields from one Matrix to another - instead of creating new ones.
         if (get_class($field) == 'craft\fields\Matrix') {
-            $field->blockTypes = $this->processCloneMatrix($field);
+            $field->blockTypes = $this->processCloneMatrix($originField);
         }
 
         if (get_class($field) == 'verbb\supertable\fields\SuperTableField') {
-            $field->blockTypes = $this->processCloneSuperTable($field);
+            $field->blockTypes = $this->processCloneSuperTable($originField);
         }
 
         if (get_class($field) == 'benf\neo\Field') {
-            $field->blockTypes = $this->processCloneNeo($field);
+            $field->blockTypes = $this->processCloneNeo($originField);
         }
 
         // Send off to Craft's native fieldSave service for heavy lifting.

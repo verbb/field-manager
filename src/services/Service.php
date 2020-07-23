@@ -140,6 +140,10 @@ class Service extends Component
                     'translationKeyFormat' => $blockField['translationKeyFormat'],
                     'typesettings' => $blockField['settings'],
                 ];
+
+                if (get_class($blockField) == 'verbb\supertable\fields\SuperTableField') {
+                    $fields['new' . $j]['typesettings']['blockTypes'] = $this->processCloneSuperTable($blockField);
+                }
             }
 
             $blockTypes['new' . ($i + 1)] = [
@@ -200,6 +204,10 @@ class Service extends Component
                     'translationKeyFormat' => $blockField['translationKeyFormat'],
                     'typesettings' => $blockField['settings'],
                 ];
+
+                if (get_class($blockField) == 'craft\fields\Matrix') {
+                    $fields['new' . $j]['typesettings']['blockTypes'] = $this->processCloneMatrix($blockField);
+                }
             }
 
             $blockTypes['new' . $i] = [

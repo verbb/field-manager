@@ -312,6 +312,7 @@ $(function() {
 		groupId: null,
 
 		$body: null,
+        $form: null,
 		$element: null,
 		$buttons: null,
 		$cancelBtn: null,
@@ -344,6 +345,10 @@ $(function() {
 			this.addListener(this.$saveBtn, 'activate', 'saveSettings');
 		},
 
+        onFormSubmit: function(e) {
+            e.preventDefault();
+        },
+
 		onFadeIn: function() {
 			var data = {
 				fieldId: this.fieldId,
@@ -358,6 +363,11 @@ $(function() {
                     Craft.appendFootHtml(response.footHtml);
 
 					Craft.initUiElements(this.$body);
+
+                    this.$form = this.$body.find('form');
+
+                    // Bind an empty event to the submit handler. This is needed for Table fields which rely on this event
+                    this.addListener(this.$form, 'submit', 'onFormSubmit');
 
 					new Craft.HandleGenerator('#name', '#handle');
 				}
@@ -377,9 +387,12 @@ $(function() {
 		},
 
 		saveSettings: function() {
-			var params = this.$body.find('form').serialize();
+            // Trigger the form submit. Table fields need this if there's a dropdown option. Other fields might also require this..
+            this.$form.trigger('submit');
 
 			this.$footerSpinner.removeClass('hidden');
+            
+            var params = this.$form.serialize();
 
 			Craft.postActionRequest('field-manager/base/save-field', params, $.proxy(function(response, textStatus) {
 				this.$footerSpinner.addClass('hidden');

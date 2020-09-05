@@ -2,6 +2,7 @@
 namespace verbb\fieldmanager\services;
 
 use Craft;
+use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
 
 use yii\base\Component;
@@ -76,6 +77,15 @@ class Export extends Component
                     $settings = $blockField->settings;
                 }
 
+                $width = 100;
+                $fieldLayout = $blockType->getFieldLayout();
+                $fieldLayoutElements = $fieldLayout->getTabs()[0]->elements ?? [];
+
+                if ($fieldLayoutElements) {
+                    $fieldLayoutElement = ArrayHelper::firstWhere($fieldLayoutElements, 'field.uid', $blockField->uid);
+                    $width = (int)($fieldLayoutElement->width ?? 0) ?: 100;
+                }
+
                 $fieldSettings['blockTypes']['new' . $blockCount]['fields']['new' . $fieldCount] = array(
                     'name' => $blockField->name,
                     'handle' => $blockField->handle,
@@ -86,6 +96,7 @@ class Export extends Component
                     'translationKeyFormat' => $blockField->translationKeyFormat,
                     'type' => \get_class($blockField),
                     'typesettings' => $settings,
+                    'width' => $width,
                 );
 
                 $fieldCount++;

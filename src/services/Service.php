@@ -130,6 +130,7 @@ class Service extends Component
             $fields = [];
 
             foreach ($blockType->getFields() as $j => $blockField) {
+                $fieldKey = 'new' . ($j + 1);
                 $width = 100;
 
                 $fieldLayout = $blockType->getFieldLayout();
@@ -140,7 +141,7 @@ class Service extends Component
                     $width = (int)($fieldLayoutElement->width ?? 0) ?: 100;
                 }
 
-                $fields['new' . ($j + 1)] = [
+                $fields[$fieldKey] = [
                     'type' => get_class($blockField),
                     'name' => $blockField['name'],
                     'handle' => $blockField['handle'],
@@ -154,11 +155,11 @@ class Service extends Component
                 ];
 
                 if (get_class($blockField) == 'verbb\supertable\fields\SuperTableField') {
-                    $fields['new' . $j]['typesettings']['blockTypes'] = $this->processCloneSuperTable($blockField);
+                    $fields['new' . ($j + 1)]['typesettings']['blockTypes'] = $this->processCloneSuperTable($blockField);
                 }
             }
 
-            $blockTypes['new' . ($i + 1)] = [
+            $blockTypes[$fieldKey] = [
                 'name' => $blockType->name,
                 'handle' => $blockType->handle,
                 'sortOrder' => $blockType->sortOrder,

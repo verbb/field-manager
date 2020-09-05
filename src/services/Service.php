@@ -6,6 +6,7 @@ use verbb\fieldmanager\FieldManager;
 use Craft;
 use craft\base\FieldInterface;
 use craft\db\Query;
+use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
 use craft\models\FieldGroup;
 
@@ -129,6 +130,16 @@ class Service extends Component
             $fields = [];
 
             foreach ($blockType->getFields() as $j => $blockField) {
+                $width = 100;
+
+                $fieldLayout = $blockType->getFieldLayout();
+                $fieldLayoutElements = $fieldLayout->getTabs()[0]->elements ?? [];
+
+                if ($fieldLayoutElements) {
+                    $fieldLayoutElement = ArrayHelper::firstWhere($fieldLayoutElements, 'field.uid', $blockField->uid);
+                    $width = (int)($fieldLayoutElement->width ?? 0) ?: 100;
+                }
+
                 $fields['new' . ($j + 1)] = [
                     'type' => get_class($blockField),
                     'name' => $blockField['name'],
@@ -139,6 +150,7 @@ class Service extends Component
                     'translationMethod' => $blockField['translationMethod'],
                     'translationKeyFormat' => $blockField['translationKeyFormat'],
                     'typesettings' => $blockField['settings'],
+                    'width' => $width,
                 ];
 
                 if (get_class($blockField) == 'verbb\supertable\fields\SuperTableField') {

@@ -368,8 +368,6 @@ $(function() {
 
                     // Bind an empty event to the submit handler. This is needed for Table fields which rely on this event
                     this.addListener(this.$form, 'submit', 'onFormSubmit');
-
-					new Craft.HandleGenerator('#name', '#handle');
 				}
 			}, this));
 

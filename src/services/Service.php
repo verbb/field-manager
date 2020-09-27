@@ -128,6 +128,7 @@ class Service extends Component
 
         foreach ($originField->blockTypes as $i => $blockType) {
             $fields = [];
+            $blockKey = 'new' . ($i + 1);
 
             foreach ($blockType->getFields() as $j => $blockField) {
                 $fieldKey = 'new' . ($j + 1);
@@ -159,7 +160,7 @@ class Service extends Component
                 }
             }
 
-            $blockTypes[$fieldKey] = [
+            $blockTypes[$blockKey] = [
                 'name' => $blockType->name,
                 'handle' => $blockType->handle,
                 'sortOrder' => $blockType->sortOrder,

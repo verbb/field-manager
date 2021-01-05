@@ -141,6 +141,7 @@ class Export extends Component
                 'handle' => $blockType->handle,
                 'sortOrder' => (int)$blockType->sortOrder,
                 'maxBlocks' => (int)$blockType->maxBlocks,
+                'maxSiblingBlocks' => (int)$blockType->maxSiblingBlocks,
                 'maxChildBlocks' => (int)$blockType->maxChildBlocks,
                 'childBlocks' => Json::decodeIfJson((string)$blockType->childBlocks),
                 'topLevel' => (bool)$blockType->topLevel,

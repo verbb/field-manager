@@ -189,6 +189,7 @@ class Service extends Component
                 'handle' => $blockType->handle,
                 'sortOrder' => $blockType->sortOrder,
                 'maxBlocks' => $blockType->maxBlocks,
+                'maxSiblingBlocks' => $blockType->maxSiblingBlocks,
                 'maxChildBlocks' => $blockType->maxChildBlocks,
                 'childBlocks' => is_string($blockType->childBlocks) ? Json::decodeIfJson($blockType->childBlocks) : $blockType->childBlocks,
                 'topLevel' => (bool)$blockType->topLevel,

@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.2 - 2021-01-05
+
+### Fixed
+- Fix error when cloning or importing Neo fields.
+
 ## 2.2.1 - 2020-09-28
 
 ### Fixed

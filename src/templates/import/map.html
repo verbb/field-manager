@@ -17,11 +17,15 @@
     {% set groupOptions = groupOptions | merge([{ label: group.name, value: group.id }]) %}
 {% endfor %}
 
+{% block submitButton %}
+    <button type="submit" class="btn submit">{{ 'Import' | t('field-manager') }}</button>
+{% endblock %}
+
 {% block blockContent %}
 
 <p>{{ 'Choose how you want to import your fields. You can modify the Name and Handle for each field, along with assigning it to a Field Group.' | t('field-manager') }}</p>
 
-<input type="hidden" name="action" value="">
+<input type="hidden" name="action" value="field-manager/base/import">
 <input type="hidden" name="data" value="{{ craft.app.request.param('data') }}">
 
 {% set groups = craft.app.fields.allGroups %}
@@ -119,7 +123,6 @@
 
 <div class="buttons">
     <a href="javascript: window.history.go(-1)" class="btn submit">{{ 'Back' | t('field-manager') }}</a>
-    <input type="submit" data-action="field-manager/base/import" class="btn submit" value="{{ 'Import' | t('field-manager') }}">
     <div id="newgroupbtn" class="btn add icon submit right">{{ "New Field Group" | t('field-manager') }}</div>
 </div>
 

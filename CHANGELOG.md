@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.3 - 2021-05-30
+
+### Fixed
+- Fix incorrectly labelled “Save” button for importing fields.
+
 ## 2.2.2 - 2021-01-05
 
 ### Fixed

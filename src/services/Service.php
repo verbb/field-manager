@@ -8,6 +8,7 @@ use craft\base\FieldInterface;
 use craft\db\Query;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
+use craft\helpers\StringHelper;
 use craft\models\FieldGroup;
 
 use yii\base\Component;
@@ -38,7 +39,22 @@ class Service extends Component
         }
 
         if (get_class($field) == 'benf\neo\Field') {
-            $field->blockTypes = $this->processCloneNeo($originField);
+            $blockTypes = $this->processCloneNeo($originField);
+            $field->blockTypes = $blockTypes;
+
+            // Reset the keys so we can get iterate
+            $blockTypes = array_values($blockTypes);
+
+            // Have to re-assign the fieldlayout after the blocktypes have been set - ugh.
+            // This is because Neo's `setBlockTypes()` relies on POST data, which we don't have here.
+            // So create the blocktype as normal, filling in all other info, then populate the fieldLayout now.
+            foreach ($field->blockTypes as $key => $blockType) {
+                $fieldLayout = $blockTypes[$key]['fieldLayout'] ?? null;
+
+                if ($fieldLayout) {
+                    $field->blockTypes[$key]->setFieldLayout($fieldLayout);
+                }
+            }
         }
 
         // Send off to Craft's native fieldSave service for heavy lifting.
@@ -176,13 +192,21 @@ class Service extends Component
         $blockTypes = [];
 
         foreach ($originField->blockTypes as $i => $blockType) {
-            $fieldLayout = [];
+            $layout = new \craft\models\FieldLayout();
+            $layout->type = \benf\neo\elements\Block::class;
 
-            foreach ($blockType->fieldLayout->getTabs() as $tab) {
-                foreach ($tab->getFields() as $field) {
-                    $fieldLayout[$tab['name']][] = $field->id;
-                }
+            $tabs = [];
+
+            foreach ($blockType->fieldLayout->getTabs() as $oldTab) {
+                $tab = new \craft\models\FieldLayoutTab();
+                $tab->name = $oldTab->name;
+                $tab->sortOrder = $oldTab->sortOrder;
+                $tab->elements = $oldTab->elements;
+
+                $tabs[] = $tab;
             }
+
+            $layout->setTabs($tabs);
 
             $blockTypes['new' . $i] = [
                 'name' => $blockType->name,
@@ -193,7 +217,7 @@ class Service extends Component
                 'maxChildBlocks' => $blockType->maxChildBlocks,
                 'childBlocks' => is_string($blockType->childBlocks) ? Json::decodeIfJson($blockType->childBlocks) : $blockType->childBlocks,
                 'topLevel' => (bool)$blockType->topLevel,
-                'fieldLayout' => $fieldLayout,
+                'fieldLayout' => $layout,
             ];
         }
 

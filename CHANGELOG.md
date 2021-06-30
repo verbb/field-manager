@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.4 - 2021-06-30
+
+### Fixed
+- Fix cloning and exporting Neo fields. Ensure you also upgrade to [Neo 2.9.12](https://github.com/spicywebau/craft-neo/releases/tag/2.9.12).
+
 ## 2.2.3 - 2021-05-30
 
 ### Fixed

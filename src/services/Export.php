@@ -136,6 +136,12 @@ class Export extends Component
                 }
             }
 
+            $childBlocks = $blockType->childBlocks;
+
+            if (!is_array($childBlocks)) {
+                $childBlocks = Json::decodeIfJson((string)$childBlocks);
+            }
+
             $fieldSettings['blockTypes']['new' . ($i + 1)] = [
                 'name' => $blockType->name,
                 'handle' => $blockType->handle,
@@ -143,7 +149,7 @@ class Export extends Component
                 'maxBlocks' => (int)$blockType->maxBlocks,
                 'maxSiblingBlocks' => (int)$blockType->maxSiblingBlocks,
                 'maxChildBlocks' => (int)$blockType->maxChildBlocks,
-                'childBlocks' => Json::decodeIfJson((string)$blockType->childBlocks),
+                'childBlocks' => $childBlocks,
                 'topLevel' => (bool)$blockType->topLevel,
                 'fieldLayout' => $fieldLayout,
                 'requiredFields' => $requiredFields,

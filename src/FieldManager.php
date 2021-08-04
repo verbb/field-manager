@@ -4,12 +4,14 @@ namespace verbb\fieldmanager;
 use verbb\fieldmanager\base\PluginTrait;
 use verbb\fieldmanager\models\Settings;
 use verbb\fieldmanager\twigextensions\Extension;
+use verbb\fieldmanager\variables\FieldManagerVariable;
 
 use Craft;
 use craft\base\Plugin;
 use craft\events\RegisterUrlRulesEvent;
 use craft\helpers\UrlHelper;
 use craft\web\UrlManager;
+use craft\web\twig\variables\CraftVariable;
 
 use yii\base\Event;
 
@@ -42,6 +44,7 @@ class FieldManager extends Plugin
         $this->_setLogging();
         $this->_registerCpRoutes();
         $this->_registerTwigExtensions();
+        $this->_registerVariables();
 
         $this->hasCpSection = $this->getService()->isCpSectionEnabled();
 
@@ -82,6 +85,13 @@ class FieldManager extends Plugin
                 'field-manager/audit' => 'field-manager/audit/index',
                 'field-manager/settings' => 'field-manager/base/settings',
             ]);
+        });
+    }
+
+    private function _registerVariables()
+    {
+        Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $event) {
+            $event->sender->set('fieldManager', FieldManagerVariable::class);
         });
     }
 }

@@ -106,8 +106,8 @@ class Import extends Component
                             }
 
                             // Update name and handles for blocktype
-                            $fieldsToImport[$key]['settings']['blockTypes'][$blockTypeKey]['name'] = $blockType['name'];
-                            $fieldsToImport[$key]['settings']['blockTypes'][$blockTypeKey]['handle'] = $blockType['handle'];
+                            $fieldsToImport[$key]['settings']['blockTypes'][$blockTypeKey]['name'] = $blockType['name'] ?? '';
+                            $fieldsToImport[$key]['settings']['blockTypes'][$blockTypeKey]['handle'] = $blockType['handle'] ?? '';
 
                             $blockTypeTabs = $blockType['fieldLayout'] ?? [];
 
@@ -252,23 +252,16 @@ class Import extends Component
 
         if (isset($settings['blockTypes'])) {
             foreach ($settings['blockTypes'] as $i => $blockType) {
-                foreach ($blockType['fieldLayout'] as $j => $blockTypeTab) {
-                    foreach ($blockTypeTab as $k => $blockTypeFieldHandle) {
-                        $blockTypeField = $fieldsService->getFieldByHandle($blockTypeFieldHandle);
+                $fieldLayout = FieldManager::$plugin->getService()->createFieldLayoutFromConfig($blockType['fieldLayout']);
 
-                        if ($blockTypeField) {
-                            $settings['blockTypes'][$i]['fieldLayout'][$j][$k] = $blockTypeField->id;
-                        }
-                    }
-                }
+                // Have to save it now, and apply the ID to the blockType, as Neo won't save it for us
+                // due to it relying on building the field layout with `assembleLayoutFromPost` which is impossible
+                // for us to use in this circumstance.
+                Craft::$app->getFields()->saveLayout($fieldLayout);
 
-                foreach ($blockType['requiredFields'] as $j => $fieldHandle) {
-                    $requiredField = $fieldsService->getFieldByHandle($fieldHandle);
-
-                    if ($requiredField) {
-                        $settings['blockTypes'][$i]['requiredFields'][$j] = $requiredField->id;
-                    }
-                }
+                // Remove the field layout config and apply the ID
+                unset($settings['blockTypes'][$i]['fieldLayout']);
+                $settings['blockTypes'][$i]['fieldLayoutId'] = $fieldLayout->id;
             }
         }
 

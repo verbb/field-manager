@@ -256,4 +256,12 @@ class Service extends Component
 
         return $blockTypes;
     }
+
+    public function createFieldLayoutFromConfig($config)
+    {
+        $layout = \craft\models\FieldLayout::createFromConfig($config);
+        $layout->type = \benf\neo\elements\Block::class;
+
+        return $layout;
+    }
 }

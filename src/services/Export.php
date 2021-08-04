@@ -17,7 +17,7 @@ class Export extends Component
 
     public function export(array $fieldIds)
     {
-        $fields = array();
+        $fields = [];
 
         foreach ($fieldIds as $fieldId) {
             $field = Craft::$app->fields->getFieldById($fieldId);
@@ -62,11 +62,11 @@ class Export extends Component
 
         $blockCount = 1;
         foreach ($blockTypes as $blockType) {
-            $fieldSettings['blockTypes']['new' . $blockCount] = array(
+            $fieldSettings['blockTypes']['new' . $blockCount] = [
                 'name' => $blockType->name,
                 'handle' => $blockType->handle,
                 'fields' => array(),
-            );
+            ];
 
             $fieldCount = 1;
             foreach ($blockType->fields as $blockField) {
@@ -86,7 +86,7 @@ class Export extends Component
                     $width = (int)($fieldLayoutElement->width ?? 0) ?: 100;
                 }
 
-                $fieldSettings['blockTypes']['new' . $blockCount]['fields']['new' . $fieldCount] = array(
+                $fieldSettings['blockTypes']['new' . $blockCount]['fields']['new' . $fieldCount] = [
                     'name' => $blockField->name,
                     'handle' => $blockField->handle,
                     'required' => $blockField->required,
@@ -97,7 +97,7 @@ class Export extends Component
                     'type' => \get_class($blockField),
                     'typesettings' => $settings,
                     'width' => $width,
-                );
+                ];
 
                 $fieldCount++;
             }
@@ -123,19 +123,6 @@ class Export extends Component
         }
 
         foreach ($blockTypes as $i => $blockType) {
-            $fieldLayout = [];
-            $requiredFields = [];
-
-            foreach ($blockType->fieldLayout->getTabs() as $tab) {
-                foreach ($tab->getFields() as $field) {
-                    $fieldLayout[$tab['name']][] = $field->handle;
-
-                    if ($field->required) {
-                        $requiredFields[] = $field->handle;
-                    }
-                }
-            }
-
             $childBlocks = $blockType->childBlocks;
 
             if (!is_array($childBlocks)) {
@@ -151,8 +138,7 @@ class Export extends Component
                 'maxChildBlocks' => (int)$blockType->maxChildBlocks,
                 'childBlocks' => $childBlocks,
                 'topLevel' => (bool)$blockType->topLevel,
-                'fieldLayout' => $fieldLayout,
-                'requiredFields' => $requiredFields,
+                'fieldLayout' => $blockType->fieldLayout->getConfig(),
             ];
         }
 

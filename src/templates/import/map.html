@@ -240,17 +240,13 @@
             </td>
         </tr>
 
-        {% for blockTypeFieldTab, blockTypeFieldTabs in blockType.fieldLayout %}
-            {% for blockTypeFieldIndex, blockTypeFieldHandle in blockTypeFieldTabs %}
-                {% set blockTypeField = craft.app.fields.getFieldByHandle(blockTypeFieldHandle) %}
+        {% set fieldLayout = craft.fieldManager.createFieldLayoutFromConfig(blockType.fieldLayout) %}
 
-                {% if blockTypeField %}
-                    {% set blockTypeField = blockTypeField | merge({ type: className(blockTypeField) }) %}
-
-                    {% namespace 'settings[blockTypes][new' ~ blockIndex ~ '][fieldLayout][' ~ blockTypeFieldTab ~ '][' ~ blockTypeFieldIndex ~ ']' %}
-                        {{ fieldManagerMacros.nestedField(blockTypeField, index, blockTypeId, true) }}
-                    {% endnamespace %}
-                {% endif %}
+        {% for blockTypeTabIndex, blockTypeFieldTab in fieldLayout.getTabs() %}
+            {% for fieldLayoutElementIndex, fieldLayoutElement in blockTypeFieldTab.elements %}
+                {% namespace 'settings[blockTypes][new' ~ blockIndex ~ '][fieldLayout][' ~ blockTypeTabIndex ~ '][' ~ fieldLayoutElementIndex ~ ']' %}
+                    {{ fieldManagerMacros.nestedFieldLayoutElement(fieldLayoutElement, index, blockTypeId, true) }}
+                {% endnamespace %}
             {% endfor %}
         {% endfor %}
     {% endfor %}
@@ -301,4 +297,81 @@
             <td class="thin"></td>
         {% endif %}
     </tr>
+{% endmacro %}
+
+{% macro nestedFieldLayoutElement(fieldLayoutElement, index, blockTypeId = '', readonly = false) %}
+    {% import '_includes/forms' as forms %}
+    {% import _self as fieldManagerMacros %}
+
+    {% set options = [
+        { label: 'Don\'t Import' | t('field-manager'), value: 'noimport' },
+        { label: 'Include' | t('field-manager'), value: 'include' },
+    ] %}
+
+    {% if className(fieldLayoutElement) == 'craft\\fieldlayoutelements\\CustomField' %}
+        {% set field = fieldLayoutElement.getField() %}
+
+        <tr data-row-id="{{ index }}" {% if blockTypeId %}data-blocktype-id="{{ blockTypeId }}"{% endif %} class="row-blocktype-field">
+            <td class="textarea icon-arrow">
+                {{ forms.textField({
+                    id: 'name',
+                    name: 'name',
+                    value: field.name,
+                    readonly: readonly,
+                }) }}
+            </td>
+
+            <td class="textarea">
+                {{ forms.textField({
+                    id: 'handle',
+                    name: 'handle',
+                    class: 'code',
+                    value: field.handle,
+                    readonly: readonly,
+                }) }}
+            </td>
+
+            {% if className(field) != 'craft\\fields\\MissingField' %}
+                <td>{{ displayName(className(field)) }}</td>
+
+                <td class="thin">
+                    {{ forms.selectField({
+                        id: 'groupId',
+                        class: 'groupSelect groupSelectNested',
+                        name: 'groupId',
+                        options: options,
+                    }) }}
+                </td>
+            {% else %}
+                <td><span class="error">{{ className(field) }}</span></td>
+                <td class="thin"></td>
+            {% endif %}
+        </tr>
+    {% else %}
+        <tr data-row-id="{{ index }}" {% if blockTypeId %}data-blocktype-id="{{ blockTypeId }}"{% endif %} class="row-blocktype-field">
+            <td class="textarea icon-arrow">
+                {{ forms.textField({
+                    id: 'name',
+                    name: 'name',
+                    value: displayName(fieldLayoutElement),
+                    readonly: readonly,
+                }) }}
+            </td>
+
+            <td class="textarea">
+                
+            </td>
+
+            <td>{{ displayName(fieldLayoutElement) }}</td>
+
+            <td class="thin">
+                {{ forms.selectField({
+                    id: 'groupId',
+                    class: 'groupSelect groupSelectNested',
+                    name: 'groupId',
+                    options: options,
+                }) }}
+            </td>
+        </tr>
+    {% endif %}
 {% endmacro %}

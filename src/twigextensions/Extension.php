@@ -23,8 +23,14 @@ class Extension extends Twig_Extension
 
     public function displayName($value)
     {
-        if (class_exists($value)) {
-            return $value::displayName();
+        if ((is_string($value) && class_exists($value)) || is_object($value)) {
+            if (method_exists($value, 'displayName')) {
+                return $value::displayName();
+            } else {
+                $classNameParts = explode('\\', get_class($value));
+                                          
+                return array_pop($classNameParts);
+            }
         }
 
         return '';

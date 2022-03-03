@@ -13,8 +13,10 @@ class Import extends Component
 {
     // Public Methods
     // =========================================================================
-
-    public function prepFieldsForImport($fields, $data)
+    /**
+     * @return array<int|string, mixed>
+     */
+    public function prepFieldsForImport($fields, $data): array
     {
         $fieldsToImport = [];
         
@@ -125,7 +127,6 @@ class Import extends Component
                             }
                         }
                     }
-
                 }
             }
         }
@@ -133,9 +134,12 @@ class Import extends Component
         return $fieldsToImport;
     }
 
+    /**
+     * @return array<int|string, mixed>
+     */
     public function import(array $fields): array
     {
-        $fieldTypes = Craft::$app->fields->getAllFieldTypes();
+        $fieldTypes = Craft::$app->getFields()->getAllFieldTypes();
         $errors = [];
 
         foreach ($fields as $fieldInfo) {
@@ -162,7 +166,7 @@ class Import extends Component
                     $fieldInfo['settings'] = $this->processPosition($fieldInfo);
                 }
 
-                $field = Craft::$app->fields->createField([
+                $field = Craft::$app->getFields()->createField([
                     'groupId' => $fieldInfo['groupId'],
                     'name' => $fieldInfo['name'],
                     'handle' => $fieldInfo['handle'],
@@ -176,13 +180,13 @@ class Import extends Component
                 ]);
                 
                 // Send off to Craft's native fieldSave service for heavy lifting.
-                if (!Craft::$app->fields->saveField($field)) {
-                    $fieldErrors = $field->getErrors();
+                if (!Craft::$app->getFields()->saveField($field)) {
+                    $field->getErrors();
 
                     // Handle Matrix/Super Table errors
                     if ($fieldInfo['type'] == 'craft\fields\Matrix' || $fieldInfo['type'] == 'verbb\supertable\fields\SuperTableField') {
                         foreach ($field->getBlockTypes() as $blockType) {
-                            foreach ($blockType->getFields() as $blockTypeField) {
+                            foreach ($blockType->getCustomFields() as $blockTypeField) {
                                 if ($blockTypeField->hasErrors()) {
                                     $errors[$fieldInfo['handle']][$blockTypeField->handle] = $blockTypeField->getErrors();
                                 }
@@ -285,7 +289,7 @@ class Import extends Component
 
     public function getData($json)
     {
-        $data = json_decode($json, true);
+        $data = Json::decode($json, true, 512);
 
         if ($data === null) {
             FieldManager::error('Could not parse JSON data - {error}.', ['error' => json_last_error_msg()]);

@@ -1,10 +1,11 @@
 <?php
 namespace verbb\fieldmanager\twigextensions;
 
-use Twig_Extension;
-use Twig_SimpleFunction;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
 
-class Extension extends Twig_Extension
+class Extension extends AbstractExtension
 {
     // Public Methods
     // =========================================================================
@@ -14,10 +15,13 @@ class Extension extends Twig_Extension
         return 'Display Name';
     }
 
+    /**
+     * @return \Twig\TwigFunction[]
+     */
     public function getFunctions(): array
     {
         return [
-            new Twig_SimpleFunction('displayName', [$this, 'displayName']),
+            new TwigFunction('displayName', fn($value) => $this->displayName($value)),
         ];
     }
 
@@ -27,7 +31,7 @@ class Extension extends Twig_Extension
             if (method_exists($value, 'displayName')) {
                 return $value::displayName();
             } else {
-                $classNameParts = explode('\\', get_class($value));
+                $classNameParts = explode('\\', $value::class);
                                           
                 return array_pop($classNameParts);
             }

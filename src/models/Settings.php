@@ -8,6 +8,6 @@ class Settings extends Model
     // Public Properties
     // =========================================================================
 
-    public $cpSectionEnabled = true;
+    public bool $cpSectionEnabled = true;
 
 }

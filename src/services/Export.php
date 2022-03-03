@@ -14,13 +14,15 @@ class Export extends Component
 {
     // Public Methods
     // =========================================================================
-
-    public function export(array $fieldIds)
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function export(array $fieldIds): array
     {
         $fields = [];
 
         foreach ($fieldIds as $fieldId) {
-            $field = Craft::$app->fields->getFieldById($fieldId);
+            $field = Craft::$app->getFields()->getFieldById($fieldId);
 
             if ($field) {
                 $newField = array(
@@ -31,7 +33,7 @@ class Export extends Component
                     'searchable' => $field->searchable,
                     'translationMethod' => $field->translationMethod,
                     'translationKeyFormat' => $field->translationKeyFormat,
-                    'type' => \get_class($field),
+                    'type' => $field::class,
                     'settings' => $field->settings,
                 );
 
@@ -58,7 +60,7 @@ class Export extends Component
     {
         $fieldSettings = $field->settings;
 
-        $blockTypes = Craft::$app->matrix->getBlockTypesByFieldId($field->id);
+        $blockTypes = Craft::$app->getMatrix()->getBlockTypesByFieldId($field->id);
 
         $blockCount = 1;
         foreach ($blockTypes as $blockType) {
@@ -69,9 +71,9 @@ class Export extends Component
             ];
 
             $fieldCount = 1;
-            foreach ($blockType->fields as $blockField) {
+            foreach ($blockType->getCustomFields() as $blockField) {
                 // Case for nested Super Table
-                if (get_class($blockField) == 'verbb\supertable\fields\SuperTableField') {
+                if ($blockField::class == 'verbb\supertable\fields\SuperTableField') {
                     $settings = $this->processSuperTable($blockField);
                 } else {
                     $settings = $blockField->settings;
@@ -94,7 +96,7 @@ class Export extends Component
                     'searchable' => $blockField->searchable,
                     'translationMethod' => $blockField->translationMethod,
                     'translationKeyFormat' => $blockField->translationKeyFormat,
-                    'type' => \get_class($blockField),
+                    'type' => $blockField::class,
                     'typesettings' => $settings,
                     'width' => $width,
                 ];
@@ -115,7 +117,7 @@ class Export extends Component
         $blockTypes = Neo::$plugin->blockTypes->getByFieldId($field->id);
         $groups = Neo::$plugin->blockTypes->getGroupsByFieldId($field->id);
 
-        foreach ($groups as $i => $group) {
+        foreach ($groups as $group) {
             $fieldSettings['groups'][] = [
                 'name' => $group->name,
                 'sortOrder' => $group->sortOrder,
@@ -149,7 +151,7 @@ class Export extends Component
     {
         $fieldSettings = $field->settings;
 
-        $blockTypes = SuperTable::$plugin->service->getBlockTypesByFieldId($field->id);
+        $blockTypes = SuperTable::$plugin->getService()->getBlockTypesByFieldId($field->id);
 
         $blockCount = 1;
         foreach ($blockTypes as $blockType) {
@@ -160,11 +162,7 @@ class Export extends Component
             $fieldCount = 1;
             foreach ($blockType->fields as $blockField) {
                 // Case for nested Matrix
-                if (get_class($blockField) == 'craft\fields\Matrix') {
-                    $settings = $this->processMatrix($blockField);
-                } else {
-                    $settings = $blockField->settings;
-                }
+                $blockField::class == \craft\fields\Matrix::class ? $this->processMatrix($blockField) : $blockField->settings;
 
                 $fieldSettings['blockTypes']['new' . $blockCount]['fields']['new' . $fieldCount] = array(
                     'name' => $blockField->name,
@@ -174,7 +172,7 @@ class Export extends Component
                     'searchable' => $blockField->searchable,
                     'translationMethod' => $blockField->translationMethod,
                     'translationKeyFormat' => $blockField->translationKeyFormat,
-                    'type' => \get_class($blockField),
+                    'type' => $blockField::class,
                     'typesettings' => $settings,
                 );
 

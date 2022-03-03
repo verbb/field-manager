@@ -24,8 +24,10 @@ class Audit extends Component
 {
     // Public Methods
     // =========================================================================
-
-    public function getElementInfo()
+    /**
+     * @return array<int|string, mixed[]>
+     */
+    public function getElementInfo(): array
     {
         $fieldLayouts = (new Query())
             ->select(['id', 'type'])
@@ -114,8 +116,10 @@ class Audit extends Component
 
     // Private Methods
     // =========================================================================
-
-    private function getAssetVolumeInfo($fieldLayout)
+    /**
+     * @return array<string, mixed>|array<string, string>
+     */
+    private function getAssetVolumeInfo($fieldLayout): array
     {
         $group = (new Query())
             ->select(['id', 'name'])
@@ -138,7 +142,10 @@ class Audit extends Component
         ];
     }
     
-    private function getCategoryGroupInfo($fieldLayout)
+    /**
+     * @return array<string, mixed>|array<string, string>
+     */
+    private function getCategoryGroupInfo($fieldLayout): array
     {
         $group = (new Query())
             ->select(['id', 'name'])
@@ -161,7 +168,10 @@ class Audit extends Component
         ];
     }
 
-    private function getEntryTypeInfo($fieldLayout)
+    /**
+     * @return array<string, mixed>|array<string, string>
+     */
+    private function getEntryTypeInfo($fieldLayout): array
     {
         $group = (new Query())
             ->select(['id', 'name', 'sectionId'])
@@ -184,7 +194,10 @@ class Audit extends Component
         ];
     }
 
-    private function getGlobalSetInfo($fieldLayout)
+    /**
+     * @return array<string, mixed>|array<string, string>
+     */
+    private function getGlobalSetInfo($fieldLayout): array
     {
         $group = (new Query())
             ->select(['id', 'name'])
@@ -207,7 +220,10 @@ class Audit extends Component
         ];
     }
 
-    private function getOrderInfo($fieldLayout)
+    /**
+     * @return array<string, mixed>
+     */
+    private function getOrderInfo($fieldLayout): array
     {
         $url = UrlHelper::cpUrl('commerce/settings/ordersettings');
 
@@ -218,7 +234,10 @@ class Audit extends Component
         ];
     }
 
-    private function getProductTypeInfo($fieldLayout)
+    /**
+     * @return array<string, mixed>|array<string, string>
+     */
+    private function getProductTypeInfo($fieldLayout): array
     {
         $group = (new Query())
             ->select(['id', 'name'])
@@ -241,7 +260,10 @@ class Audit extends Component
         ];
     }
 
-    private function getTagGroupInfo($fieldLayout)
+    /**
+     * @return array<string, mixed>|array<string, string>
+     */
+    private function getTagGroupInfo($fieldLayout): array
     {
         $group = (new Query())
             ->select(['id', 'name'])
@@ -264,7 +286,10 @@ class Audit extends Component
         ];
     }
 
-    private function getUserInfo($fieldLayout)
+    /**
+     * @return array<string, mixed>
+     */
+    private function getUserInfo($fieldLayout): array
     {
         $url = UrlHelper::cpUrl('settings/users/fields');
 
@@ -275,7 +300,10 @@ class Audit extends Component
         ];
     }
 
-    private function getVariantInfo($fieldLayout)
+    /**
+     * @return array<string, mixed>|array<string, string>
+     */
+    private function getVariantInfo($fieldLayout): array
     {
         $group = (new Query())
             ->select(['id', 'name'])

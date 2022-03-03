@@ -7,25 +7,28 @@ use Craft;
 use craft\base\Field;
 use craft\fields\PlainText;
 use craft\helpers\ArrayHelper;
+use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use craft\models\FieldGroup;
 use craft\web\Controller;
 
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 class BaseController extends Controller
 {
     // Public Methods
     // =========================================================================
 
-    public function actionIndex()
+    public function actionIndex(): Response
     {
-        $variables['unusedFieldIds'] = FieldManager::$plugin->service->getUnusedFieldIds();
+        $variables = [];
+        $variables['unusedFieldIds'] = FieldManager::$plugin->getService()->getUnusedFieldIds();
 
         return $this->renderTemplate('field-manager/index', $variables);
     }
 
-    public function actionSettings()
+    public function actionSettings(): Response
     {
         $settings = FieldManager::$plugin->getSettings();
 
@@ -34,7 +37,7 @@ class BaseController extends Controller
         ]);
     }
 
-    public function actionGetGroupModalBody()
+    public function actionGetGroupModalBody(): Response
     {
         $this->requirePostRequest();
         $this->requireAcceptsJson();
@@ -66,7 +69,7 @@ class BaseController extends Controller
         ]);
     }
 
-    public function actionGetFieldModalBody()
+    public function actionGetFieldModalBody(): Response
     {
         $this->requirePostRequest();
         $this->requireAcceptsJson();
@@ -106,7 +109,7 @@ class BaseController extends Controller
         $allFieldTypes = $fieldsService->getAllFieldTypes();
 
         foreach ($allFieldTypes as $class) {
-            if ($class === get_class($field) || $class::isSelectable()) {
+            if ($class === $field::class || $class::isSelectable()) {
                 $supportedTranslationMethods[$class] = $class::supportedTranslationMethods();
             }
         }
@@ -119,12 +122,11 @@ class BaseController extends Controller
         } else {
             $compatibleFieldTypes = $fieldsService->getCompatibleFieldTypes($field, true);
         }
-
-        /** @var string[]|FieldInterface[] $compatibleFieldTypes */
+        
         $fieldTypeOptions = [];
 
         foreach ($allFieldTypes as $class) {
-            if ($class === get_class($field) || $class::isSelectable()) {
+            if ($class === $field::class || $class::isSelectable()) {
                 $compatible = in_array($class, $compatibleFieldTypes, true);
                 $fieldTypeOptions[] = [
                     'value' => $class,
@@ -185,12 +187,12 @@ class BaseController extends Controller
         ]);
     }
 
-    public function actionCloneField()
+    public function actionCloneField(): Response
     {
         $this->requirePostRequest();
         $this->requireAcceptsJson();
 
-        $fieldId = Craft::$app->request->getRequiredBodyParam('fieldId');
+        $fieldId = Craft::$app->getRequest()->getRequiredBodyParam('fieldId');
 
         $fieldsService = Craft::$app->getFields();
         $request = Craft::$app->getRequest();
@@ -210,27 +212,27 @@ class BaseController extends Controller
 
         $originField = $fieldsService->getFieldById($fieldId);
 
-        if (!FieldManager::$plugin->service->cloneField($field, $originField)) {
+        if (!FieldManager::$plugin->getService()->cloneField($field, $originField)) {
             return $this->asJson(['success' => false, 'error' => $field->getErrors()]);
         }
 
         return $this->asJson(['success' => true, 'fieldId' => $field->id]);
     }
 
-    public function actionCloneGroup()
+    public function actionCloneGroup(): Response
     {
         $this->requirePostRequest();
         $this->requireAcceptsJson();
 
-        $groupId = Craft::$app->request->getRequiredBodyParam('groupId');
-        $prefix = Craft::$app->request->getRequiredBodyParam('prefix');
+        $groupId = Craft::$app->getRequest()->getRequiredBodyParam('groupId');
+        $prefix = Craft::$app->getRequest()->getRequiredBodyParam('prefix');
 
         $group = new FieldGroup();
-        $group->name = Craft::$app->request->getRequiredBodyParam('name');
+        $group->name = Craft::$app->getRequest()->getRequiredBodyParam('name');
 
-        $originGroup = Craft::$app->fields->getGroupById($groupId);
+        $originGroup = Craft::$app->getFields()->getGroupById($groupId);
 
-        if (!FieldManager::$plugin->service->cloneGroup($group, $prefix, $originGroup)) {
+        if (!FieldManager::$plugin->getService()->cloneGroup($group, $prefix, $originGroup)) {
             return $this->asJson(['success' => false, 'error' => $group->getErrors()]);
         }
 
@@ -238,7 +240,7 @@ class BaseController extends Controller
     }
 
     // From Craft's native saveField, which doesn't really support Ajax...
-    public function actionSaveField()
+    public function actionSaveField(): Response
     {
         $this->requirePostRequest();
 
@@ -278,8 +280,7 @@ class BaseController extends Controller
         if (\count($fields) > 0) {
             $fieldsObj = FieldManager::$plugin->export->export($fields);
 
-            // Support PHP <5.4, JSON_PRETTY_PRINT = 128, JSON_NUMERIC_CHECK = 32
-            $json = json_encode($fieldsObj, 128 | 32);
+            $json = Json::encode($fieldsObj, JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
 
             if ($download) {
                 Craft::$app->getResponse()->sendContentAsFile($json, 'export.json');
@@ -291,15 +292,15 @@ class BaseController extends Controller
             }
         }
 
-        Craft::$app->session->setError(Craft::t('field-manager', 'Could not export data.'));
+        Craft::$app->getSession()->setError(Craft::t('field-manager', 'Could not export data.'));
     }
 
     public function actionMapFields()
     {
         $this->requirePostRequest();
 
-        $json = Craft::$app->request->getParam('data', '{}');
-        $data = FieldManager::$plugin->import->getData($json);
+        $json = Craft::$app->getRequest()->getParam('data', '{}');
+        $data = FieldManager::$plugin->getImport()->getData($json);
 
         if ($data) {
             return $this->renderTemplate('field-manager/import/map', [
@@ -308,7 +309,7 @@ class BaseController extends Controller
             ]);
         }
 
-        Craft::$app->session->setError(Craft::t('field-manager', 'Could not parse JSON data.'));
+        Craft::$app->getSession()->setError(Craft::t('field-manager', 'Could not parse JSON data.'));
     }
 
     public function actionImport()
@@ -316,19 +317,19 @@ class BaseController extends Controller
         $this->requirePostRequest();
 
         /** @var array $fields */
-        $fields = Craft::$app->request->getBodyParam('fields', '');
-        $json = Craft::$app->request->getBodyParam('data', '{}');
-        $data = FieldManager::$plugin->import->getData($json);
+        $fields = Craft::$app->getRequest()->getBodyParam('fields', '');
+        $json = Craft::$app->getRequest()->getBodyParam('data', '{}');
+        $data = FieldManager::$plugin->getImport()->getData($json);
 
-        $fieldsToImport = FieldManager::$plugin->import->prepFieldsForImport($fields, $data);
+        $fieldsToImport = FieldManager::$plugin->getImport()->prepFieldsForImport($fields, $data);
 
         if ($fieldsToImport) {
-            $importErrors = FieldManager::$plugin->import->import($fieldsToImport);
+            $importErrors = FieldManager::$plugin->getImport()->import($fieldsToImport);
 
             if (!$importErrors) {
-                Craft::$app->session->setNotice(Craft::t('field-manager', 'Imported successfully.'));
+                Craft::$app->getSession()->setNotice(Craft::t('field-manager', 'Imported successfully.'));
             } else {
-                Craft::$app->session->setError(Craft::t('field-manager', 'Error importing fields.'));
+                Craft::$app->getSession()->setError(Craft::t('field-manager', 'Error importing fields.'));
 
                 return $this->renderTemplate('field-manager/import/map', [
                     'fields' => $fieldsToImport,
@@ -336,7 +337,7 @@ class BaseController extends Controller
                 ]);
             }
         } else {
-            Craft::$app->session->setNotice(Craft::t('field-manager', 'No fields imported.'));
+            Craft::$app->getSession()->setNotice(Craft::t('field-manager', 'No fields imported.'));
         }
     }
 }

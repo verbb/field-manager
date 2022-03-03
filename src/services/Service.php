@@ -58,7 +58,7 @@ class Service extends Component
         }
 
         // Send off to Craft's native fieldSave service for heavy lifting.
-        if (!Craft::$app->fields->saveField($field)) {
+        if (!Craft::$app->getFields()->saveField($field)) {
             FieldManager::error('Could not clone {name} - {errors}.', ['name' => $field->name, 'errors' => print_r($field->getErrors(), true)]);
 
             return false;
@@ -69,7 +69,7 @@ class Service extends Component
 
     public function cloneGroup(FieldGroup $group, $prefix, FieldGroup $originGroup): bool
     {
-        if (!Craft::$app->fields->saveGroup($group)) {
+        if (!Craft::$app->getFields()->saveGroup($group)) {
             FieldManager::error('Could not clone {name} group - {errors}.', ['name' => $originGroup->name, 'errors' => print_r($group->getErrors(), true)]);
 
             return false;
@@ -77,9 +77,9 @@ class Service extends Component
 
         $errors = [];
 
-        foreach (Craft::$app->fields->getFieldsByGroupId($originGroup->id) as $originField) {
-            $field = Craft::$app->fields->createField([
-                'type' => \get_class($originField),
+        foreach (Craft::$app->getFields()->getFieldsByGroupId($originGroup->id) as $originField) {
+            $field = Craft::$app->getFields()->createField([
+                'type' => $originField::class,
                 'groupId' => $group->id,
                 'name' => $originField->name,
                 'handle' => $prefix . $originField->handle,
@@ -98,7 +98,7 @@ class Service extends Component
                 $field->blockTypes = $this->processCloneSuperTable($originField);
             }
 
-            if (!FieldManager::$plugin->service->cloneField($field, $originField)) {
+            if (!FieldManager::$plugin->getService()->cloneField($field, $originField)) {
                 $errors[] = $field;
             }
         }
@@ -120,6 +120,9 @@ class Service extends Component
         return true;
     }
 
+    /**
+     * @return mixed[]
+     */
     public function getUnusedFieldIds(): array
     {
         // All fields
@@ -138,7 +141,10 @@ class Service extends Component
         return array_diff($allFieldIds, $usedFieldIds);
     }
 
-    public function processCloneMatrix(FieldInterface $originField)
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function processCloneMatrix(FieldInterface $originField): array
     {
         $blockTypes = [];
 
@@ -146,7 +152,7 @@ class Service extends Component
             $fields = [];
             $blockKey = 'new' . ($i + 1);
 
-            foreach ($blockType->getFields() as $j => $blockField) {
+            foreach ($blockType->getCustomFields() as $j => $blockField) {
                 $fieldKey = 'new' . ($j + 1);
                 $width = 100;
 
@@ -159,7 +165,7 @@ class Service extends Component
                 }
 
                 $fields[$fieldKey] = [
-                    'type' => get_class($blockField),
+                    'type' => $blockField::class,
                     'name' => $blockField['name'],
                     'handle' => $blockField['handle'],
                     'instructions' => $blockField['instructions'],
@@ -171,7 +177,7 @@ class Service extends Component
                     'width' => $width,
                 ];
 
-                if (get_class($blockField) == 'verbb\supertable\fields\SuperTableField') {
+                if ($blockField::class == 'verbb\supertable\fields\SuperTableField') {
                     $fields['new' . ($j + 1)]['typesettings']['blockTypes'] = $this->processCloneSuperTable($blockField);
                 }
             }
@@ -187,7 +193,10 @@ class Service extends Component
         return $blockTypes;
     }
 
-    public function processCloneNeo(FieldInterface $originField)
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function processCloneNeo(FieldInterface $originField): array
     {
         $blockTypes = [];
 
@@ -224,16 +233,19 @@ class Service extends Component
         return $blockTypes;
     }
 
-    public function processCloneSuperTable(FieldInterface $originField)
+    /**
+     * @return array<string, array<string, array<string, array<string, mixed>>>>
+     */
+    public function processCloneSuperTable(FieldInterface $originField): array
     {
         $blockTypes = [];
 
         foreach ($originField->blockTypes as $i => $blockType) {
             $fields = [];
 
-            foreach ($blockType->getFields() as $j => $blockField) {
+            foreach ($blockType->getCustomFields() as $j => $blockField) {
                 $fields['new' . $j] = [
-                    'type' => get_class($blockField),
+                    'type' => $blockField::class,
                     'name' => $blockField['name'],
                     'handle' => $blockField['handle'],
                     'instructions' => $blockField['instructions'],
@@ -244,7 +256,7 @@ class Service extends Component
                     'typesettings' => $blockField['settings'],
                 ];
 
-                if (get_class($blockField) == 'craft\fields\Matrix') {
+                if ($blockField::class == \craft\fields\Matrix::class) {
                     $fields['new' . $j]['typesettings']['blockTypes'] = $this->processCloneMatrix($blockField);
                 }
             }
@@ -257,7 +269,7 @@ class Service extends Component
         return $blockTypes;
     }
 
-    public function createFieldLayoutFromConfig($config)
+    public function createFieldLayoutFromConfig(array $config): \craft\models\FieldLayout
     {
         $layout = \craft\models\FieldLayout::createFromConfig($config);
         $layout->type = \benf\neo\elements\Block::class;

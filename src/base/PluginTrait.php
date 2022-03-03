@@ -8,7 +8,6 @@ use verbb\fieldmanager\services\Import;
 use verbb\fieldmanager\services\Export;
 
 use Craft;
-use craft\log\FileTarget;
 
 use yii\log\Logger;
 
@@ -19,38 +18,38 @@ trait PluginTrait
     // Static Properties
     // =========================================================================
 
-    public static $plugin;
+    public static FieldManager $plugin;
 
 
     // Public Methods
     // =========================================================================
 
-    public function getAudit()
+    public function getAudit(): Audit
     {
         return $this->get('audit');
     }
 
-    public function getImport()
+    public function getImport(): Import
     {
         return $this->get('import');
     }
 
-    public function getService()
+    public function getService(): Service
     {
         return $this->get('service');
     }
 
-    public function getExport()
+    public function getExport(): Export
     {
         return $this->get('export');
     }
 
-    public static function log($message)
+    public static function log($message): void
     {
         Craft::getLogger()->log($message, Logger::LEVEL_INFO, 'field-manager');
     }
 
-    public static function error($message)
+    public static function error($message): void
     {
         Craft::getLogger()->log($message, Logger::LEVEL_ERROR, 'field-manager');
     }
@@ -59,7 +58,7 @@ trait PluginTrait
     // Private Methods
     // =========================================================================
 
-    private function _setPluginComponents()
+    private function _setPluginComponents(): void
     {
         $this->setComponents([
             'audit' => Audit::class,
@@ -71,7 +70,7 @@ trait PluginTrait
         BaseHelper::registerModule();
     }
 
-    private function _setLogging()
+    private function _setLogging(): void
     {
         BaseHelper::setFileLogging('field-manager');
     }

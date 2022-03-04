@@ -16,7 +16,7 @@ class Extension extends AbstractExtension
     }
 
     /**
-     * @return \Twig\TwigFunction[]
+     * @return TwigFunction[]
      */
     public function getFunctions(): array
     {
@@ -32,7 +32,7 @@ class Extension extends AbstractExtension
                 return $value::displayName();
             } else {
                 $classNameParts = explode('\\', $value::class);
-                                          
+
                 return array_pop($classNameParts);
             }
         }

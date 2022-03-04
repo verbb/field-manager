@@ -12,6 +12,10 @@ use craft\helpers\StringHelper;
 use craft\models\FieldGroup;
 
 use yii\base\Component;
+use benf\neo\elements\Block;
+use craft\models\FieldLayout;
+use craft\fields\Matrix;
+use craft\models\FieldLayoutTab;
 
 class Service extends Component
 {
@@ -107,8 +111,8 @@ class Service extends Component
             foreach ($errors as $error) {
                 FieldManager::error('Could not clone {errorName} in {name} group - {errors}.', [
                     'errorName' => $error->name,
-                    'name'      => $originGroup->name,
-                    'errors'    => print_r($group->getErrors(), true),
+                    'name' => $originGroup->name,
+                    'errors' => print_r($group->getErrors(), true),
                 ]);
 
                 $group->addError($error->name, 'Could not clone group.');
@@ -201,13 +205,13 @@ class Service extends Component
         $blockTypes = [];
 
         foreach ($originField->blockTypes as $i => $blockType) {
-            $layout = new \craft\models\FieldLayout();
-            $layout->type = \benf\neo\elements\Block::class;
+            $layout = new FieldLayout();
+            $layout->type = Block::class;
 
             $tabs = [];
 
             foreach ($blockType->fieldLayout->getTabs() as $oldTab) {
-                $tab = new \craft\models\FieldLayoutTab();
+                $tab = new FieldLayoutTab();
                 $tab->name = $oldTab->name;
                 $tab->sortOrder = $oldTab->sortOrder;
                 $tab->elements = $oldTab->elements;
@@ -256,7 +260,7 @@ class Service extends Component
                     'typesettings' => $blockField['settings'],
                 ];
 
-                if ($blockField::class == \craft\fields\Matrix::class) {
+                if ($blockField::class == Matrix::class) {
                     $fields['new' . $j]['typesettings']['blockTypes'] = $this->processCloneMatrix($blockField);
                 }
             }
@@ -269,10 +273,10 @@ class Service extends Component
         return $blockTypes;
     }
 
-    public function createFieldLayoutFromConfig(array $config): \craft\models\FieldLayout
+    public function createFieldLayoutFromConfig(array $config): FieldLayout
     {
-        $layout = \craft\models\FieldLayout::createFromConfig($config);
-        $layout->type = \benf\neo\elements\Block::class;
+        $layout = FieldLayout::createFromConfig($config);
+        $layout->type = Block::class;
 
         return $layout;
     }

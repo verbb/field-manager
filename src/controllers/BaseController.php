@@ -14,6 +14,7 @@ use craft\web\Controller;
 
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
+use function count;
 
 class BaseController extends Controller
 {
@@ -56,15 +57,15 @@ class BaseController extends Controller
         }
 
         $variables = [
-            'group'  => $group,
+            'group' => $group,
             'prefix' => $prefix,
-            'clone'  => $request->getBodyParam('clone'),
+            'clone' => $request->getBodyParam('clone'),
         ];
 
         $html = $this->getView()->renderTemplate('field-manager/_group/group_edit', $variables);
 
         return $this->asJson([
-            'success'   => true,
+            'success' => true,
             'html' => $html,
         ]);
     }
@@ -122,7 +123,7 @@ class BaseController extends Controller
         } else {
             $compatibleFieldTypes = $fieldsService->getCompatibleFieldTypes($field, true);
         }
-        
+
         $fieldTypeOptions = [];
 
         foreach ($allFieldTypes as $class) {
@@ -158,7 +159,7 @@ class BaseController extends Controller
         foreach ($allGroups as $group) {
             $groupOptions[] = [
                 'value' => $group->id,
-                'label' => $group->name
+                'label' => $group->name,
             ];
         }
 
@@ -180,7 +181,7 @@ class BaseController extends Controller
         $footHtml = $view->getBodyHtml();
 
         return $this->asJson([
-            'success'   => true,
+            'success' => true,
             'html' => $html,
             'headHtml' => $headHtml,
             'footHtml' => $footHtml,
@@ -277,7 +278,7 @@ class BaseController extends Controller
         $fields = $request->getParam('selectedFields');
         $download = $request->getParam('download');
 
-        if (\count($fields) > 0) {
+        if (count($fields) > 0) {
             $fieldsObj = FieldManager::$plugin->export->export($fields);
 
             $json = Json::encode($fieldsObj, JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);

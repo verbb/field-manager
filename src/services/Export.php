@@ -9,6 +9,7 @@ use yii\base\Component;
 
 use verbb\supertable\SuperTable;
 use benf\neo\Plugin as Neo;
+use craft\fields\Matrix;
 
 class Export extends Component
 {
@@ -25,7 +26,7 @@ class Export extends Component
             $field = Craft::$app->getFields()->getFieldById($fieldId);
 
             if ($field) {
-                $newField = array(
+                $newField = [
                     'name' => $field->name,
                     'handle' => $field->handle,
                     'instructions' => $field->instructions,
@@ -35,7 +36,7 @@ class Export extends Component
                     'translationKeyFormat' => $field->translationKeyFormat,
                     'type' => $field::class,
                     'settings' => $field->settings,
-                );
+                ];
 
                 if (get_class($field) == 'benf\neo\Field') {
                     $newField['settings'] = $this->processNeo($field);
@@ -67,7 +68,7 @@ class Export extends Component
             $fieldSettings['blockTypes']['new' . $blockCount] = [
                 'name' => $blockType->name,
                 'handle' => $blockType->handle,
-                'fields' => array(),
+                'fields' => [],
             ];
 
             $fieldCount = 1;
@@ -155,16 +156,16 @@ class Export extends Component
 
         $blockCount = 1;
         foreach ($blockTypes as $blockType) {
-            $fieldSettings['blockTypes']['new' . $blockCount] = array(
-                'fields' => array(),
-            );
+            $fieldSettings['blockTypes']['new' . $blockCount] = [
+                'fields' => [],
+            ];
 
             $fieldCount = 1;
             foreach ($blockType->fields as $blockField) {
                 // Case for nested Matrix
-                $blockField::class == \craft\fields\Matrix::class ? $this->processMatrix($blockField) : $blockField->settings;
+                $blockField::class == Matrix::class ? $this->processMatrix($blockField) : $blockField->settings;
 
-                $fieldSettings['blockTypes']['new' . $blockCount]['fields']['new' . $fieldCount] = array(
+                $fieldSettings['blockTypes']['new' . $blockCount]['fields']['new' . $fieldCount] = [
                     'name' => $blockField->name,
                     'handle' => $blockField->handle,
                     'required' => $blockField->required,
@@ -174,7 +175,7 @@ class Export extends Component
                     'translationKeyFormat' => $blockField->translationKeyFormat,
                     'type' => $blockField::class,
                     'typesettings' => $settings,
-                );
+                ];
 
                 $fieldCount++;
             }

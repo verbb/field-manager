@@ -8,6 +8,7 @@ use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
 
 use yii\base\Component;
+use function in_array;
 
 class Import extends Component
 {
@@ -19,7 +20,7 @@ class Import extends Component
     public function prepFieldsForImport($fields, $data): array
     {
         $fieldsToImport = [];
-        
+
         foreach ($fields as $key => $field) {
             if (isset($field['groupId'])) {
                 if ($field['groupId'] != 'noimport') {
@@ -149,7 +150,7 @@ class Import extends Component
                 $this->_processCraft2Fields($fieldInfo);
             }
 
-            if (\in_array($fieldInfo['type'], $fieldTypes, false)) {
+            if (in_array($fieldInfo['type'], $fieldTypes, false)) {
                 if ($fieldInfo['type'] == 'craft\fields\Matrix') {
                     $fieldInfo['settings'] = $this->processMatrix($fieldInfo);
                 }
@@ -178,7 +179,7 @@ class Import extends Component
                     'type' => $fieldInfo['type'],
                     'settings' => $fieldInfo['settings'],
                 ]);
-                
+
                 // Send off to Craft's native fieldSave service for heavy lifting.
                 if (!Craft::$app->getFields()->saveField($field)) {
                     $field->getErrors();
@@ -191,7 +192,7 @@ class Import extends Component
                                     $errors[$fieldInfo['handle']][$blockTypeField->handle] = $blockTypeField->getErrors();
                                 }
                             }
-                        } 
+                        }
                     } else {
                         $errors[$fieldInfo['handle']] = $field;
                     }

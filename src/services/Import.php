@@ -8,7 +8,6 @@ use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
 
 use yii\base\Component;
-use function in_array;
 
 class Import extends Component
 {

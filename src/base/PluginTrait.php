@@ -21,6 +21,20 @@ trait PluginTrait
     public static FieldManager $plugin;
 
 
+    // Static Methods
+    // =========================================================================
+
+    public static function log($message): void
+    {
+        Craft::getLogger()->log($message, Logger::LEVEL_INFO, 'field-manager');
+    }
+
+    public static function error($message): void
+    {
+        Craft::getLogger()->log($message, Logger::LEVEL_ERROR, 'field-manager');
+    }
+
+
     // Public Methods
     // =========================================================================
 
@@ -42,16 +56,6 @@ trait PluginTrait
     public function getExport(): Export
     {
         return $this->get('export');
-    }
-
-    public static function log($message): void
-    {
-        Craft::getLogger()->log($message, Logger::LEVEL_INFO, 'field-manager');
-    }
-
-    public static function error($message): void
-    {
-        Craft::getLogger()->log($message, Logger::LEVEL_ERROR, 'field-manager');
     }
 
 

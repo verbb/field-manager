@@ -4,12 +4,14 @@ namespace verbb\fieldmanager\services;
 use Craft;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
+use craft\fields\Matrix;
 
 use yii\base\Component;
 
 use verbb\supertable\SuperTable;
+use verbb\supertable\fields\SuperTableField;
+
 use benf\neo\Plugin as Neo;
-use craft\fields\Matrix;
 
 class Export extends Component
 {
@@ -40,11 +42,11 @@ class Export extends Component
                     $newField['settings'] = $this->processNeo($field);
                 }
 
-                if ($field instanceof \craft\fields\Matrix) {
+                if ($field instanceof Matrix) {
                     $newField['settings'] = $this->processMatrix($field);
                 }
 
-                if ($field instanceof \verbb\supertable\fields\SuperTableField) {
+                if ($field instanceof SuperTableField) {
                     $newField['settings'] = $this->processSuperTable($field);
                 }
 

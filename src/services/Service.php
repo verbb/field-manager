@@ -8,13 +8,16 @@ use craft\base\FieldInterface;
 use craft\db\Query;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
+use craft\fields\Matrix;
 use craft\models\FieldGroup;
+use craft\models\FieldLayout;
+use craft\models\FieldLayoutTab;
 
 use yii\base\Component;
+
 use benf\neo\elements\Block;
-use craft\models\FieldLayout;
-use craft\fields\Matrix;
-use craft\models\FieldLayoutTab;
+
+use verbb\supertable\fields\SuperTableField;
 
 class Service extends Component
 {
@@ -33,11 +36,11 @@ class Service extends Component
         // If this is a Matrix or Super Table field, we need to do some pre-processing.
         // Because we're essentially editing a current field, we need to remove ID's for blocks and inner fields.
         // Not doing this will move all fields from one Matrix to another - instead of creating new ones.
-        if ($field instanceof \craft\fields\Matrix) {
+        if ($field instanceof Matrix) {
             $field->blockTypes = $this->processCloneMatrix($originField);
         }
 
-        if ($field instanceof \verbb\supertable\fields\SuperTableField) {
+        if ($field instanceof SuperTableField) {
             $field->blockTypes = $this->processCloneSuperTable($originField);
         }
 
@@ -93,11 +96,11 @@ class Service extends Component
                 'settings' => $originField->settings,
             ]);
 
-            if ($field instanceof \craft\fields\Matrix) {
+            if ($field instanceof Matrix) {
                 $field->blockTypes = $this->processCloneMatrix($originField);
             }
 
-            if ($field instanceof \verbb\supertable\fields\SuperTableField) {
+            if ($field instanceof SuperTableField) {
                 $field->blockTypes = $this->processCloneSuperTable($originField);
             }
 

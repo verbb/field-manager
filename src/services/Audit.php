@@ -172,7 +172,7 @@ class Audit extends Component
                 'error' => 'Orphaned layout #' . $fieldLayout->id,
             ];
         }
-        
+
         $url = UrlHelper::cpUrl('settings/sections/' . $group['sectionId'] . '/entrytypes/' . $group['id']);
 
         return [

@@ -2,7 +2,6 @@
 namespace verbb\fieldmanager\twigextensions;
 
 use Twig\Extension\AbstractExtension;
-use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class Extension extends AbstractExtension
@@ -25,16 +24,16 @@ class Extension extends AbstractExtension
         ];
     }
 
-    public function displayName($value)
+    public function displayName($value): ?string
     {
         if ((is_string($value) && class_exists($value)) || is_object($value)) {
             if (method_exists($value, 'displayName')) {
                 return $value::displayName();
-            } else {
-                $classNameParts = explode('\\', $value::class);
-
-                return array_pop($classNameParts);
             }
+
+            $classNameParts = explode('\\', $value::class);
+
+            return array_pop($classNameParts);
         }
 
         return '';

@@ -15,7 +15,7 @@ use verbb\base\BaseHelper;
 
 trait PluginTrait
 {
-    // Static Properties
+    // Properties
     // =========================================================================
 
     public static FieldManager $plugin;

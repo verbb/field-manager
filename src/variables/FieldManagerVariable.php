@@ -3,14 +3,14 @@ namespace verbb\fieldmanager\variables;
 
 use verbb\fieldmanager\FieldManager;
 
-use Craft;
+use craft\models\FieldLayout;
 
 class FieldManagerVariable
 {
     // Public Methods
     // =========================================================================
 
-    public function createFieldLayoutFromConfig($config)
+    public function createFieldLayoutFromConfig($config): FieldLayout
     {
         return FieldManager::$plugin->getService()->createFieldLayoutFromConfig($config);
     }

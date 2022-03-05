@@ -42,11 +42,11 @@ class Export extends Component
                     $newField['settings'] = $this->processNeo($field);
                 }
 
-                if (get_class($field) == 'craft\fields\Matrix') {
+                if ($field instanceof \craft\fields\Matrix) {
                     $newField['settings'] = $this->processMatrix($field);
                 }
 
-                if (get_class($field) == 'verbb\supertable\fields\SuperTableField') {
+                if ($field instanceof \verbb\supertable\fields\SuperTableField) {
                     $newField['settings'] = $this->processSuperTable($field);
                 }
 
@@ -57,7 +57,7 @@ class Export extends Component
         return $fields;
     }
 
-    public function processMatrix($field)
+    public function processMatrix($field): array
     {
         $fieldSettings = $field->settings;
 
@@ -111,7 +111,7 @@ class Export extends Component
         return $fieldSettings;
     }
 
-    public function processNeo($field)
+    public function processNeo($field): array
     {
         $fieldSettings = $field->settings;
 
@@ -148,7 +148,7 @@ class Export extends Component
         return $fieldSettings;
     }
 
-    public function processSuperTable($field)
+    public function processSuperTable($field): array
     {
         $fieldSettings = $field->settings;
 
@@ -174,7 +174,7 @@ class Export extends Component
                     'translationMethod' => $blockField->translationMethod,
                     'translationKeyFormat' => $blockField->translationKeyFormat,
                     'type' => $blockField::class,
-                    'typesettings' => $settings,
+                    'typesettings' => $blockField->settings,
                 ];
 
                 $fieldCount++;

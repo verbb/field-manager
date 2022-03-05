@@ -1,8 +1,6 @@
 <?php
 namespace verbb\fieldmanager\services;
 
-use verbb\fieldmanager\FieldManager;
-
 use Craft;
 use craft\db\Query;
 use craft\helpers\UrlHelper;
@@ -25,7 +23,7 @@ class Audit extends Component
     // Public Methods
     // =========================================================================
     /**
-     * @return array<int|string, mixed[]>
+     * @return array<int|string, array>
      */
     public function getElementInfo(): array
     {
@@ -117,7 +115,8 @@ class Audit extends Component
     // Private Methods
     // =========================================================================
     /**
-     * @return array<string, mixed>|array<string, string>
+     * @param $fieldLayout
+     * @return array
      */
     private function getAssetVolumeInfo($fieldLayout): array
     {
@@ -141,9 +140,10 @@ class Audit extends Component
             'tabs' => $fieldLayout->getTabs(),
         ];
     }
-    
+
     /**
-     * @return array<string, mixed>|array<string, string>
+     * @param $fieldLayout
+     * @return array
      */
     private function getCategoryGroupInfo($fieldLayout): array
     {
@@ -169,7 +169,8 @@ class Audit extends Component
     }
 
     /**
-     * @return array<string, mixed>|array<string, string>
+     * @param $fieldLayout
+     * @return array
      */
     private function getEntryTypeInfo($fieldLayout): array
     {
@@ -195,7 +196,8 @@ class Audit extends Component
     }
 
     /**
-     * @return array<string, mixed>|array<string, string>
+     * @param $fieldLayout
+     * @return array
      */
     private function getGlobalSetInfo($fieldLayout): array
     {
@@ -235,7 +237,8 @@ class Audit extends Component
     }
 
     /**
-     * @return array<string, mixed>|array<string, string>
+     * @param $fieldLayout
+     * @return array
      */
     private function getProductTypeInfo($fieldLayout): array
     {
@@ -261,7 +264,8 @@ class Audit extends Component
     }
 
     /**
-     * @return array<string, mixed>|array<string, string>
+     * @param $fieldLayout
+     * @return array
      */
     private function getTagGroupInfo($fieldLayout): array
     {
@@ -301,7 +305,8 @@ class Audit extends Component
     }
 
     /**
-     * @return array<string, mixed>|array<string, string>
+     * @param $fieldLayout
+     * @return array
      */
     private function getVariantInfo($fieldLayout): array
     {

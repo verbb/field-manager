@@ -5,6 +5,7 @@ use verbb\fieldmanager\FieldManager;
 
 use Craft;
 use craft\base\Field;
+use craft\fields\MissingField;
 use craft\fields\PlainText;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
@@ -12,9 +13,8 @@ use craft\helpers\StringHelper;
 use craft\models\FieldGroup;
 use craft\web\Controller;
 
-use yii\web\NotFoundHttpException;
 use yii\web\Response;
-use function count;
+use yii\web\ServerErrorHttpException;
 
 class BaseController extends Controller
 {
@@ -106,7 +106,7 @@ class BaseController extends Controller
         // ---------------------------------------------------------------------
 
         $supportedTranslationMethods = [];
-        /** @var string[]|FieldInterface[] $allFieldTypes */
+
         $allFieldTypes = $fieldsService->getAllFieldTypes();
 
         foreach ($allFieldTypes as $class) {
@@ -269,7 +269,7 @@ class BaseController extends Controller
         return $this->asJson(['success' => true]);
     }
 
-    public function actionExport()
+    public function actionExport(): ?Response
     {
         $this->requirePostRequest();
 
@@ -279,7 +279,7 @@ class BaseController extends Controller
         $download = $request->getParam('download');
 
         if (count($fields) > 0) {
-            $fieldsObj = FieldManager::$plugin->export->export($fields);
+            $fieldsObj = FieldManager::$plugin->getExport()->export($fields);
 
             $json = Json::encode($fieldsObj, JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
 
@@ -294,9 +294,11 @@ class BaseController extends Controller
         }
 
         Craft::$app->getSession()->setError(Craft::t('field-manager', 'Could not export data.'));
+
+        return null;
     }
 
-    public function actionMapFields()
+    public function actionMapFields(): ?Response
     {
         $this->requirePostRequest();
 
@@ -311,9 +313,11 @@ class BaseController extends Controller
         }
 
         Craft::$app->getSession()->setError(Craft::t('field-manager', 'Could not parse JSON data.'));
+
+        return null;
     }
 
-    public function actionImport()
+    public function actionImport(): ?Response
     {
         $this->requirePostRequest();
 
@@ -337,8 +341,10 @@ class BaseController extends Controller
                     'errors' => $importErrors,
                 ]);
             }
-        } else {
-            Craft::$app->getSession()->setNotice(Craft::t('field-manager', 'No fields imported.'));
         }
+
+        Craft::$app->getSession()->setNotice(Craft::t('field-manager', 'No fields imported.'));
+
+        return null;
     }
 }

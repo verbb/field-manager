@@ -22,9 +22,7 @@ class Audit extends Component
 {
     // Public Methods
     // =========================================================================
-    /**
-     * @return array<int|string, array>
-     */
+
     public function getElementInfo(): array
     {
         $fieldLayouts = (new Query())
@@ -114,10 +112,7 @@ class Audit extends Component
 
     // Private Methods
     // =========================================================================
-    /**
-     * @param $fieldLayout
-     * @return array
-     */
+
     private function getAssetVolumeInfo($fieldLayout): array
     {
         $group = (new Query())
@@ -141,10 +136,6 @@ class Audit extends Component
         ];
     }
 
-    /**
-     * @param $fieldLayout
-     * @return array
-     */
     private function getCategoryGroupInfo($fieldLayout): array
     {
         $group = (new Query())
@@ -168,10 +159,6 @@ class Audit extends Component
         ];
     }
 
-    /**
-     * @param $fieldLayout
-     * @return array
-     */
     private function getEntryTypeInfo($fieldLayout): array
     {
         $group = (new Query())
@@ -195,10 +182,6 @@ class Audit extends Component
         ];
     }
 
-    /**
-     * @param $fieldLayout
-     * @return array
-     */
     private function getGlobalSetInfo($fieldLayout): array
     {
         $group = (new Query())
@@ -222,9 +205,6 @@ class Audit extends Component
         ];
     }
 
-    /**
-     * @return array<string, mixed>
-     */
     private function getOrderInfo($fieldLayout): array
     {
         $url = UrlHelper::cpUrl('commerce/settings/ordersettings');
@@ -236,10 +216,6 @@ class Audit extends Component
         ];
     }
 
-    /**
-     * @param $fieldLayout
-     * @return array
-     */
     private function getProductTypeInfo($fieldLayout): array
     {
         $group = (new Query())
@@ -263,10 +239,6 @@ class Audit extends Component
         ];
     }
 
-    /**
-     * @param $fieldLayout
-     * @return array
-     */
     private function getTagGroupInfo($fieldLayout): array
     {
         $group = (new Query())
@@ -290,9 +262,6 @@ class Audit extends Component
         ];
     }
 
-    /**
-     * @return array<string, mixed>
-     */
     private function getUserInfo($fieldLayout): array
     {
         $url = UrlHelper::cpUrl('settings/users/fields');
@@ -304,10 +273,6 @@ class Audit extends Component
         ];
     }
 
-    /**
-     * @param $fieldLayout
-     * @return array
-     */
     private function getVariantInfo($fieldLayout): array
     {
         $group = (new Query())

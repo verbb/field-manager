@@ -14,9 +14,7 @@ class Import extends Component
 {
     // Public Methods
     // =========================================================================
-    /**
-     * @return array<int|string, mixed>
-     */
+
     public function prepFieldsForImport($fields, $data): array
     {
         $fieldsToImport = [];
@@ -131,9 +129,6 @@ class Import extends Component
         return $fieldsToImport;
     }
 
-    /**
-     * @return array<int|string, mixed>
-     */
     public function import(array $fields): array
     {
         $fieldTypes = Craft::$app->getFields()->getAllFieldTypes();

@@ -15,9 +15,7 @@ class Export extends Component
 {
     // Public Methods
     // =========================================================================
-    /**
-     * @return array<int, array<string, mixed>>
-     */
+
     public function export(array $fieldIds): array
     {
         $fields = [];

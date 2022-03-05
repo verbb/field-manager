@@ -31,7 +31,11 @@ class Extension extends AbstractExtension
                 return $value::displayName();
             }
 
-            $classNameParts = explode('\\', $value::class);
+            if (is_object($value)) {
+                $value = $value::class;
+            }
+
+            $classNameParts = explode('\\', $value);
 
             return array_pop($classNameParts);
         }

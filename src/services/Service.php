@@ -123,9 +123,6 @@ class Service extends Component
         return true;
     }
 
-    /**
-     * @return array
-     */
     public function getUnusedFieldIds(): array
     {
         // All fields
@@ -144,9 +141,6 @@ class Service extends Component
         return array_diff($allFieldIds, $usedFieldIds);
     }
 
-    /**
-     * @return array<string, array<string, mixed>>
-     */
     public function processCloneMatrix(FieldInterface $originField): array
     {
         $blockTypes = [];
@@ -196,9 +190,6 @@ class Service extends Component
         return $blockTypes;
     }
 
-    /**
-     * @return array<string, array<string, mixed>>
-     */
     public function processCloneNeo(FieldInterface $originField): array
     {
         $blockTypes = [];
@@ -236,9 +227,6 @@ class Service extends Component
         return $blockTypes;
     }
 
-    /**
-     * @return array<string, array<string, array<string, array<string, mixed>>>>
-     */
     public function processCloneSuperTable(FieldInterface $originField): array
     {
         $blockTypes = [];

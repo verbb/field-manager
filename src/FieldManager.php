@@ -18,7 +18,7 @@ use yii\base\Event;
 
 class FieldManager extends Plugin
 {
-    // Public Properties
+    // Properties
     // =========================================================================
 
     public bool $hasCpSection = true;

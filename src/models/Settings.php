@@ -5,7 +5,7 @@ use craft\base\Model;
 
 class Settings extends Model
 {
-    // Public Properties
+    // Properties
     // =========================================================================
 
     public bool $cpSectionEnabled = true;

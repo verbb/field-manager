@@ -251,7 +251,7 @@ $(function() {
 					this.$body.html(response.html);
 
                     Craft.appendHeadHtml(response.headHtml);
-                    Craft.appendFootHtml(response.footHtml);
+                    Craft.appendBodyHtml(response.footHtml);
 
 					Craft.initUiElements(this.$body);
 
@@ -360,7 +360,7 @@ $(function() {
 					this.$body.html(response.html);
 
                     Craft.appendHeadHtml(response.headHtml);
-                    Craft.appendFootHtml(response.footHtml);
+                    Craft.appendBodyHtml(response.footHtml);
 
 					Craft.initUiElements(this.$body);
 

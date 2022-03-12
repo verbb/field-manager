@@ -2,6 +2,7 @@
 namespace verbb\fieldmanager\services;
 
 use verbb\fieldmanager\FieldManager;
+use verbb\fieldmanager\models\Settings;
 
 use Craft;
 use craft\base\FieldInterface;
@@ -26,6 +27,7 @@ class Service extends Component
 
     public function isCpSectionEnabled(): bool
     {
+        /* @var Settings $settings */
         $settings = FieldManager::$plugin->getSettings();
 
         return isset($settings['cpSectionEnabled']) && $settings['cpSectionEnabled'];

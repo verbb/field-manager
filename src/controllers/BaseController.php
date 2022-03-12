@@ -2,6 +2,7 @@
 namespace verbb\fieldmanager\controllers;
 
 use verbb\fieldmanager\FieldManager;
+use verbb\fieldmanager\models\Settings;
 
 use Craft;
 use craft\base\Field;
@@ -31,6 +32,7 @@ class BaseController extends Controller
 
     public function actionSettings(): Response
     {
+        /* @var Settings $settings */
         $settings = FieldManager::$plugin->getSettings();
 
         return $this->renderTemplate('field-manager/settings', [

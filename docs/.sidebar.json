@@ -14,12 +14,5 @@
         "children": [
             "feature-tour/field-manager"
         ]
-    },
-    {
-        "title": "Support",
-        "collapsable": false,
-        "children": [
-            "support/get-support"
-        ]
     }
 ]

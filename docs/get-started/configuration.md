@@ -11,7 +11,7 @@ return [
 ];
 ```
 
-### Configuration options
+## Configuration options
 - `cpSectionEnabled` - Whether the plugin's page should be shown in the main sidebar navigation.
 
 ## Control Panel

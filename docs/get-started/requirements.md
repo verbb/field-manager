@@ -1,7 +1,7 @@
 # Requirements
 
-### Craft CMS
+## Craft CMS
 Field Manager requires Craft CMS 3.5 or greater.
 
-### PHP
+## PHP
 Field Manager requires PHP 7.2.5 or greater.

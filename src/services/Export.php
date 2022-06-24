@@ -149,7 +149,7 @@ class Export extends Component
     {
         $fieldSettings = $field->settings;
 
-        $blockTypes = SuperTable::$plugin->service->getBlockTypesByFieldId($field->id);
+        $blockTypes = SuperTable::$plugin->getService()->getBlockTypesByFieldId($field->id);
 
         $blockCount = 1;
         foreach ($blockTypes as $blockType) {

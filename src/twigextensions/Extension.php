@@ -28,7 +28,7 @@ class Extension extends Twig_Extension
                 return $value::displayName();
             } else {
                 $classNameParts = explode('\\', get_class($value));
-                                          
+
                 return array_pop($classNameParts);
             }
         }

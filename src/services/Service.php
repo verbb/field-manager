@@ -98,7 +98,7 @@ class Service extends Component
                 $field->blockTypes = $this->processCloneSuperTable($originField);
             }
 
-            if (!FieldManager::$plugin->service->cloneField($field, $originField)) {
+            if (!FieldManager::$plugin->getService()->cloneField($field, $originField)) {
                 $errors[] = $field;
             }
         }

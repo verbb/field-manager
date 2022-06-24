@@ -137,7 +137,7 @@ class Audit extends Component
             'tabs' => $fieldLayout->getTabs(),
         ];
     }
-    
+
     private function getCategoryGroupInfo($fieldLayout)
     {
         $group = (new Query())
@@ -174,7 +174,7 @@ class Audit extends Component
                 'error' => 'Orphaned layout #' . $fieldLayout->id,
             ];
         }
-        
+
         $url = UrlHelper::cpUrl('settings/sections/' . $group['sectionId'] . '/entrytypes/' . $group['id']);
 
         return [

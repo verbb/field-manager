@@ -17,7 +17,7 @@ class Import extends Component
     public function prepFieldsForImport($fields, $data)
     {
         $fieldsToImport = [];
-        
+
         foreach ($fields as $key => $field) {
             if (isset($field['groupId'])) {
                 if ($field['groupId'] != 'noimport') {
@@ -125,7 +125,6 @@ class Import extends Component
                             }
                         }
                     }
-
                 }
             }
         }
@@ -174,7 +173,7 @@ class Import extends Component
                     'type' => $fieldInfo['type'],
                     'settings' => $fieldInfo['settings'],
                 ]);
-                
+
                 // Send off to Craft's native fieldSave service for heavy lifting.
                 if (!Craft::$app->fields->saveField($field)) {
                     $fieldErrors = $field->getErrors();
@@ -187,7 +186,7 @@ class Import extends Component
                                     $errors[$fieldInfo['handle']][$blockTypeField->handle] = $blockTypeField->getErrors();
                                 }
                             }
-                        } 
+                        }
                     } else {
                         $errors[$fieldInfo['handle']] = $field;
                     }

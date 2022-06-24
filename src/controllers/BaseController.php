@@ -20,7 +20,7 @@ class BaseController extends Controller
 
     public function actionIndex()
     {
-        $variables['unusedFieldIds'] = FieldManager::$plugin->service->getUnusedFieldIds();
+        $variables['unusedFieldIds'] = FieldManager::$plugin->getService()->getUnusedFieldIds();
 
         return $this->renderTemplate('field-manager/index', $variables);
     }
@@ -190,7 +190,7 @@ class BaseController extends Controller
         $this->requirePostRequest();
         $this->requireAcceptsJson();
 
-        $fieldId = Craft::$app->request->getRequiredBodyParam('fieldId');
+        $fieldId = Craft::$app->getRequest()->getRequiredBodyParam('fieldId');
 
         $fieldsService = Craft::$app->getFields();
         $request = Craft::$app->getRequest();
@@ -210,7 +210,7 @@ class BaseController extends Controller
 
         $originField = $fieldsService->getFieldById($fieldId);
 
-        if (!FieldManager::$plugin->service->cloneField($field, $originField)) {
+        if (!FieldManager::$plugin->getService()->cloneField($field, $originField)) {
             return $this->asJson(['success' => false, 'error' => $field->getErrors()]);
         }
 
@@ -222,15 +222,15 @@ class BaseController extends Controller
         $this->requirePostRequest();
         $this->requireAcceptsJson();
 
-        $groupId = Craft::$app->request->getRequiredBodyParam('groupId');
-        $prefix = Craft::$app->request->getRequiredBodyParam('prefix');
+        $groupId = Craft::$app->getRequest()->getRequiredBodyParam('groupId');
+        $prefix = Craft::$app->getRequest()->getRequiredBodyParam('prefix');
 
         $group = new FieldGroup();
-        $group->name = Craft::$app->request->getRequiredBodyParam('name');
+        $group->name = Craft::$app->getRequest()->getRequiredBodyParam('name');
 
         $originGroup = Craft::$app->fields->getGroupById($groupId);
 
-        if (!FieldManager::$plugin->service->cloneGroup($group, $prefix, $originGroup)) {
+        if (!FieldManager::$plugin->getService()->cloneGroup($group, $prefix, $originGroup)) {
             return $this->asJson(['success' => false, 'error' => $group->getErrors()]);
         }
 
@@ -291,14 +291,14 @@ class BaseController extends Controller
             }
         }
 
-        Craft::$app->session->setError(Craft::t('field-manager', 'Could not export data.'));
+        Craft::$app->getSession()->setError(Craft::t('field-manager', 'Could not export data.'));
     }
 
     public function actionMapFields()
     {
         $this->requirePostRequest();
 
-        $json = Craft::$app->request->getParam('data', '{}');
+        $json = Craft::$app->getRequest()->getParam('data', '{}');
         $data = FieldManager::$plugin->import->getData($json);
 
         if ($data) {
@@ -308,7 +308,7 @@ class BaseController extends Controller
             ]);
         }
 
-        Craft::$app->session->setError(Craft::t('field-manager', 'Could not parse JSON data.'));
+        Craft::$app->getSession()->setError(Craft::t('field-manager', 'Could not parse JSON data.'));
     }
 
     public function actionImport()
@@ -316,8 +316,8 @@ class BaseController extends Controller
         $this->requirePostRequest();
 
         /** @var array $fields */
-        $fields = Craft::$app->request->getBodyParam('fields', '');
-        $json = Craft::$app->request->getBodyParam('data', '{}');
+        $fields = Craft::$app->getRequest()->getBodyParam('fields', '');
+        $json = Craft::$app->getRequest()->getBodyParam('data', '{}');
         $data = FieldManager::$plugin->import->getData($json);
 
         $fieldsToImport = FieldManager::$plugin->import->prepFieldsForImport($fields, $data);
@@ -326,9 +326,9 @@ class BaseController extends Controller
             $importErrors = FieldManager::$plugin->import->import($fieldsToImport);
 
             if (!$importErrors) {
-                Craft::$app->session->setNotice(Craft::t('field-manager', 'Imported successfully.'));
+                Craft::$app->getSession()->setNotice(Craft::t('field-manager', 'Imported successfully.'));
             } else {
-                Craft::$app->session->setError(Craft::t('field-manager', 'Error importing fields.'));
+                Craft::$app->getSession()->setError(Craft::t('field-manager', 'Error importing fields.'));
 
                 return $this->renderTemplate('field-manager/import/map', [
                     'fields' => $fieldsToImport,
@@ -336,7 +336,7 @@ class BaseController extends Controller
                 ]);
             }
         } else {
-            Craft::$app->session->setNotice(Craft::t('field-manager', 'No fields imported.'));
+            Craft::$app->getSession()->setNotice(Craft::t('field-manager', 'No fields imported.'));
         }
     }
 }

@@ -10,6 +10,15 @@
 - Now requires Craft `4.0.0+`.
 - Rename base plugin methods.
 
+## 2.2.5 - 2021-07-10
+
+### Changed
+- Revamp Neo import/export handling to support field layout elements.
+
+### Fixed
+- Improve `displayName` twig function.
+- Fix an error when exporting Neo fields with child blocks configured.
+
 ## 2.2.4 - 2021-06-30
 
 ### Fixed

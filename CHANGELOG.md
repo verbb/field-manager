@@ -1,10 +1,14 @@
 # Changelog
 
-## 3.0.0-beta.1 - 2022-03-10
+## 3.0.0 - 2022-07-10
+
+### Added
+- Add checks for registering events for performance.
 
 ### Changed
-- Now requires PHP `^8.0.2`.
-- Now requires Craft `^4.0.0-beta.1`.
+- Now requires PHP `8.0.2+`.
+- Now requires Craft `4.0.0+`.
+- Rename base plugin methods.
 
 ## 2.2.4 - 2021-06-30
 

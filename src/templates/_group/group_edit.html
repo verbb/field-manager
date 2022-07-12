@@ -1,7 +1,7 @@
 {% import "_includes/forms" as forms %}
 
 {{ forms.textField({
-    label: "Name" | t('field-manager'),
+    label: 'Name' | t('field-manager'),
     instructions: 'What do you want to name your group?' | t('field-manager'),
     id: 'name',
     name: 'name',
@@ -12,8 +12,8 @@
 
 {% if clone %}
     {{ forms.textField({
-        label: "Field Prefix" | t('field-manager'),
-        instructions: 'A prefix for each field\'s handle in this group. <br> Field handles must be unique.' | t('field-manager'),
+        label: 'Field Prefix' | t('field-manager'),
+        instructions: 'A prefix for each field‘s handle in this group. <br> Field handles must be unique.' | t('field-manager'),
         id: 'prefix',
         name: 'prefix',
         required: true,

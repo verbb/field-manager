@@ -166,6 +166,10 @@ class Service extends Component
                     $width = (int)($fieldLayoutElement->width ?? 0) ?: 100;
                 }
 
+                if ($blockField::class == 'verbb\supertable\fields\SuperTableField') {
+                    $blockField->contentTable = $blockField->contentTable ?? '';
+                }
+
                 $fields[$fieldKey] = [
                     'type' => $blockField::class,
                     'name' => $blockField['name'],
@@ -240,6 +244,10 @@ class Service extends Component
             $fields = [];
 
             foreach ($blockType->getCustomFields() as $j => $blockField) {
+                if ($blockField::class == Matrix::class) {
+                    $blockField->contentTable = $blockField->contentTable ?? '';
+                }
+
                 $fields['new' . $j] = [
                     'type' => $blockField::class,
                     'name' => $blockField['name'],

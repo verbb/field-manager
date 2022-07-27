@@ -36,45 +36,46 @@ $(function() {
 				clone: true,
 			};
 
-			Craft.postActionRequest('field-manager/base/get-group-modal-body', data, $.proxy(this, 'showHud'));
+            Craft.sendActionRequest('POST', 'field-manager/base/get-group-modal-body', { data })
+                .then((response) => {
+                    this.showHud(response);
+                });
 		},
 
-		showHud: function(response, textStatus) {
+		showHud: function(response) {
 			this.$element.removeClass('loading');
 
-			if (response.success) {
-				var $hudContents = $();
+			var $hudContents = $();
 
-				this.$form = $('<div/>');
-				$('<input type="hidden" name="groupId" value="' + this.groupId + '">').appendTo(this.$form);
-				$fieldsContainer = $('<div class="fields"/>').appendTo(this.$form);
+			this.$form = $('<div/>');
+			$('<input type="hidden" name="groupId" value="' + this.groupId + '">').appendTo(this.$form);
+			$fieldsContainer = $('<div class="fields"/>').appendTo(this.$form);
 
-				$fieldsContainer.html(response.html);
-				Craft.initUiElements($fieldsContainer);
+			$fieldsContainer.html(response.data.html);
+			Craft.initUiElements($fieldsContainer);
 
-                var $footer = $('<div class="hud-footer"/>').appendTo(this.$form),
-                    $buttonsContainer = $('<div class="buttons right"/>').appendTo($footer);
+            var $footer = $('<div class="hud-footer"/>').appendTo(this.$form),
+                $buttonsContainer = $('<div class="buttons right"/>').appendTo($footer);
 
-                this.$cancelBtn = $('<div class="btn">' + Craft.t('field-manager', 'Cancel') + '</div>').appendTo($buttonsContainer);
-                this.$saveBtn = $('<input class="btn submit" type="submit" value="' + Craft.t('field-manager', 'Clone') + '"/>').appendTo($buttonsContainer);
-                this.$spinner = $('<div class="spinner hidden"/>').appendTo($buttonsContainer);
+            this.$cancelBtn = $('<div class="btn">' + Craft.t('field-manager', 'Cancel') + '</div>').appendTo($buttonsContainer);
+            this.$saveBtn = $('<input class="btn submit" type="submit" value="' + Craft.t('field-manager', 'Clone') + '"/>').appendTo($buttonsContainer);
+            this.$spinner = $('<div class="spinner hidden"/>').appendTo($buttonsContainer);
 
-                $hudContents = $hudContents.add(this.$form);
+            $hudContents = $hudContents.add(this.$form);
 
-				this.hud = new Garnish.HUD(this.$element, $hudContents, {
-					bodyClass: 'body',
-					closeOtherHUDs: false
-				});
+			this.hud = new Garnish.HUD(this.$element, $hudContents, {
+				bodyClass: 'body',
+				closeOtherHUDs: false
+			});
 
-				this.hud.on('hide', $.proxy(function() {
-					delete this.hud;
-				}, this));
+			this.hud.on('hide', $.proxy(function() {
+				delete this.hud;
+			}, this));
 
-				this.addListener(this.$saveBtn, 'activate', 'saveGroupField');
-				this.addListener(this.$cancelBtn, 'activate', 'closeHud');
+			this.addListener(this.$saveBtn, 'activate', 'saveGroupField');
+			this.addListener(this.$cancelBtn, 'activate', 'closeHud');
 
-				new Craft.FieldManager.HandleGeneratorWithSuffix('#name', '#prefix');
-			}
+			new Craft.FieldManager.HandleGeneratorWithSuffix('#name', '#prefix');
 		},
 
 		saveGroupField: function(ev) {
@@ -84,24 +85,25 @@ $(function() {
 
             var data = this.hud.$body.serialize();
 
-			Craft.postActionRequest('field-manager/base/clone-group', data, $.proxy(function(response, textStatus) {
-				this.$spinner.addClass('hidden');
+            Craft.sendActionRequest('POST', 'field-manager/base/clone-group', { data })
+                .then((response) => {
+                    Craft.cp.displayNotice(Craft.t('field-manager', 'Group cloned.'));
+                    location.href = Craft.getUrl('field-manager');
 
-				if (response.error) {
-					Garnish.shake(this.hud.$hud);
+                    this.onFadeOut();
+                })
+                .catch(({response}) => {
+                    Garnish.shake(this.hud.$hud);
 
-					$.each(response.error, function(index, value) {
-						Craft.cp.displayError(value);
-					});
-				} else if (response.success) {
-					Craft.cp.displayNotice(Craft.t('field-manager', 'Group cloned.'));
-					location.href = Craft.getUrl('field-manager');
-
-					this.onFadeOut();
-				} else {
-					Craft.cp.displayError(Craft.t('field-manager', 'Could not clone group'));
-				}
-			}, this));
+                    if (response && response.data && response.data.message) {
+                        Craft.cp.displayError(response.data.message);
+                    } else {
+                        Craft.cp.displayError();
+                    }
+                })
+                .finally(() => {
+                    this.$spinner.addClass('hidden');;
+                });
 		},
 
 		closeHud: function() {
@@ -132,43 +134,44 @@ $(function() {
 				groupId: this.groupId,
 			};
 
-			Craft.postActionRequest('field-manager/base/get-group-modal-body', data, $.proxy(this, 'showHud'));
+            Craft.sendActionRequest('POST', 'field-manager/base/get-group-modal-body', { data })
+                .then((response) => {
+                    this.showHud(response);
+                });
 		},
 
-		showHud: function(response, textStatus) {
+		showHud: function(response) {
 			this.$element.removeClass('loading');
 
-			if (response.success) {
-				var $hudContents = $();
+			var $hudContents = $();
 
-				this.$form = $('<div/>');
-				$('<input type="hidden" name="groupId" value="' + this.groupId + '">').appendTo(this.$form);
-				$fieldsContainer = $('<div class="fields"/>').appendTo(this.$form);
+			this.$form = $('<div/>');
+			$('<input type="hidden" name="groupId" value="' + this.groupId + '">').appendTo(this.$form);
+			$fieldsContainer = $('<div class="fields"/>').appendTo(this.$form);
 
-				$fieldsContainer.html(response.html);
-				Craft.initUiElements($fieldsContainer);
+			$fieldsContainer.html(response.data.html);
+			Craft.initUiElements($fieldsContainer);
 
-				var $footer = $('<div class="hud-footer"/>').appendTo(this.$form),
-                    $buttonsContainer = $('<div class="buttons right"/>').appendTo($footer);
+			var $footer = $('<div class="hud-footer"/>').appendTo(this.$form),
+                $buttonsContainer = $('<div class="buttons right"/>').appendTo($footer);
 
-                this.$cancelBtn = $('<div class="btn">' + Craft.t('field-manager', 'Cancel') + '</div>').appendTo($buttonsContainer);
-                this.$saveBtn = $('<input class="btn submit" type="submit" value="' + Craft.t('field-manager', 'Save') + '"/>').appendTo($buttonsContainer);
-                this.$spinner = $('<div class="spinner hidden"/>').appendTo($buttonsContainer);
+            this.$cancelBtn = $('<div class="btn">' + Craft.t('field-manager', 'Cancel') + '</div>').appendTo($buttonsContainer);
+            this.$saveBtn = $('<input class="btn submit" type="submit" value="' + Craft.t('field-manager', 'Save') + '"/>').appendTo($buttonsContainer);
+            this.$spinner = $('<div class="spinner hidden"/>').appendTo($buttonsContainer);
 
-                $hudContents = $hudContents.add(this.$form);
+            $hudContents = $hudContents.add(this.$form);
 
-				this.hud = new Garnish.HUD(this.$element, $hudContents, {
-					bodyClass: 'body',
-					closeOtherHUDs: false
-				});
+			this.hud = new Garnish.HUD(this.$element, $hudContents, {
+				bodyClass: 'body',
+				closeOtherHUDs: false
+			});
 
-				this.hud.on('hide', $.proxy(function() {
-					delete this.hud;
-				}, this));
+			this.hud.on('hide', $.proxy(function() {
+				delete this.hud;
+			}, this));
 
-				this.addListener(this.$saveBtn, 'activate', 'saveGroupField');
-				this.addListener(this.$cancelBtn, 'activate', 'closeHud');
-			}
+			this.addListener(this.$saveBtn, 'activate', 'saveGroupField');
+			this.addListener(this.$cancelBtn, 'activate', 'closeHud');
 		},
 
 		saveGroupField: function(ev) {
@@ -178,19 +181,26 @@ $(function() {
 
 			var data = this.hud.$body.serialize();
 
-			Craft.postActionRequest('fields/save-group', data, $.proxy(function(response, textStatus) {
-				this.$spinner.addClass('hidden');
+            Craft.sendActionRequest('POST', 'fields/save-group', { data })
+            .then((response) => {
+                location.href = Craft.getUrl('field-manager');
 
-				if (textStatus == 'success' && response.success) {
-					location.href = Craft.getUrl('field-manager');
+                Craft.cp.displayNotice(Craft.t('field-manager', 'Field group updated.'));
 
-					Craft.cp.displayNotice(Craft.t('field-manager', 'Field group updated.'));
+                this.closeHud();
+            })
+            .catch(({response}) => {
+                Garnish.shake(this.hud.$hud);
 
-					this.closeHud();
-				} else {
-					Garnish.shake(this.hud.$hud);
-				}
-			}, this));
+                if (response && response.data && response.data.message) {
+                    Craft.cp.displayError(response.data.message);
+                } else {
+                    Craft.cp.displayError();
+                }
+            })
+            .finally(() => {
+                this.$spinner.addClass('hidden');
+            });
 		},
 
 		closeHud: function() {
@@ -246,18 +256,17 @@ $(function() {
 				groupId: this.groupId,
 			};
 
-			Craft.postActionRequest('field-manager/base/get-field-modal-body', data, $.proxy(function(response, textStatus) {
-				if (response.success) {
-					this.$body.html(response.html);
+            Craft.sendActionRequest('POST', 'field-manager/base/get-field-modal-body', { data })
+                .then((response) => {
+                    this.$body.html(response.data.html);
 
-                    Craft.appendHeadHtml(response.headHtml);
-                    Craft.appendBodyHtml(response.footHtml);
+                    Craft.appendHeadHtml(response.data.headHtml);
+                    Craft.appendBodyHtml(response.data.footHtml);
 
-					Craft.initUiElements(this.$body);
+                    Craft.initUiElements(this.$body);
 
-					new Craft.HandleGenerator('#name', '#handle');
-				}
-			}, this));
+                    new Craft.HandleGenerator('#name', '#handle');
+                });
 
 			this.base();
 		},
@@ -273,28 +282,28 @@ $(function() {
 		},
 
 		saveSettings: function() {
-			var params = this.$body.find('form').serializeObject();
-			params.fieldId = this.fieldId;
+			var data = this.$body.find('form').serializeObject();
+			data.fieldId = this.fieldId;
 
 			this.$footerSpinner.removeClass('hidden');
 
-			Craft.postActionRequest('field-manager/base/clone-field', params, $.proxy(function(response, textStatus) {
-				this.$footerSpinner.addClass('hidden');
+            Craft.sendActionRequest('POST', 'field-manager/base/clone-field', { data })
+                .then((response) => {
+                    Craft.cp.displayNotice(Craft.t('field-manager', 'Field cloned.'));
+                    location.href = Craft.getUrl('field-manager');
 
-				if (response.error) {
-					$.each(response.error, function(index, value) {
-						Craft.cp.displayError(value);
-					});
-				} else if (response.success) {
-					Craft.cp.displayNotice(Craft.t('field-manager', 'Field cloned.'));
-					location.href = Craft.getUrl('field-manager');
-
-					this.onFadeOut();
-				} else {
-					Craft.cp.displayError(Craft.t('field-manager', 'Could not clone field'));
-				}
-
-			}, this));
+                    this.onFadeOut();
+                })
+                .catch(({response}) => {
+                    if (response && response.data && response.data.message) {
+                        Craft.cp.displayError(response.data.message);
+                    } else {
+                        Craft.cp.displayError();
+                    }
+                })
+                .finally(() => {
+                    this.$footerSpinner.addClass('hidden');
+                });
 
 			this.removeListener(this.$saveBtn, 'click');
 			this.removeListener(this.$cancelBtn, 'click');
@@ -355,21 +364,20 @@ $(function() {
 				groupId: this.groupId,
 			};
 
-			Craft.postActionRequest('field-manager/base/get-field-modal-body', data, $.proxy(function(response, textStatus) {
-                if (response.success) {
-					this.$body.html(response.html);
+            Craft.sendActionRequest('POST', 'field-manager/base/get-field-modal-body', { data })
+                .then((response) => {
+                    this.$body.html(response.data.html);
 
-                    Craft.appendHeadHtml(response.headHtml);
-                    Craft.appendBodyHtml(response.footHtml);
+                    Craft.appendHeadHtml(response.data.headHtml);
+                    Craft.appendBodyHtml(response.data.footHtml);
 
-					Craft.initUiElements(this.$body);
+                    Craft.initUiElements(this.$body);
 
                     this.$form = this.$body.find('form');
 
                     // Bind an empty event to the submit handler. This is needed for Table fields which rely on this event
                     this.addListener(this.$form, 'submit', 'onFormSubmit');
-				}
-			}, this));
+                });
 
 			this.base();
 		},
@@ -390,28 +398,24 @@ $(function() {
 
 			this.$footerSpinner.removeClass('hidden');
             
-            var params = this.$form.serialize();
+            var data = this.$form.serialize();
 
-			Craft.postActionRequest('field-manager/base/save-field', params, $.proxy(function(response, textStatus) {
-				this.$footerSpinner.addClass('hidden');
+            Craft.sendActionRequest('POST', 'field-manager/base/save-field', { data })
+                .then((response) => {
+                    Craft.cp.displayNotice(Craft.t('field-manager', 'Field updated.'));
+                    location.href = Craft.getUrl('field-manager');
 
-				if (response.error) {
-					Garnish.shake(this.$container);
+                    this.onFadeOut();
+                })
+                .catch(({response}) => {
+                    Garnish.shake(this.$container);
 
-					$.each(response.error, function(index, value) {
-						Craft.cp.displayError(value);
-					});
-				} else if (response.success) {
-					Craft.cp.displayNotice(Craft.t('field-manager', 'Field updated.'));
-					location.href = Craft.getUrl('field-manager');
-
-					this.onFadeOut();
-				} else {
-					Garnish.shake(this.$container);
-					Craft.cp.displayError(Craft.t('field-manager', 'Could not update field'));
-				}
-
-			}, this));
+                    if (response && response.data && response.data.message) {
+                        Craft.cp.displayError(response.data.message);
+                    } else {
+                        Craft.cp.displayError();
+                    }
+                });
 
 			this.removeListener(this.$saveBtn, 'click');
 			this.removeListener(this.$cancelBtn, 'click');

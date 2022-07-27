@@ -52,27 +52,23 @@ $(function() {
                 name: name
             };
 
-            Craft.postActionRequest('fields/save-group', data, $.proxy(function(response, textStatus) {
-                if (textStatus == 'success') {
-                    if (response.success) {
-                        $('#fieldmapping select#groupAll')
-                            .append($('<option value="'+response.group.id + '">' + response.group.name + '</option>'))
-                            .val(response.group.id);
-                        $('#fieldmapping .groupSelect select')
-                            .append($('<option value="'+response.group.id + '">' + response.group.name + '</option>'))
-                            .val(response.group.id);
-                    } else if (response.errors) {
-                        var errors = [];
-                        for (var attribute in response.errors) {
-                            errors = errors.concat(response.errors[attribute]);
-                        }
-                        alert(Craft.t('field-manager', 'Could not create the group:')+"\n\n"+errors.join("\n"));
+            Craft.sendActionRequest('POST', 'fields/save-group', { data })
+                .then((response) => {
+                    $('#fieldmapping select#groupAll')
+                        .append($('<option value="' + response.data.group.id + '">' + response.data.group.name + '</option>'))
+                        .val(response.data.group.id);
+                    
+                    $('#fieldmapping .groupSelect select')
+                        .append($('<option value="' + response.data.group.id + '">' + response.data.group.name + '</option>'))
+                        .val(response.data.group.id);
+                })
+                .catch(({response}) => {
+                    if (response && response.data && response.data.message) {
+                        Craft.cp.displayError(response.data.message);
                     } else {
                         Craft.cp.displayError();
                     }
-                }
-
-            }, this));
+                });
         }
     });
 
@@ -182,15 +178,17 @@ $(function() {
                 id: $selectedGroup.data('groupid')
             };
 
-            Craft.postActionRequest('fields/delete-group', data, $.proxy(function(response, textStatus) {
-                if (textStatus == 'success') {
-                    if (response.success) {
-                        location.href = Craft.getUrl('field-manager');
+            Craft.sendActionRequest('POST', 'fields/delete-group', { data })
+                .then((response) => {
+                    location.href = Craft.getUrl('field-manager');
+                })
+                .catch(({response}) => {
+                    if (response && response.data && response.data.message) {
+                        Craft.cp.displayError(response.data.message);
                     } else {
                         Craft.cp.displayError();
                     }
-                }
-            }, this));
+                });
         }
     });
 

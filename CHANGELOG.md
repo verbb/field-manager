@@ -4,11 +4,16 @@
 
 ### Added
 - Add checks for registering events for performance.
+- Add English translations.
 
 ### Changed
 - Now requires PHP `8.0.2+`.
 - Now requires Craft `4.0.0+`.
 - Rename base plugin methods.
+- Replace deprecated `Craft.postActionRequest()` for JS.
+
+### Fixed
+- Fix an error when cloning a Matrix and Super Table combination.
 
 ## 2.2.5 - 2021-07-10
 

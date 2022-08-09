@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.2 - 2022-08-09
+
+### Fixed
+- Fix an error when cloning Neo fields.
+
 ## 3.0.1 - 2022-07-27
 
 ### Added

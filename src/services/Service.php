@@ -211,6 +211,7 @@ class Service extends Component
 
             foreach ($blockType->fieldLayout->getTabs() as $oldTab) {
                 $tab = new FieldLayoutTab();
+                $tab->layout = $layout;
                 $tab->name = $oldTab->name;
                 $tab->sortOrder = $oldTab->sortOrder;
                 $tab->elements = $oldTab->elements;
@@ -230,6 +231,8 @@ class Service extends Component
                 'childBlocks' => is_string($blockType->childBlocks) ? Json::decodeIfJson($blockType->childBlocks) : $blockType->childBlocks,
                 'topLevel' => (bool)$blockType->topLevel,
                 'fieldLayout' => $layout,
+                'conditions' => $blockType->conditions,
+                'description' => $blockType->description,
             ];
         }
 

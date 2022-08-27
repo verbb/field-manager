@@ -253,7 +253,7 @@ class BaseController extends Controller
 
         $field = $fieldsService->createField([
             'type' => $type,
-            'id' => $request->getBodyParam('fieldId'),
+            'id' => (int)$request->getBodyParam('fieldId') ?: null,
             'groupId' => $request->getRequiredBodyParam('group'),
             'name' => $request->getBodyParam('name'),
             'handle' => $request->getBodyParam('handle'),

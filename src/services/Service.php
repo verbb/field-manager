@@ -224,15 +224,19 @@ class Service extends Component
             $blockTypes['new' . $i] = [
                 'name' => $blockType->name,
                 'handle' => $blockType->handle,
-                'sortOrder' => $blockType->sortOrder,
+                'description' => $blockType->description,
+                'enabled' => $blockType->enabled,
+                'minBlocks' => $blockType->minBlocks,
                 'maxBlocks' => $blockType->maxBlocks,
+                'minSiblingBlocks' => $blockType->minSiblingBlocks,
                 'maxSiblingBlocks' => $blockType->maxSiblingBlocks,
+                'minChildBlocks' => $blockType->minChildBlocks,
                 'maxChildBlocks' => $blockType->maxChildBlocks,
                 'childBlocks' => is_string($blockType->childBlocks) ? Json::decodeIfJson($blockType->childBlocks) : $blockType->childBlocks,
                 'topLevel' => (bool)$blockType->topLevel,
                 'fieldLayout' => $layout,
                 'conditions' => $blockType->conditions,
-                'description' => $blockType->description,
+                'sortOrder' => $blockType->sortOrder,
             ];
         }
 

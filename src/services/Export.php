@@ -161,9 +161,22 @@ class Export extends Component
             ];
 
             $fieldCount = 1;
-            foreach ($blockType->fields as $blockField) {
+            foreach ($blockType->getCustomFields() as $blockField) {
                 // Case for nested Matrix
-                $blockField::class == Matrix::class ? $this->processMatrix($blockField) : $blockField->settings;
+                if ($blockField::class == Matrix::class) {
+                    $settings = $this->processMatrix($blockField);
+                } else {
+                    $settings = $blockField->settings;
+                }
+
+                $width = 100;
+                $fieldLayout = $blockType->getFieldLayout();
+                $fieldLayoutElements = $fieldLayout->getTabs()[0]->elements ?? [];
+
+                if ($fieldLayoutElements) {
+                    $fieldLayoutElement = ArrayHelper::firstWhere($fieldLayoutElements, 'field.uid', $blockField->uid);
+                    $width = (int)($fieldLayoutElement->width ?? 0) ?: 100;
+                }
 
                 $fieldSettings['blockTypes']['new' . $blockCount]['fields']['new' . $fieldCount] = [
                     'name' => $blockField->name,
@@ -174,7 +187,8 @@ class Export extends Component
                     'translationMethod' => $blockField->translationMethod,
                     'translationKeyFormat' => $blockField->translationKeyFormat,
                     'type' => $blockField::class,
-                    'typesettings' => $blockField->settings,
+                    'typesettings' => $settings,
+                    'width' => $width,
                 ];
 
                 $fieldCount++;

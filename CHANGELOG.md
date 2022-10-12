@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.4 - 2022-10-13
+
+### Fixed
+- Fix an error when exporting Super Table fields.
+
 ## 3.0.3 - 2022-10-12
 
 ### Fixed

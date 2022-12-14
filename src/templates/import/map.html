@@ -240,15 +240,17 @@
             </td>
         </tr>
 
-        {% set fieldLayout = craft.fieldManager.createFieldLayoutFromConfig(blockType.fieldLayout) %}
+        {% if blockType.fieldLayout is not null %}
+            {% set fieldLayout = craft.fieldManager.createFieldLayoutFromConfig(blockType.fieldLayout) %}
 
-        {% for blockTypeTabIndex, blockTypeFieldTab in fieldLayout.getTabs() %}
-            {% for fieldLayoutElementIndex, fieldLayoutElement in blockTypeFieldTab.elements %}
-                {% namespace 'settings[blockTypes][new' ~ blockIndex ~ '][fieldLayout][' ~ blockTypeTabIndex ~ '][' ~ fieldLayoutElementIndex ~ ']' %}
-                    {{ fieldManagerMacros.nestedFieldLayoutElement(fieldLayoutElement, index, blockTypeId, true) }}
-                {% endnamespace %}
+            {% for blockTypeTabIndex, blockTypeFieldTab in fieldLayout.getTabs() %}
+                {% for fieldLayoutElementIndex, fieldLayoutElement in blockTypeFieldTab.elements %}
+                    {% namespace 'settings[blockTypes][new' ~ blockIndex ~ '][fieldLayout][' ~ blockTypeTabIndex ~ '][' ~ fieldLayoutElementIndex ~ ']' %}
+                        {{ fieldManagerMacros.nestedFieldLayoutElement(fieldLayoutElement, index, blockTypeId, true) }}
+                    {% endnamespace %}
+                {% endfor %}
             {% endfor %}
-        {% endfor %}
+        {% endif %}
     {% endfor %}
 {% endmacro %}
 

@@ -2,6 +2,8 @@
 {% import '_includes/forms' as forms %}
 {% import 'verbb-base/_macros' as macros %}
 
+{% requireAdmin %}
+
 {% set crumbs = [
     { label: 'Field Manager' | t('field-manager'), url: url('field-manager') },
     { label: 'Settings' | t('app'), url: url('field-manager/settings') }

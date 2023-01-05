@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.5 - 2023-01-05
+
+### Fixed
+- Fix Audit items showing field layouts with no fields.
+- Fix an error when running Audit on elements where their plugin is disabled, but installed.
+- Fix error when importing Neo block type with null field layout. (thanks @ttempleton).
+
 ## 3.0.4 - 2022-10-13
 
 ### Fixed

@@ -18,6 +18,8 @@ use craft\commerce\elements\Order;
 use craft\commerce\elements\Product;
 use craft\commerce\elements\Variant;
 
+use Throwable;
+
 class Audit extends Component
 {
     // Public Methods
@@ -25,6 +27,8 @@ class Audit extends Component
 
     public function getElementInfo(): array
     {
+        $elementInfo = [];
+
         $fieldLayouts = (new Query())
             ->select(['id', 'type'])
             ->from('{{%fieldlayouts}}')
@@ -34,73 +38,75 @@ class Audit extends Component
         $fields = Craft::$app->getFields();
         $elements = Craft::$app->getElements();
 
-        $elementInfo = [];
-
         foreach ($fieldLayouts as $fieldLayout) {
-            if (!class_exists($fieldLayout['type'])) {
-                continue;
-            }
+            try {
+                if (!class_exists($fieldLayout['type'])) {
+                    continue;
+                }
 
-            $elementType = $fieldLayout['type'];
-            $elementTypeDisplay = $fieldLayout['type']::displayName();
-            $fieldLayout = $fields->getLayoutById($fieldLayout['id']);
+                $elementType = $fieldLayout['type'];
+                $elementTypeDisplay = $fieldLayout['type']::displayName();
+                $fieldLayout = $fields->getLayoutById($fieldLayout['id']);
 
-            if (!$fieldLayout) {
-                continue;
-            }
+                if (!$fieldLayout) {
+                    continue;
+                }
 
-            if ($elementType === Asset::class) {
-                $groupName = Craft::t('app', 'Asset Volumes');
+                if ($elementType === Asset::class) {
+                    $groupName = Craft::t('app', 'Asset Volumes');
 
-                $elementInfo[$groupName][] = $this->getAssetVolumeInfo($fieldLayout);
-            }
+                    $elementInfo[$groupName][] = $this->getAssetVolumeInfo($fieldLayout);
+                }
 
-            if ($elementType === Category::class) {
-                $groupName = Craft::t('app', 'Category Groups');
+                if ($elementType === Category::class) {
+                    $groupName = Craft::t('app', 'Category Groups');
 
-                $elementInfo[$groupName][] = $this->getCategoryGroupInfo($fieldLayout);
-            }
+                    $elementInfo[$groupName][] = $this->getCategoryGroupInfo($fieldLayout);
+                }
 
-            if ($elementType === Entry::class) {
-                $groupName = Craft::t('app', 'Entry Types');
+                if ($elementType === Entry::class) {
+                    $groupName = Craft::t('app', 'Entry Types');
 
-                $elementInfo[$groupName][] = $this->getEntryTypeInfo($fieldLayout);
-            }
+                    $elementInfo[$groupName][] = $this->getEntryTypeInfo($fieldLayout);
+                }
 
-            if ($elementType === GlobalSet::class) {
-                $groupName = Craft::t('app', 'Global Sets');
+                if ($elementType === GlobalSet::class) {
+                    $groupName = Craft::t('app', 'Global Sets');
 
-                $elementInfo[$groupName][] = $this->getGlobalSetInfo($fieldLayout);
-            }
+                    $elementInfo[$groupName][] = $this->getGlobalSetInfo($fieldLayout);
+                }
 
-            if ($elementType === Tag::class) {
-                $groupName = Craft::t('app', 'Tag Groups');
+                if ($elementType === Tag::class) {
+                    $groupName = Craft::t('app', 'Tag Groups');
 
-                $elementInfo[$groupName][] = $this->getTagGroupInfo($fieldLayout);
-            }
+                    $elementInfo[$groupName][] = $this->getTagGroupInfo($fieldLayout);
+                }
 
-            if ($elementType === User::class) {
-                $groupName = Craft::t('app', 'Users');
+                if ($elementType === User::class) {
+                    $groupName = Craft::t('app', 'Users');
 
-                $elementInfo[$groupName][] = $this->getUserInfo($fieldLayout);
-            }
+                    $elementInfo[$groupName][] = $this->getUserInfo($fieldLayout);
+                }
 
-            if ($elementType === Order::class) {
-                $groupName = Craft::t('app', 'Orders');
+                if ($elementType === Order::class) {
+                    $groupName = Craft::t('app', 'Orders');
 
-                $elementInfo[$groupName][] = $this->getOrderInfo($fieldLayout);
-            }
+                    $elementInfo[$groupName][] = $this->getOrderInfo($fieldLayout);
+                }
 
-            if ($elementType === Product::class) {
-                $groupName = Craft::t('app', 'Product Types');
+                if ($elementType === Product::class) {
+                    $groupName = Craft::t('app', 'Product Types');
 
-                $elementInfo[$groupName][] = $this->getProductTypeInfo($fieldLayout);
-            }
+                    $elementInfo[$groupName][] = $this->getProductTypeInfo($fieldLayout);
+                }
 
-            if ($elementType === Variant::class) {
-                $groupName = Craft::t('app', 'Variants');
+                if ($elementType === Variant::class) {
+                    $groupName = Craft::t('app', 'Variants');
 
-                $elementInfo[$groupName][] = $this->getVariantInfo($fieldLayout);
+                    $elementInfo[$groupName][] = $this->getVariantInfo($fieldLayout);
+                }
+            } catch (Throwable $e) {
+                // When an element is registered, but the plugin disabled, a fatal error will be thrown, so ignore.
             }
         }
 

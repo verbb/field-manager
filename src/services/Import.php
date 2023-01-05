@@ -247,6 +247,10 @@ class Import extends Component
 
         if (isset($settings['blockTypes'])) {
             foreach ($settings['blockTypes'] as $i => $blockType) {
+                if ($blockType['fieldLayout'] === null) {
+                    continue;
+                }
+
                 $fieldLayout = FieldManager::$plugin->getService()->createFieldLayoutFromConfig($blockType['fieldLayout']);
 
                 // Have to save it now, and apply the ID to the blockType, as Neo won't save it for us

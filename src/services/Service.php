@@ -48,7 +48,9 @@ class Service extends Component
 
         if (get_class($field) == 'benf\neo\Field') {
             $blockTypes = $this->processCloneNeo($originField);
+            $groups = $this->processCloneNeoGroups($originField);
             $field->blockTypes = $blockTypes;
+            $field->groups = $groups;
 
             // Reset the keys so we can get iterate
             $blockTypes = array_values($blockTypes);
@@ -241,6 +243,21 @@ class Service extends Component
         }
 
         return $blockTypes;
+    }
+
+    public function processCloneNeoGroups(FieldInterface $originField): array
+    {
+        $groups = [];
+
+        foreach ($originField->groups as $i => $group) {
+            $groups['new' . $i] = [
+                'name' => $group->name,
+                'sortOrder' => $group->sortOrder,
+                'alwaysShowDropdown' => $group->alwaysShowDropdown,
+            ];
+        }
+
+        return $groups;
     }
 
     public function processCloneSuperTable(FieldInterface $originField): array

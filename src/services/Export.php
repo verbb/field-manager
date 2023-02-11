@@ -122,6 +122,7 @@ class Export extends Component
             $fieldSettings['groups'][] = [
                 'name' => $group->name,
                 'sortOrder' => $group->sortOrder,
+                'alwaysShowDropdown' => $group->alwaysShowDropdown,
             ];
         }
 
@@ -135,13 +136,22 @@ class Export extends Component
             $fieldSettings['blockTypes']['new' . ($i + 1)] = [
                 'name' => $blockType->name,
                 'handle' => $blockType->handle,
-                'sortOrder' => (int)$blockType->sortOrder,
+                'description' => $blockType->description,
+                'ignorePermissions' => (bool)$blockType->ignorePermissions,
+                'enabled' => (bool)$blockType->enabled,
+                'iconId' => $blockType->iconId,
+                'minBlocks' => $blockType->minBlocks,
                 'maxBlocks' => (int)$blockType->maxBlocks,
+                'minSiblingBlocks' => $blockType->minSiblingBlocks,
                 'maxSiblingBlocks' => (int)$blockType->maxSiblingBlocks,
+                'minChildBlocks' => (int)$blockType->minChildBlocks,
                 'maxChildBlocks' => (int)$blockType->maxChildBlocks,
                 'childBlocks' => $childBlocks,
+                'groupChildBlockTypes' => (bool)$blockType->groupChildBlockTypes,
                 'topLevel' => (bool)$blockType->topLevel,
                 'fieldLayout' => $blockType->fieldLayout->getConfig(),
+                'conditions' => $blockType->conditions,
+                'sortOrder' => (int)$blockType->sortOrder,
             ];
         }
 

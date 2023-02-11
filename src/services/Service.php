@@ -48,7 +48,9 @@ class Service extends Component
 
         if (get_class($field) == 'benf\neo\Field') {
             $blockTypes = $this->processCloneNeo($originField);
+            $groups = $this->processCloneNeoGroups($originField);
             $field->blockTypes = $blockTypes;
+            $field->groups = $groups;
 
             // Reset the keys so we can get iterate
             $blockTypes = array_values($blockTypes);
@@ -225,7 +227,9 @@ class Service extends Component
                 'name' => $blockType->name,
                 'handle' => $blockType->handle,
                 'description' => $blockType->description,
+                'ignorePermissions' => $blockType->ignorePermissions,
                 'enabled' => $blockType->enabled,
+                'iconId' => $blockType->iconId,
                 'minBlocks' => $blockType->minBlocks,
                 'maxBlocks' => $blockType->maxBlocks,
                 'minSiblingBlocks' => $blockType->minSiblingBlocks,
@@ -233,6 +237,7 @@ class Service extends Component
                 'minChildBlocks' => $blockType->minChildBlocks,
                 'maxChildBlocks' => $blockType->maxChildBlocks,
                 'childBlocks' => is_string($blockType->childBlocks) ? Json::decodeIfJson($blockType->childBlocks) : $blockType->childBlocks,
+                'groupChildBlockTypes' => $blockType->groupChildBlockTypes,
                 'topLevel' => (bool)$blockType->topLevel,
                 'fieldLayout' => $layout,
                 'conditions' => $blockType->conditions,
@@ -241,6 +246,21 @@ class Service extends Component
         }
 
         return $blockTypes;
+    }
+
+    public function processCloneNeoGroups(FieldInterface $originField): array
+    {
+        $groups = [];
+
+        foreach ($originField->groups as $i => $group) {
+            $groups['new' . $i] = [
+                'name' => $group->name,
+                'sortOrder' => $group->sortOrder,
+                'alwaysShowDropdown' => $group->alwaysShowDropdown,
+            ];
+        }
+
+        return $groups;
     }
 
     public function processCloneSuperTable(FieldInterface $originField): array

@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.0.6 - 2023-05-27
+
+### Changed
+- Only admins are now allowed to access plugin settings.
+
+### Fixed
+- Fix Neo groups being moved to clone field instead of cloned. (thanks @ttempleton).
+- Export/clone new Neo properties up to 3.6.0. (thanks @ttempleton).
+
 ## 3.0.5 - 2023-01-05
 
 ### Fixed

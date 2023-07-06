@@ -187,32 +187,6 @@
       "rFN" : 0,
       "uCM" : 0
     },
-    "\/docs\/screenshots\/import.png" : {
-      "ft" : 32768,
-      "iS" : 311585,
-      "oA" : 0,
-      "oAP" : "\/docs\/screenshots\/import.png",
-      "oF" : 0,
-      "oIPL" : 0,
-      "opt" : 0,
-      "oT" : 1,
-      "ou" : "lpckwebp-none",
-      "q" : 100,
-      "rq" : 75
-    },
-    "\/docs\/screenshots\/main.png" : {
-      "ft" : 32768,
-      "iS" : 311491,
-      "oA" : 0,
-      "oAP" : "\/docs\/screenshots\/main.png",
-      "oF" : 0,
-      "oIPL" : 0,
-      "opt" : 0,
-      "oT" : 1,
-      "ou" : "lpckwebp-none",
-      "q" : 100,
-      "rq" : 75
-    },
     "\/LICENSE.md" : {
       "cB" : 0,
       "cS" : 0,

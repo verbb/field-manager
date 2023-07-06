@@ -2,6 +2,7 @@
 namespace verbb\fieldmanager\services;
 
 use verbb\fieldmanager\FieldManager;
+use verbb\fieldmanager\helpers\Plugin;
 use verbb\fieldmanager\models\Settings;
 
 use Craft;
@@ -16,6 +17,7 @@ use craft\models\FieldLayoutTab;
 
 use yii\base\Component;
 
+use benf\neo\Field as NeoField;
 use benf\neo\elements\Block;
 
 use verbb\supertable\fields\SuperTableField;
@@ -42,27 +44,31 @@ class Service extends Component
             $field->blockTypes = $this->processCloneMatrix($originField);
         }
 
-        if ($field instanceof SuperTableField) {
-            $field->blockTypes = $this->processCloneSuperTable($originField);
+        if (Plugin::isPluginInstalledAndEnabled('super-table')) {
+            if ($field instanceof SuperTableField) {
+                $field->blockTypes = $this->processCloneSuperTable($originField);
+            }
         }
 
-        if (get_class($field) == 'benf\neo\Field') {
-            $blockTypes = $this->processCloneNeo($originField);
-            $groups = $this->processCloneNeoGroups($originField);
-            $field->blockTypes = $blockTypes;
-            $field->groups = $groups;
+        if (Plugin::isPluginInstalledAndEnabled('neo')) {
+            if ($field instanceof NeoField) {
+                $blockTypes = $this->processCloneNeo($originField);
+                $groups = $this->processCloneNeoGroups($originField);
+                $field->blockTypes = $blockTypes;
+                $field->groups = $groups;
 
-            // Reset the keys so we can get iterate
-            $blockTypes = array_values($blockTypes);
+                // Reset the keys so we can get iterate
+                $blockTypes = array_values($blockTypes);
 
-            // Have to re-assign the fieldlayout after the blocktypes have been set - ugh.
-            // This is because Neo's `setBlockTypes()` relies on POST data, which we don't have here.
-            // So create the blocktype as normal, filling in all other info, then populate the fieldLayout now.
-            foreach ($field->blockTypes as $key => $blockType) {
-                $fieldLayout = $blockTypes[$key]['fieldLayout'] ?? null;
+                // Have to re-assign the fieldlayout after the blocktypes have been set - ugh.
+                // This is because Neo's `setBlockTypes()` relies on POST data, which we don't have here.
+                // So create the blocktype as normal, filling in all other info, then populate the fieldLayout now.
+                foreach ($field->blockTypes as $key => $blockType) {
+                    $fieldLayout = $blockTypes[$key]['fieldLayout'] ?? null;
 
-                if ($fieldLayout) {
-                    $field->blockTypes[$key]->setFieldLayout($fieldLayout);
+                    if ($fieldLayout) {
+                        $field->blockTypes[$key]->setFieldLayout($fieldLayout);
+                    }
                 }
             }
         }
@@ -104,8 +110,10 @@ class Service extends Component
                 $field->blockTypes = $this->processCloneMatrix($originField);
             }
 
-            if ($field instanceof SuperTableField) {
-                $field->blockTypes = $this->processCloneSuperTable($originField);
+            if (Plugin::isPluginInstalledAndEnabled('super-table')) {
+                if ($field instanceof SuperTableField) {
+                    $field->blockTypes = $this->processCloneSuperTable($originField);
+                }
             }
 
             if (!FieldManager::$plugin->getService()->cloneField($field, $originField)) {

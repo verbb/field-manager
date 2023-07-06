@@ -1,6 +1,8 @@
 <?php
 namespace verbb\fieldmanager\services;
 
+use verbb\fieldmanager\helpers\Plugin;
+
 use Craft;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
@@ -12,6 +14,7 @@ use verbb\supertable\SuperTable;
 use verbb\supertable\fields\SuperTableField;
 
 use benf\neo\Plugin as Neo;
+use benf\neo\Field as NeoField;
 
 class Export extends Component
 {
@@ -38,16 +41,20 @@ class Export extends Component
                     'settings' => $field->settings,
                 ];
 
-                if (get_class($field) == 'benf\neo\Field') {
-                    $newField['settings'] = $this->processNeo($field);
-                }
-
                 if ($field instanceof Matrix) {
                     $newField['settings'] = $this->processMatrix($field);
                 }
 
-                if ($field instanceof SuperTableField) {
-                    $newField['settings'] = $this->processSuperTable($field);
+                if (Plugin::isPluginInstalledAndEnabled('super-table')) {
+                    if ($field instanceof SuperTableField) {
+                        $newField['settings'] = $this->processSuperTable($field);
+                    }
+                }
+
+                if (Plugin::isPluginInstalledAndEnabled('neo')) {
+                    if ($field instanceof NeoField) {
+                        $newField['settings'] = $this->processNeo($field);
+                    }
                 }
 
                 $fields[] = $newField;

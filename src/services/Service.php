@@ -189,7 +189,7 @@ class Service extends Component
                     'searchable' => (bool)$blockField['searchable'],
                     'translationMethod' => $blockField['translationMethod'],
                     'translationKeyFormat' => $blockField['translationKeyFormat'],
-                    'typesettings' => $blockField['settings'],
+                    'typesettings' => Json::decode(Json::encode($blockField['settings'])),
                     'width' => $width,
                 ];
 
@@ -292,7 +292,7 @@ class Service extends Component
                     'searchable' => (bool)$blockField['searchable'],
                     'translationMethod' => $blockField['translationMethod'],
                     'translationKeyFormat' => $blockField['translationKeyFormat'],
-                    'typesettings' => $blockField['settings'],
+                    'typesettings' => Json::decode(Json::encode($blockField['settings'])),
                 ];
 
                 if ($blockField::class == Matrix::class) {

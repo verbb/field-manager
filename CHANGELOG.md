@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.0.7 - 2023-07-11
+
+### Added
+- Add better guards for Super Table and Neo fields, when plugin not installed.
+
+### Fixed
+- Fix an issue where some fields in Matrix and Super Table fields weren’t having their settings created correctly.
+
 ## 3.0.6 - 2023-05-27
 
 ### Changed

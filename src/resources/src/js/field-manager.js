@@ -102,7 +102,7 @@ $(function() {
                     }
                 })
                 .finally(() => {
-                    this.$spinner.addClass('hidden');;
+                    this.$spinner.addClass('hidden');
                 });
 		},
 
@@ -415,6 +415,9 @@ $(function() {
                     } else {
                         Craft.cp.displayError();
                     }
+                })
+                .finally(() => {
+                    this.$footerSpinner.addClass('hidden');
                 });
 
 			this.removeListener(this.$saveBtn, 'click');

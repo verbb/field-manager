@@ -216,10 +216,10 @@ class BaseController extends Controller
         $originField = $fieldsService->getFieldById($fieldId);
 
         if (!FieldManager::$plugin->getService()->cloneField($field, $originField)) {
-            return $this->asJson(['success' => false, 'error' => $field->getErrors()]);
+            return $this->asFailure(Json::encode($field->getErrors()));
         }
 
-        return $this->asJson(['success' => true, 'fieldId' => $field->id]);
+        return $this->asSuccess(null, ['fieldId' => $field->id]);
     }
 
     public function actionCloneGroup(): Response
@@ -236,10 +236,10 @@ class BaseController extends Controller
         $originGroup = Craft::$app->getFields()->getGroupById($groupId);
 
         if (!FieldManager::$plugin->getService()->cloneGroup($group, $prefix, $originGroup)) {
-            return $this->asJson(['success' => false, 'error' => $group->getErrors()]);
+            return $this->asFailure(Json::encode($group->getErrors()));
         }
 
-        return $this->asJson(['success' => true, 'groupId' => $group->id]);
+        return $this->asSuccess(null, ['groupId' => $group->id]);
     }
 
     // From Craft's native saveField, which doesn't really support Ajax...
@@ -265,10 +265,10 @@ class BaseController extends Controller
         ]);
 
         if (!$fieldsService->saveField($field)) {
-            return $this->asJson(['success' => false, 'error' => $field->getErrors()]);
+            return $this->asFailure(Json::encode($field->getErrors()));
         }
 
-        return $this->asJson(['success' => true]);
+        return $this->asSuccess();
     }
 
     public function actionExport(): ?Response

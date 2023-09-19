@@ -1,5 +1,5 @@
 # Field Manager plugin for Craft CMS
-<img width="500" src="https://verbb.imgix.net/plugins/field-manager/field-manager-social-card.png?v=1">
+<img width="500" src="https://verbb.imgix.net/plugins/field-manager/field-manager-social-card.png?v=2">
 
 Field Manager is a Craft CMS plugin to help make it easy to manage your fields and field groups. 
 

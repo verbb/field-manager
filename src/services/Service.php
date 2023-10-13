@@ -83,77 +83,38 @@ class Service extends Component
         return true;
     }
 
-    public function cloneGroup(FieldGroup $group, $prefix, FieldGroup $originGroup): bool
-    {
-        if (!Craft::$app->getFields()->saveGroup($group)) {
-            FieldManager::error('Could not clone {name} group - {errors}.', ['name' => $originGroup->name, 'errors' => print_r($group->getErrors(), true)]);
-
-            return false;
-        }
-
-        $errors = [];
-
-        foreach (Craft::$app->getFields()->getFieldsByGroupId($originGroup->id) as $originField) {
-            $field = Craft::$app->getFields()->createField([
-                'type' => $originField::class,
-                'groupId' => $group->id,
-                'name' => $originField->name,
-                'handle' => $prefix . $originField->handle,
-                'instructions' => $originField->instructions,
-                'searchable' => $originField->searchable,
-                'translationMethod' => $originField->translationMethod,
-                'translationKeyFormat' => $originField->translationKeyFormat,
-                'settings' => $originField->settings,
-            ]);
-
-            if ($field instanceof Matrix) {
-                $field->blockTypes = $this->processCloneMatrix($originField);
-            }
-
-            if (Plugin::isPluginInstalledAndEnabled('super-table')) {
-                if ($field instanceof SuperTableField) {
-                    $field->blockTypes = $this->processCloneSuperTable($originField);
-                }
-            }
-
-            if (!FieldManager::$plugin->getService()->cloneField($field, $originField)) {
-                $errors[] = $field;
-            }
-        }
-
-        if ($errors) {
-            foreach ($errors as $error) {
-                FieldManager::error('Could not clone {errorName} in {name} group - {errors}.', [
-                    'errorName' => $error->name,
-                    'name' => $originGroup->name,
-                    'errors' => print_r($group->getErrors(), true),
-                ]);
-
-                $group->addError($error->name, 'Could not clone group.');
-            }
-
-            return false;
-        }
-
-        return true;
-    }
-
-    public function getUnusedFieldIds(): array
+    public function getUnusedFields(): array
     {
         // All fields
-        $allFieldIds = (new Query())
-            ->select(['id'])
+        $allFields = (new Query())
+            ->select(['uid'])
             ->from(['{{%fields}}'])
             ->column();
 
-        $usedFieldIds = (new Query())
-            ->distinct(true)
-            ->select(['fieldId'])
-            ->from(['{{%fieldlayoutfields}}'])
+        $usedFields = [];
+
+        $layoutConfig = (new Query())
+            ->select(['config'])
+            ->from(['{{%fieldlayouts}}'])
+            ->where(['not', ['config' => null]])
             ->column();
 
+        foreach ($layoutConfig as $config) {
+            $json = Json::decode($config);
+
+            foreach (($json['tabs'] ?? []) as $tab) {
+                foreach (($tab['elements'] ?? []) as $element) {
+                    $fieldUid = $element['fieldUid'] ?? null;
+
+                    if ($fieldUid) {
+                        $usedFields[] = $fieldUid;
+                    }
+                }
+            }
+        }
+
         // Get only the unused fields
-        return array_diff($allFieldIds, $usedFieldIds);
+        return array_diff($allFields, $usedFields);
     }
 
     public function processCloneMatrix(FieldInterface $originField): array
@@ -238,8 +199,8 @@ class Service extends Component
                 'ignorePermissions' => $blockType->ignorePermissions,
                 'enabled' => $blockType->enabled,
                 'iconId' => $blockType->iconId,
-                'minBlocks' => $blockType->minBlocks,
-                'maxBlocks' => $blockType->maxBlocks,
+                'minEntries' => $blockType->minEntries,
+                'maxEntries' => $blockType->maxEntries,
                 'minSiblingBlocks' => $blockType->minSiblingBlocks,
                 'maxSiblingBlocks' => $blockType->maxSiblingBlocks,
                 'minChildBlocks' => $blockType->minChildBlocks,

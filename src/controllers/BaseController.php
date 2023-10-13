@@ -11,7 +11,6 @@ use craft\fields\PlainText;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
-use craft\models\FieldGroup;
 use craft\web\Controller;
 
 use yii\web\Response;
@@ -25,7 +24,7 @@ class BaseController extends Controller
     public function actionIndex(): Response
     {
         $variables = [];
-        $variables['unusedFieldIds'] = FieldManager::$plugin->getService()->getUnusedFieldIds();
+        $variables['getUnusedFields'] = FieldManager::$plugin->getService()->getUnusedFields();
 
         return $this->renderTemplate('field-manager/index', $variables);
     }
@@ -40,38 +39,6 @@ class BaseController extends Controller
         ]);
     }
 
-    public function actionGetGroupModalBody(): Response
-    {
-        $this->requirePostRequest();
-        $this->requireAcceptsJson();
-
-        $fieldsService = Craft::$app->getFields();
-        $request = Craft::$app->getRequest();
-
-        $groupId = $request->getBodyParam('groupId');
-
-        $group = null;
-        $prefix = null;
-
-        if ($groupId) {
-            $group = $fieldsService->getGroupById($groupId);
-            $prefix = StringHelper::toCamelCase($group->name) . '_';
-        }
-
-        $variables = [
-            'group' => $group,
-            'prefix' => $prefix,
-            'clone' => $request->getBodyParam('clone'),
-        ];
-
-        $html = $this->getView()->renderTemplate('field-manager/_group/group_edit', $variables);
-
-        return $this->asJson([
-            'success' => true,
-            'html' => $html,
-        ]);
-    }
-
     public function actionGetFieldModalBody(): Response
     {
         $this->requirePostRequest();
@@ -83,7 +50,6 @@ class BaseController extends Controller
         $request = Craft::$app->getRequest();
 
         $fieldId = (int)$request->getBodyParam('fieldId');
-        $groupId = (int)$request->getBodyParam('groupId');
 
         // The field
         // ---------------------------------------------------------------------
@@ -141,30 +107,6 @@ class BaseController extends Controller
         // Sort them by name
         ArrayHelper::multisort($fieldTypeOptions, 'label');
 
-        // Groups
-        // ---------------------------------------------------------------------
-
-        $allGroups = $fieldsService->getAllGroups();
-
-        if (empty($allGroups)) {
-            throw new ServerErrorHttpException('No field groups exist');
-        }
-
-        if ($groupId === null) {
-            $groupId = ($field !== null && $field->groupId !== null) ? $field->groupId : $allGroups[0]->id;
-        }
-
-        $fieldGroup = $fieldsService->getGroupById($groupId);
-
-        $groupOptions = [];
-
-        foreach ($allGroups as $group) {
-            $groupOptions[] = [
-                'value' => $group->id,
-                'label' => $group->name,
-            ];
-        }
-
         $variables = [
             'fieldId' => $fieldId,
             'field' => $field,
@@ -173,8 +115,6 @@ class BaseController extends Controller
             'missingFieldPlaceholder' => $missingFieldPlaceholder,
             'supportedTranslationMethods' => $supportedTranslationMethods,
             'compatibleFieldTypes' => $compatibleFieldTypes,
-            'groupId' => $groupId,
-            'groupOptions' => $groupOptions,
         ];
 
         $html = $view->renderTemplate('field-manager/_single/field_edit', $variables);
@@ -203,7 +143,6 @@ class BaseController extends Controller
 
         $field = $fieldsService->createField([
             'type' => $type,
-            'groupId' => $request->getRequiredBodyParam('group'),
             'name' => $request->getBodyParam('name'),
             'handle' => $request->getBodyParam('handle'),
             'instructions' => $request->getBodyParam('instructions'),
@@ -222,26 +161,6 @@ class BaseController extends Controller
         return $this->asSuccess(null, ['fieldId' => $field->id]);
     }
 
-    public function actionCloneGroup(): Response
-    {
-        $this->requirePostRequest();
-        $this->requireAcceptsJson();
-
-        $groupId = Craft::$app->getRequest()->getRequiredBodyParam('groupId');
-        $prefix = Craft::$app->getRequest()->getRequiredBodyParam('prefix');
-
-        $group = new FieldGroup();
-        $group->name = Craft::$app->getRequest()->getRequiredBodyParam('name');
-
-        $originGroup = Craft::$app->getFields()->getGroupById($groupId);
-
-        if (!FieldManager::$plugin->getService()->cloneGroup($group, $prefix, $originGroup)) {
-            return $this->asFailure(Json::encode($group->getErrors()));
-        }
-
-        return $this->asSuccess(null, ['groupId' => $group->id]);
-    }
-
     // From Craft's native saveField, which doesn't really support Ajax...
     public function actionSaveField(): Response
     {
@@ -254,7 +173,6 @@ class BaseController extends Controller
         $field = $fieldsService->createField([
             'type' => $type,
             'id' => (int)$request->getBodyParam('fieldId') ?: null,
-            'groupId' => $request->getRequiredBodyParam('group'),
             'name' => $request->getBodyParam('name'),
             'handle' => $request->getBodyParam('handle'),
             'instructions' => $request->getBodyParam('instructions'),
@@ -335,6 +253,8 @@ class BaseController extends Controller
 
             if (!$importErrors) {
                 Craft::$app->getSession()->setNotice(Craft::t('field-manager', 'Imported successfully.'));
+
+                return null;
             } else {
                 Craft::$app->getSession()->setError(Craft::t('field-manager', 'Error importing fields.'));
 

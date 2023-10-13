@@ -15,205 +15,8 @@ if (typeof Craft.FieldManager === typeof undefined) {
 
 $(function() {
 
-	// Provide HUD functionality for cloning a group of fields
-	Craft.FieldManager.CloneGroup = Garnish.Base.extend({
-		$element: null,
-		groupId: null,
-
-		$form: null,
-		$spinner: null,
-
-		hud: null,
-
-		init: function($element, $data) {
-			this.$element = $element;
-			this.groupId = $data.data('groupid');
-
-			this.$element.addClass('loading');
-
-			var data = {
-				groupId: this.groupId,
-				clone: true,
-			};
-
-            Craft.sendActionRequest('POST', 'field-manager/base/get-group-modal-body', { data })
-                .then((response) => {
-                    this.showHud(response);
-                });
-		},
-
-		showHud: function(response) {
-			this.$element.removeClass('loading');
-
-			var $hudContents = $();
-
-			this.$form = $('<div/>');
-			$('<input type="hidden" name="groupId" value="' + this.groupId + '">').appendTo(this.$form);
-			$fieldsContainer = $('<div class="fields"/>').appendTo(this.$form);
-
-			$fieldsContainer.html(response.data.html);
-			Craft.initUiElements($fieldsContainer);
-
-            var $footer = $('<div class="hud-footer"/>').appendTo(this.$form),
-                $buttonsContainer = $('<div class="buttons right"/>').appendTo($footer);
-
-            this.$cancelBtn = $('<div class="btn">' + Craft.t('field-manager', 'Cancel') + '</div>').appendTo($buttonsContainer);
-            this.$saveBtn = $('<input class="btn submit" type="submit" value="' + Craft.t('field-manager', 'Clone') + '"/>').appendTo($buttonsContainer);
-            this.$spinner = $('<div class="spinner hidden"/>').appendTo($buttonsContainer);
-
-            $hudContents = $hudContents.add(this.$form);
-
-			this.hud = new Garnish.HUD(this.$element, $hudContents, {
-				bodyClass: 'body',
-				closeOtherHUDs: false
-			});
-
-			this.hud.on('hide', $.proxy(function() {
-				delete this.hud;
-			}, this));
-
-			this.addListener(this.$saveBtn, 'activate', 'saveGroupField');
-			this.addListener(this.$cancelBtn, 'activate', 'closeHud');
-
-			new Craft.FieldManager.HandleGeneratorWithSuffix('#name', '#prefix');
-		},
-
-		saveGroupField: function(ev) {
-			ev.preventDefault();
-
-			this.$spinner.removeClass('hidden');
-
-            var data = this.hud.$body.serialize();
-
-            Craft.sendActionRequest('POST', 'field-manager/base/clone-group', { data })
-                .then((response) => {
-                    Craft.cp.displayNotice(Craft.t('field-manager', 'Group cloned.'));
-                    location.href = Craft.getUrl('field-manager');
-
-                    this.onFadeOut();
-                })
-                .catch(({response}) => {
-                    Garnish.shake(this.hud.$hud);
-
-                    if (response && response.data && response.data.message) {
-                        Craft.cp.displayError(response.data.message);
-                    } else {
-                        Craft.cp.displayError();
-                    }
-                })
-                .finally(() => {
-                    this.$spinner.addClass('hidden');
-                });
-		},
-
-		closeHud: function() {
-			this.hud.hide();
-			delete this.hud;
-		}
-	});
-
-
-
-
-	Craft.FieldManager.EditGroup = Garnish.Base.extend({
-		$element: null,
-		groupId: null,
-
-		$form: null,
-		$spinner: null,
-
-		hud: null,
-
-		init: function($element, $data) {
-			this.$element = $element;
-			this.groupId = $data.data('groupid');
-
-			this.$element.addClass('loading');
-
-			var data = {
-				groupId: this.groupId,
-			};
-
-            Craft.sendActionRequest('POST', 'field-manager/base/get-group-modal-body', { data })
-                .then((response) => {
-                    this.showHud(response);
-                });
-		},
-
-		showHud: function(response) {
-			this.$element.removeClass('loading');
-
-			var $hudContents = $();
-
-			this.$form = $('<div/>');
-			$('<input type="hidden" name="groupId" value="' + this.groupId + '">').appendTo(this.$form);
-			$fieldsContainer = $('<div class="fields"/>').appendTo(this.$form);
-
-			$fieldsContainer.html(response.data.html);
-			Craft.initUiElements($fieldsContainer);
-
-			var $footer = $('<div class="hud-footer"/>').appendTo(this.$form),
-                $buttonsContainer = $('<div class="buttons right"/>').appendTo($footer);
-
-            this.$cancelBtn = $('<div class="btn">' + Craft.t('field-manager', 'Cancel') + '</div>').appendTo($buttonsContainer);
-            this.$saveBtn = $('<input class="btn submit" type="submit" value="' + Craft.t('field-manager', 'Save') + '"/>').appendTo($buttonsContainer);
-            this.$spinner = $('<div class="spinner hidden"/>').appendTo($buttonsContainer);
-
-            $hudContents = $hudContents.add(this.$form);
-
-			this.hud = new Garnish.HUD(this.$element, $hudContents, {
-				bodyClass: 'body',
-				closeOtherHUDs: false
-			});
-
-			this.hud.on('hide', $.proxy(function() {
-				delete this.hud;
-			}, this));
-
-			this.addListener(this.$saveBtn, 'activate', 'saveGroupField');
-			this.addListener(this.$cancelBtn, 'activate', 'closeHud');
-		},
-
-		saveGroupField: function(ev) {
-			ev.preventDefault();
-
-			this.$spinner.removeClass('hidden');
-
-			var data = this.hud.$body.serialize();
-
-            Craft.sendActionRequest('POST', 'fields/save-group', { data })
-            .then((response) => {
-                location.href = Craft.getUrl('field-manager');
-
-                Craft.cp.displayNotice(Craft.t('field-manager', 'Field group updated.'));
-
-                this.closeHud();
-            })
-            .catch(({response}) => {
-                Garnish.shake(this.hud.$hud);
-
-                if (response && response.data && response.data.message) {
-                    Craft.cp.displayError(response.data.message);
-                } else {
-                    Craft.cp.displayError();
-                }
-            })
-            .finally(() => {
-                this.$spinner.addClass('hidden');
-            });
-		},
-
-		closeHud: function() {
-			this.hud.hide();
-			delete this.hud;
-		}
-	});
-
-
-
 	Craft.FieldManager.CloneField = Garnish.Modal.extend({
 		fieldId: null,
-		groupId: null,
 
 		$body: null,
 		$element: null,
@@ -225,7 +28,6 @@ $(function() {
 		init: function($element, $data) {
 			this.$element = $element;
 			this.fieldId = $data.data('id');
-			this.groupId = $data.data('groupid');
 
 			// Build the modal
 			var $container = $('<div class="modal fieldsettingsmodal"></div>').appendTo(Garnish.$bod),
@@ -253,7 +55,6 @@ $(function() {
 		onFadeIn: function() {
 			var data = {
 				fieldId: this.fieldId,
-				groupId: this.groupId,
 			};
 
             Craft.sendActionRequest('POST', 'field-manager/base/get-field-modal-body', { data })
@@ -318,7 +119,6 @@ $(function() {
 
 	Craft.FieldManager.EditField = Garnish.Modal.extend({
 		fieldId: null,
-		groupId: null,
 
 		$body: null,
         $form: null,
@@ -333,7 +133,6 @@ $(function() {
 
             if ($data) {
     			this.fieldId = $data.data('id');
-    			this.groupId = $data.data('groupid');
             }
 
 			// Build the modal
@@ -361,7 +160,6 @@ $(function() {
 		onFadeIn: function() {
 			var data = {
 				fieldId: this.fieldId,
-				groupId: this.groupId,
 			};
 
             Craft.sendActionRequest('POST', 'field-manager/base/get-field-modal-body', { data })

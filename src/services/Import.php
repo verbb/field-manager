@@ -19,7 +19,7 @@ class Import extends Component
         $fieldsToImport = [];
 
         foreach ($fields as $key => $field) {
-            if (isset($field['groupId']) && $field['groupId'] != 'noimport') {
+            if (isset($field['import']) && $field['import'] != 'noimport') {
 
                 // Get the field data from our imported JSON data
                 $fieldsToImport[$key] = $data[$key];
@@ -27,14 +27,13 @@ class Import extends Component
                 // Handle overrides
                 $fieldsToImport[$key]['name'] = $field['name'];
                 $fieldsToImport[$key]['handle'] = $field['handle'];
-                $fieldsToImport[$key]['groupId'] = $field['groupId'];
 
                 // Handle Matrix
                 if ($data[$key]['type'] === 'craft\fields\Matrix') {
                     $blockTypes = $field['settings']['blockTypes'] ?? [];
 
                     foreach ($blockTypes as $blockTypeKey => $blockType) {
-                        $blockTypeImport = ArrayHelper::remove($blockType, 'groupId');
+                        $blockTypeImport = ArrayHelper::remove($blockType, 'import');
 
                         // Remove the whole block if not importing
                         if ($blockTypeImport === 'noimport') {
@@ -50,7 +49,7 @@ class Import extends Component
                         $blockTypeFields = $blockType['fields'] ?? [];
 
                         foreach ($blockTypeFields as $blockTypeFieldKey => $blockTypeField) {
-                            $blockTypeFieldImport = ArrayHelper::remove($blockTypeField, 'groupId');
+                            $blockTypeFieldImport = ArrayHelper::remove($blockTypeField, 'import');
 
                             // Remove the whole field if not importing
                             if ($blockTypeFieldImport === 'noimport') {
@@ -74,7 +73,7 @@ class Import extends Component
                         $blockTypeFields = $blockType['fields'] ?? [];
 
                         foreach ($blockTypeFields as $blockTypeFieldKey => $blockTypeField) {
-                            $blockTypeFieldImport = ArrayHelper::remove($blockTypeField, 'groupId');
+                            $blockTypeFieldImport = ArrayHelper::remove($blockTypeField, 'import');
 
                             // Remove the whole field if not importing
                             if ($blockTypeFieldImport === 'noimport') {
@@ -95,7 +94,7 @@ class Import extends Component
                     $blockTypes = $field['settings']['blockTypes'] ?? [];
 
                     foreach ($blockTypes as $blockTypeKey => $blockType) {
-                        $blockTypeImport = ArrayHelper::remove($blockType, 'groupId');
+                        $blockTypeImport = ArrayHelper::remove($blockType, 'import');
 
                         // Remove the whole block if not importing
                         if ($blockTypeImport === 'noimport') {
@@ -112,7 +111,7 @@ class Import extends Component
 
                         foreach ($blockTypeTabs as $blockTypeTabKey => $blockTypeTab) {
                             foreach ($blockTypeTab as $blockTypeFieldKey => $blockTypeField) {
-                                $blockTypeFieldImport = ArrayHelper::remove($blockTypeField, 'groupId');
+                                $blockTypeFieldImport = ArrayHelper::remove($blockTypeField, 'import');
 
                                 // Remove the whole field if not importing
                                 if ($blockTypeFieldImport === 'noimport') {
@@ -158,7 +157,6 @@ class Import extends Component
                 }
 
                 $field = Craft::$app->getFields()->createField([
-                    'groupId' => $fieldInfo['groupId'],
                     'name' => $fieldInfo['name'],
                     'handle' => $fieldInfo['handle'],
                     'instructions' => $fieldInfo['instructions'],
@@ -184,7 +182,7 @@ class Import extends Component
                             }
                         }
                     } else {
-                        $errors[$fieldInfo['handle']] = $field;
+                        $errors[$fieldInfo['handle']] = $fieldErrors;
                     }
 
                     FieldManager::error('Could not import {name} - {errors}.', [

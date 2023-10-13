@@ -11,25 +11,8 @@
 
 {% set fullPageForm = true %}
 
-{% set groups = craft.app.fields.allGroups %}
-
-{% set sidebar %}
-    <nav class="sidebar-nav">
-        <ul>
-            <li class="heading"><span>{{ 'Field Groups' | t('field-manager') }}</span></li>
-            <li class="active"><a href="#" data-groupid="all">{{ 'All' | t('field-manager') }}</a></li>
-
-            {% for group in groups %}
-                <li><a href="#" data-groupid="{{ group.id }}">{{ group.name }}</a></li>
-            {% endfor %}
-        </ul>
-    </nav>
-{% endset %}
-
 {% block actionButton %}
-    {% if groups %}
-        <a href="{{ url('settings/fields/new') }}" class="submit btn add icon new-field-btn">{{ 'New field' | t('field-manager') }}</a>
-    {% endif %}
+    <a href="{{ url('settings/fields/new') }}" class="submit btn add icon new-field-btn">{{ 'New field' | t('field-manager') }}</a>
 {% endblock %}
 
 {% block blockContent %}
@@ -38,77 +21,63 @@
 
 <table id="fieldmanager" class="data fullwidth field-manager-table">
     <thead>
-        <th>{{ 'Group Name' | t('field-manager') }}</th>
+        <th>{{ 'Field' | t('field-manager') }}</th>
         <th>{{ 'Handle' | t('field-manager') }}</th>
         <th>{{ 'Type' | t('field-manager') }}</th>
-        <th>{{ 'Translatable' | t('field-manager') }}</th>
         <th></th>
         <th></th>
     </thead>
     <tbody>
-        {% for group in groups %}
-            {% set fields = craft.app.fields.getFieldsByGroupId(group.id) %}
+        <tr class="group" data-groupid="1">
+            <th scope="row">
+                {{ forms.checkboxField({
+                    label: 'All Fields' | t('field-manager'),
+                }) }}
+            </th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
 
-            <tr class="group" data-groupid="{{ group.id }}">
-                <th scope="row">
+        {% for field in craft.app.fields.getAllFields() %}
+            <tr class="field" data-id="{{ field.id }}" data-groupid="1" data-name="{{ field.name }}">
+                <th scope="row" class="name">
                     {% set label %}
                         <span class="go">
-                            <a href="{{ url('settings/fields/' ~ group.id) }}">{{ group.name }}</a>
+                            <a href="{{ url('settings/fields/edit/' ~ field.id) }}">{{ field.name }}</a>
+
+                            {% if field.uid in getUnusedFields %}
+                                <span class="unused-field">{{ 'Unused' | t('field-manager') }}</span>
+                            {% endif %}
                         </span>
                     {% endset %}
 
                     {{ forms.checkboxField({
-                        label: label
+                        name: 'selectedFields[]',
+                        value: field.id,
+                        label: label,
                     }) }}
                 </th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td class="thin"><div class="btn small clone-btn element">{{ 'Clone Group' | t('field-manager') }}</div></td>
-                <td class="thin delete-row"><a class="delete-group icon" title="{{ 'Delete' | t('field-manager') }}" role="button"></a></td>
+
+                <td><code>{{ field.handle }}</code></td>
+
+                {% if field is missing %}
+                    <td><span class="error">{{ field.expectedType }}</span></td>
+                {% else %}
+                    <td>{{ field.displayName() }}</td>
+                {% endif %}
+
+                {% if field is missing %}
+                    <td class="thin"></td>
+                {% else %}
+                    <td class="thin"><div class="btn small clone-btn element">{{ 'Clone' | t('field-manager') }}</div></td>
+                {% endif %}
+
+                <td class="thin delete-row">
+                    <a class="delete icon" title="{{ 'Delete' | t('field-manager') }}" role="button"></a>
+                </td>
             </tr>
-
-            {% for field in fields %}
-                <tr class="field" data-id="{{ field.id }}" data-groupid="{{ group.id }}" data-name="{{ field.name }}">
-                    <th scope="row" class="name">
-                        {% set label %}
-                            <span class="go">
-                                <a href="{{ url('settings/fields/edit/' ~ field.id) }}">{{ field.name }}</a>
-
-                                {% if field.id in unusedFieldIds %}
-                                    <span class="unused-field">{{ 'Unused' | t('field-manager') }}</span>
-                                {% endif %}
-                            </span>
-                        {% endset %}
-
-                        {{ forms.checkboxField({
-                            name: 'selectedFields[]',
-                            value: field.id,
-                            label: label,
-                        }) }}
-                    </th>
-
-                    <td><code>{{ field.handle }}</code></td>
-
-                    {% if field is missing %}
-                        <td><span class="error">{{ field.expectedType }}</span></td>
-                    {% else %}
-                        <td>{{ field.displayName() }}</td>
-                    {% endif %}
-
-                    <td><span class="status {{ field.getIsTranslatable() ? 'live' : 'disabled' }} }}"></span></td>
-
-                    {% if field is missing %}
-                        <td class="thin"></td>
-                    {% else %}
-                        <td class="thin"><div class="btn small clone-btn element">{{ 'Clone' | t('field-manager') }}</div></td>
-                    {% endif %}
-
-                    <td class="thin delete-row">
-                        <a class="delete icon" title="{{ 'Delete' | t('field-manager') }}" role="button"></a>
-                    </td>
-                </tr>
-            {% endfor %}
         {% endfor %}
     </tbody>
 </table>
@@ -136,4 +105,3 @@
         deleteAction: 'fields/delete-field'
     });
 {% endjs %}
-

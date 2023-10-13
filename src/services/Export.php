@@ -68,7 +68,7 @@ class Export extends Component
     {
         $fieldSettings = $field->settings;
 
-        $blockTypes = Craft::$app->getMatrix()->getBlockTypesByFieldId($field->id);
+        $blockTypes =$field->getEntryTypes();
 
         $blockCount = 1;
         foreach ($blockTypes as $blockType) {
@@ -147,8 +147,8 @@ class Export extends Component
                 'ignorePermissions' => (bool)$blockType->ignorePermissions,
                 'enabled' => (bool)$blockType->enabled,
                 'iconId' => $blockType->iconId,
-                'minBlocks' => $blockType->minBlocks,
-                'maxBlocks' => (int)$blockType->maxBlocks,
+                'minEntries' => $blockType->minEntries,
+                'maxEntries' => (int)$blockType->maxEntries,
                 'minSiblingBlocks' => $blockType->minSiblingBlocks,
                 'maxSiblingBlocks' => (int)$blockType->maxSiblingBlocks,
                 'minChildBlocks' => (int)$blockType->minChildBlocks,

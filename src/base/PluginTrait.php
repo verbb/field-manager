@@ -6,35 +6,39 @@ use verbb\fieldmanager\services\Audit;
 use verbb\fieldmanager\services\Service;
 use verbb\fieldmanager\services\Import;
 use verbb\fieldmanager\services\Export;
-use verbb\base\BaseHelper;
 
-use Craft;
-
-use yii\log\Logger;
+use verbb\base\LogTrait;
+use verbb\base\helpers\Plugin;
 
 trait PluginTrait
 {
     // Properties
     // =========================================================================
 
-    public static FieldManager $plugin;
+    public static ?FieldManager $plugin = null;
 
+
+    // Traits
+    // =========================================================================
+
+    use LogTrait;
+    
 
     // Static Methods
     // =========================================================================
 
-    public static function log(string $message, array $params = []): void
+    public static function config(): array
     {
-        $message = Craft::t('field-manager', $message, $params);
+        Plugin::bootstrapPlugin('field-manager');
 
-        Craft::getLogger()->log($message, Logger::LEVEL_INFO, 'field-manager');
-    }
-
-    public static function error(string $message, array $params = []): void
-    {
-        $message = Craft::t('field-manager', $message, $params);
-
-        Craft::getLogger()->log($message, Logger::LEVEL_ERROR, 'field-manager');
+        return [
+            'components' => [
+                'audit' => Audit::class,
+                'service' => Service::class,
+                'import' => Import::class,
+                'export' => Export::class,
+            ],
+        ];
     }
 
 
@@ -59,27 +63,6 @@ trait PluginTrait
     public function getExport(): Export
     {
         return $this->get('export');
-    }
-
-
-    // Private Methods
-    // =========================================================================
-
-    private function _registerComponents(): void
-    {
-        $this->setComponents([
-            'audit' => Audit::class,
-            'service' => Service::class,
-            'import' => Import::class,
-            'export' => Export::class,
-        ]);
-
-        BaseHelper::registerModule();
-    }
-
-    private function _registerLogTarget(): void
-    {
-        BaseHelper::setFileLogging('field-manager');
     }
 
 }

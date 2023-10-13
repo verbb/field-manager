@@ -7,28 +7,21 @@
 
 {% set fullPageForm = true %}
 
-{% set groups = craft.app.fields.allGroups %}
-
-{% set groupOptions = [
-    { label: 'Don‘t Import' | t('field-manager'), value: 'noimport' },
-] %}
-
-{% for group in groups %}
-    {% set groupOptions = groupOptions | merge([{ label: group.name, value: group.id }]) %}
-{% endfor %}
-
 {% block submitButton %}
     <button type="submit" class="btn submit">{{ 'Import' | t('field-manager') }}</button>
 {% endblock %}
 
 {% block blockContent %}
 
-<p>{{ 'Choose how you want to import your fields. You can modify the Name and Handle for each field, along with assigning it to a Field Group.' | t('field-manager') }}</p>
+{% set importOptions = [
+    { label: 'Don‘t Import' | t('field-manager'), value: 'noimport' },
+    { label: 'Include' | t('field-manager'), value: 'include' },
+] %}
+
+<p>{{ 'Choose how you want to import your fields. You can modify the Name and Handle for each field.' | t('field-manager') }}</p>
 
 <input type="hidden" name="action" value="field-manager/base/import">
 <input type="hidden" name="data" value="{{ craft.app.request.param('data') }}">
-
-{% set groups = craft.app.fields.allGroups %}
 
 <table id="fieldmapping" class="data editable fullwidth collapsible">
     <thead>
@@ -37,10 +30,9 @@
         <th style="width: 10%;">{{ 'Field Type' | t('field-manager') }}</th>
         <th style="width: 10%;">
             {{ forms.selectField({
-                id: 'groupAll',
-                name: 'groupAll',
-                options: groupOptions,
-                value: fields[0].groupId is defined ? fields[0].groupId : null
+                id: 'importAll',
+                name: 'importAll',
+                options: importOptions,
             }) }}
         </th>
     </thead>
@@ -90,11 +82,10 @@
 
                         <td class="thin">
                             {{ forms.selectField({
-                                id: 'groupId',
-                                class: 'groupSelect ' ~ hasNestedFields,
-                                name: 'groupId',
-                                options: groupOptions,
-                                value: field.groupId | default(''),
+                                id: 'import',
+                                class: 'importSelect ' ~ hasNestedFields,
+                                name: 'import',
+                                options: importOptions,
                             }) }}
                         </td>
                     {% else %}
@@ -123,7 +114,6 @@
 
 <div class="buttons">
     <a href="javascript: window.history.go(-1)" class="btn submit">{{ 'Back' | t('field-manager') }}</a>
-    <div id="newgroupbtn" class="btn add icon submit right">{{ "New Field Group" | t('field-manager') }}</div>
 </div>
 
 {% endblock %}
@@ -178,13 +168,13 @@
                 }) }}
             </td>
 
-            <td>{{ 'Blocktype' | t('field-manager') }}</td>
+            <td>{{ 'Entry Type' | t('field-manager') }}</td>
 
             <td class="thin">
                 {{ forms.selectField({
-                    id: 'groupId',
-                    class: 'groupSelect groupSelectNested select-blocktype',
-                    name: 'settings[blockTypes][new' ~ blockIndex ~ '][groupId]',
+                    id: 'import',
+                    class: 'importSelect importSelectNested select-blocktype',
+                    name: 'settings[blockTypes][new' ~ blockIndex ~ '][import]',
                     options: options,
                 }) }}
             </td>
@@ -232,9 +222,9 @@
 
             <td class="thin">
                 {{ forms.selectField({
-                    id: 'groupId',
-                    class: 'groupSelect groupSelectNested select-blocktype',
-                    name: 'settings[blockTypes][new' ~ blockIndex ~ '][groupId]',
+                    id: 'import',
+                    class: 'importSelect importSelectNested select-blocktype',
+                    name: 'settings[blockTypes][new' ~ blockIndex ~ '][import]',
                     options: options,
                 }) }}
             </td>
@@ -288,9 +278,9 @@
 
             <td class="thin">
                 {{ forms.selectField({
-                    id: 'groupId',
-                    class: 'groupSelect groupSelectNested',
-                    name: 'groupId',
+                    id: 'import',
+                    class: 'importSelect importSelectNested',
+                    name: 'import',
                     options: options,
                 }) }}
             </td>
@@ -338,9 +328,9 @@
 
                 <td class="thin">
                     {{ forms.selectField({
-                        id: 'groupId',
-                        class: 'groupSelect groupSelectNested',
-                        name: 'groupId',
+                        id: 'import',
+                        class: 'importSelect importSelectNested',
+                        name: 'import',
                         options: options,
                     }) }}
                 </td>
@@ -368,9 +358,9 @@
 
             <td class="thin">
                 {{ forms.selectField({
-                    id: 'groupId',
-                    class: 'groupSelect groupSelectNested',
-                    name: 'groupId',
+                    id: 'import',
+                    class: 'importSelect importSelectNested',
+                    name: 'import',
                     options: options,
                 }) }}
             </td>

@@ -41,8 +41,6 @@ class FieldManager extends Plugin
 
         self::$plugin = $this;
 
-        $this->_registerComponents();
-        $this->_registerLogTarget();
         $this->_registerTwigExtensions();
         $this->_registerVariables();
 

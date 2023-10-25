@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.8 - 2023-10-25
+
+### Fixed
+- Fix an error when viewing the audit screen.
+- Fix lack of validation checks when creating or editing fields.
+
 ## 3.0.7 - 2023-07-11
 
 ### Added

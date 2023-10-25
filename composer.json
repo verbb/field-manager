@@ -2,7 +2,7 @@
     "name": "verbb/field-manager",
     "description": "Manage your fields and field groups with ease.",
     "type": "craft-plugin",
-    "version": "3.0.7",
+    "version": "3.0.8",
     "keywords": [
         "craft",
         "cms",
@@ -31,7 +31,7 @@
     },
     "autoload": {
         "psr-4": {
-          "verbb\\fieldmanager\\": "src/"
+            "verbb\\fieldmanager\\": "src/"
         }
     },
     "extra": {

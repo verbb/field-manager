@@ -47,9 +47,8 @@ class BaseController extends Controller
         $view = $this->getView();
 
         $fieldsService = Craft::$app->getFields();
-        $request = Craft::$app->getRequest();
 
-        $fieldId = (int)$request->getBodyParam('fieldId');
+        $fieldId = (int)$this->request->getBodyParam('fieldId');
 
         // The field
         // ---------------------------------------------------------------------
@@ -138,18 +137,17 @@ class BaseController extends Controller
         $fieldId = Craft::$app->getRequest()->getRequiredBodyParam('fieldId');
 
         $fieldsService = Craft::$app->getFields();
-        $request = Craft::$app->getRequest();
-        $type = $request->getRequiredBodyParam('type');
+        $type = $this->request->getRequiredBodyParam('type');
 
         $field = $fieldsService->createField([
             'type' => $type,
-            'name' => $request->getBodyParam('name'),
-            'handle' => $request->getBodyParam('handle'),
-            'instructions' => $request->getBodyParam('instructions'),
-            'searchable' => (bool)$request->getBodyParam('searchable', true),
-            'translationMethod' => $request->getBodyParam('translationMethod', Field::TRANSLATION_METHOD_NONE),
-            'translationKeyFormat' => $request->getBodyParam('translationKeyFormat'),
-            'settings' => $request->getBodyParam('types.' . $type),
+            'name' => $this->request->getBodyParam('name'),
+            'handle' => $this->request->getBodyParam('handle'),
+            'instructions' => $this->request->getBodyParam('instructions'),
+            'searchable' => (bool)$this->request->getBodyParam('searchable', true),
+            'translationMethod' => $this->request->getBodyParam('translationMethod', Field::TRANSLATION_METHOD_NONE),
+            'translationKeyFormat' => $this->request->getBodyParam('translationKeyFormat'),
+            'settings' => $this->request->getBodyParam('types.' . $type),
         ]);
 
         $originField = $fieldsService->getFieldById($fieldId);
@@ -167,19 +165,18 @@ class BaseController extends Controller
         $this->requirePostRequest();
 
         $fieldsService = Craft::$app->getFields();
-        $request = Craft::$app->getRequest();
-        $type = $request->getRequiredBodyParam('type');
+        $type = $this->request->getRequiredBodyParam('type');
 
         $field = $fieldsService->createField([
             'type' => $type,
-            'id' => (int)$request->getBodyParam('fieldId') ?: null,
-            'name' => $request->getBodyParam('name'),
-            'handle' => $request->getBodyParam('handle'),
-            'instructions' => $request->getBodyParam('instructions'),
-            'searchable' => (bool)$request->getBodyParam('searchable', true),
-            'translationMethod' => $request->getBodyParam('translationMethod', Field::TRANSLATION_METHOD_NONE),
-            'translationKeyFormat' => $request->getBodyParam('translationKeyFormat'),
-            'settings' => $request->getBodyParam('types.' . $type),
+            'id' => (int)$this->request->getBodyParam('fieldId') ?: null,
+            'name' => $this->request->getBodyParam('name'),
+            'handle' => $this->request->getBodyParam('handle'),
+            'instructions' => $this->request->getBodyParam('instructions'),
+            'searchable' => (bool)$this->request->getBodyParam('searchable', true),
+            'translationMethod' => $this->request->getBodyParam('translationMethod', Field::TRANSLATION_METHOD_NONE),
+            'translationKeyFormat' => $this->request->getBodyParam('translationKeyFormat'),
+            'settings' => $this->request->getBodyParam('types.' . $type),
         ]);
 
         if (!$fieldsService->saveField($field)) {
@@ -193,10 +190,8 @@ class BaseController extends Controller
     {
         $this->requirePostRequest();
 
-        $request = Craft::$app->getRequest();
-
-        $fields = $request->getParam('selectedFields');
-        $download = $request->getParam('download');
+        $fields = $this->request->getParam('selectedFields');
+        $download = $this->request->getParam('download');
 
         if (count($fields) > 0) {
             $fieldsObj = FieldManager::$plugin->getExport()->export($fields);

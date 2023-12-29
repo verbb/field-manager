@@ -84,7 +84,11 @@
                                 </th>
                             </tr>
 
-                            {% for field in tab.layout.customFields %}
+                            {% set elements = tab.elements|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField')) %}
+
+                            {% for element in elements %}
+                                {% set field = element.field %}
+                                    
                                 <tr class="fields">
                                     <th>
                                         <span class="go">

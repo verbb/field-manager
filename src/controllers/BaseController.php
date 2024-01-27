@@ -334,7 +334,8 @@ class BaseController extends Controller
             $importErrors = FieldManager::$plugin->getImport()->import($fieldsToImport);
 
             if (!$importErrors) {
-                Craft::$app->getSession()->setNotice(Craft::t('field-manager', 'Imported successfully.'));
+                Craft::$app->getSession()->setSuccess(Craft::t('field-manager', 'Imported successfully.'));
+                return null;
             } else {
                 Craft::$app->getSession()->setError(Craft::t('field-manager', 'Error importing fields.'));
 

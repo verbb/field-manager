@@ -9,6 +9,12 @@ use craft\helpers\Json;
 
 use yii\base\Component;
 
+use Throwable;
+
+use craft\ckeditor\Plugin as CkEditor;
+use craft\ckeditor\Field as CkEditorField;
+use craft\ckeditor\CkeConfig;
+
 class Import extends Component
 {
     // Public Methods
@@ -157,6 +163,10 @@ class Import extends Component
                     $fieldInfo['settings'] = $this->processPosition($fieldInfo);
                 }
 
+                if ($fieldInfo['type'] === 'craft\ckeditor\Field') {
+                    $fieldInfo['settings'] = $this->processCkEditor($fieldInfo);
+                }
+
                 $field = Craft::$app->getFields()->createField([
                     'groupId' => $fieldInfo['groupId'],
                     'name' => $fieldInfo['name'],
@@ -277,6 +287,35 @@ class Import extends Component
             foreach ($settings['options'] as $key => $value) {
                 $settings['options'][$key] = (string)$value;
             }
+        }
+
+        return $settings;
+    }
+
+    public function processCkEditor($fieldInfo): array
+    {
+        $settings = $fieldInfo['settings'];
+
+        // Get or create the config from its UID
+        $ckeConfigData = $settings['ckeConfig'] ?? null;
+        $ckeConfigUid = $settings['ckeConfig']['uid'] ?? null;
+
+        if ($ckeConfigUid) {
+            try {
+                $ckeConfig = CkEditor::getInstance()->getCkeConfigs()->getByUid($ckeConfigUid);
+            } catch (Throwable) {
+                $ckeConfig = null;
+            }
+
+            if (!$ckeConfig) {
+                $ckeConfig = new CkeConfig($ckeConfigData);
+
+                CkEditor::getInstance()->getCkeConfigs()->save($ckeConfig);
+
+                $ckeConfigUid = $ckeConfig->uid;
+            }
+
+            $settings['ckeConfig'] = $ckeConfigUid;
         }
 
         return $settings;

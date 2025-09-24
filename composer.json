@@ -2,7 +2,7 @@
     "name": "verbb/field-manager",
     "description": "Manage your fields and field groups with ease.",
     "type": "craft-plugin",
-    "version": "4.0.3",
+    "version": "5.0.0-alpha.1",
     "keywords": [
         "craft",
         "cms",
@@ -25,9 +25,9 @@
         }
     ],
     "require": {
-        "php": "^8.2",
-        "craftcms/cms": "^5.0.0",
-        "verbb/base": "^3.0.0"
+        "php": "^8.4",
+        "craftcms/cms": "6.x-dev",
+        "verbb/base": "dev-craft-6"
     },
     "autoload": {
         "psr-4": {
@@ -37,7 +37,9 @@
     "extra": {
         "name": "Field Manager",
         "handle": "field-manager",
-        "changelogUrl": "https://raw.githubusercontent.com/verbb/field-manager/craft-5/CHANGELOG.md",
+        "changelogUrl": "https://raw.githubusercontent.com/verbb/field-manager/craft-6/CHANGELOG.md",
         "class": "verbb\\fieldmanager\\FieldManager"
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

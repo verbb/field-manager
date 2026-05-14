@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.0.4 - 2026-05-14
+
+### Changed
+- Preserve Matrix entry-type groups when cloning fields.
+
 ## 4.0.3 - 2024-10-20
 
 ### Changed

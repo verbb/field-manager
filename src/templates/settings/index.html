@@ -1,0 +1,21 @@
+{% extends 'field-manager/_layouts/settings' %}
+
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{% set fullPageForm = true %}
+{% set selectedTab = 'general' %}
+{% set pageTitle = 'General Settings' | t('field-manager') %}
+{% set pageAction = 'plugins/save-plugin-settings' %}
+{% set pageUrl = 'field-manager/settings' %}
+
+{% block settingsContent %}
+{{ forms.lightswitchField({
+    id: 'cpSectionEnabled',
+    name: 'cpSectionEnabled',
+    label: 'Show in CP navigation' | t('field-manager'),
+    on: settings.cpSectionEnabled,
+    instructions: 'Display Field Manager in the control panel navigation menu.' | t('field-manager'),
+    warning: macros.configWarning('cpSectionEnabled', 'field-manager'),
+}) }}
+{% endblock %}

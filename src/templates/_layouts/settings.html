@@ -1,0 +1,27 @@
+{% extends 'verbb-base/_layouts/settings' %}
+
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{% requireAdmin %}
+
+{% do view.registerAssetBundle('verbb\\fieldmanager\\assetbundles\\FieldManagerAsset') %}
+
+{% set crumbs = [
+    { label: 'Settings' | t('app'), url: url('settings') },
+    { label: 'Plugins' | t('app'), url: url('settings/plugins') },
+    { label: 'Field Manager' | t('field-manager'), url: url('field-manager/settings') },
+] | merge(crumbs ?? []) %}
+
+{% set pageTabs = {
+    general: { title: 'General Settings' | t('field-manager'), url: url('field-manager/settings') },
+} %}
+
+{% set pageTitle = pageTitle ?? false %}
+{% if title is not defined and pageTitle %}
+    {% set title = pageTitle %}
+{% endif %}
+
+{% block settingsMeta %}
+    {{ hiddenInput('pluginHandle', 'field-manager') }}
+{% endblock %}

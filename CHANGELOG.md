@@ -5,6 +5,9 @@
 ### Changed
 - Route plugin settings through the plugin’s authorized settings controller.
 
+### Fixed
+- Fixed imported field configuration accepting Yii event and behavior keys.
+
 ## 4.0.6 - 2026-09-14
 
 ### Changed

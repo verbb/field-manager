@@ -5,6 +5,7 @@ use verbb\fieldmanager\FieldManager;
 
 use Craft;
 use craft\helpers\ArrayHelper;
+use craft\helpers\Component as ComponentHelper;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use craft\models\EntryType;
@@ -358,7 +359,13 @@ class Import extends Component
             return false;
         }
 
-        return $data;
+        if (!is_array($data)) {
+            FieldManager::error('Could not parse JSON data - expected an object or array.');
+
+            return false;
+        }
+
+        return ComponentHelper::cleanseConfig($data);
     }
 
     private function _processCraft2Fields(&$fieldInfo): array

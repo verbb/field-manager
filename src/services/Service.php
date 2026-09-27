@@ -9,6 +9,7 @@ use Craft;
 use craft\base\FieldInterface;
 use craft\db\Query;
 use craft\helpers\ArrayHelper;
+use craft\helpers\Component as ComponentHelper;
 use craft\helpers\Json;
 use craft\helpers\StringHelper;
 use craft\fields\Matrix;
@@ -263,7 +264,7 @@ class Service extends Component
 
     public function createFieldLayoutFromConfig(array $config): FieldLayout
     {
-        $layout = FieldLayout::createFromConfig($config);
+        $layout = FieldLayout::createFromConfig(ComponentHelper::cleanseConfig($config));
         $layout->type = Block::class;
 
         return $layout;

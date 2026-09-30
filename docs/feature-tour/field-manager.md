@@ -3,6 +3,8 @@
 ## Cloning
 Field Manager copies field configuration so you can reuse a setup without entering every option again.
 
+![Field Manager's field overview and actions](../../screenshots/main.png)
+
 Cloning an individual field gives you the opportunity to set its Group, Name, Handle and all other settings related to that field type. Settings available to edit are identical to settings available when using the regular field edit screen.
 
 For cloning a field group, you'll be able to set the Name for this new group. All fields within this group will be duplicated.
@@ -16,6 +18,8 @@ You can export multiple fields, including their groups by using the checkboxes a
 
 ## Import
 Using the Import tab, you paste in your JSON file contents that you created through Field Managers export process. Once done so, you can choose which fields to import, which group to add them to, and their name/handle.
+
+![Importing fields with Field Manager](../../screenshots/import.png)
 
 ## Check a Copied Field
 

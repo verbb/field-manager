@@ -1,5 +1,7 @@
 {% extends '_layouts/cp' %}
 
+{% requireAdmin %}
+
 {% do view.registerAssetBundle('verbb\\fieldmanager\\assetbundles\\FieldManagerAsset') %}
 
 {% if title is not defined %}

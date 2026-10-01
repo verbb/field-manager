@@ -186,6 +186,18 @@ class Import extends Component
                     $fieldInfo['settings'] = $this->processCkEditor($fieldInfo);
                 }
 
+                if (is_string($fieldInfo['settings'])) {
+                    $decodedSettings = Json::decode($fieldInfo['settings']);
+
+                    if (is_array($decodedSettings)) {
+                        $fieldInfo['settings'] = $decodedSettings;
+                    }
+                }
+
+                if (is_array($fieldInfo['settings'])) {
+                    unset($fieldInfo['settings']['id'], $fieldInfo['settings']['uid']);
+                }
+
                 $field = Craft::$app->getFields()->createField([
                     'name' => $fieldInfo['name'],
                     'handle' => $fieldInfo['handle'],

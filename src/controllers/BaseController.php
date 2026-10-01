@@ -21,6 +21,18 @@ class BaseController extends Controller
     // Public Methods
     // =========================================================================
 
+    public function beforeAction($action): bool
+    {
+        if (!parent::beforeAction($action)) {
+            return false;
+        }
+
+        $this->requireCpRequest();
+        $this->requireAdmin();
+
+        return true;
+    }
+
     public function actionIndex(): Response
     {
         $variables = [];
@@ -147,7 +159,7 @@ class BaseController extends Controller
             'searchable' => (bool)$this->request->getBodyParam('searchable', true),
             'translationMethod' => $this->request->getBodyParam('translationMethod', Field::TRANSLATION_METHOD_NONE),
             'translationKeyFormat' => $this->request->getBodyParam('translationKeyFormat'),
-            'settings' => $this->request->getBodyParam('types.' . $type),
+            'settings' => $this->getFieldSettings($type),
         ]);
 
         $originField = $fieldsService->getFieldById($fieldId);
@@ -176,7 +188,7 @@ class BaseController extends Controller
             'searchable' => (bool)$this->request->getBodyParam('searchable', true),
             'translationMethod' => $this->request->getBodyParam('translationMethod', Field::TRANSLATION_METHOD_NONE),
             'translationKeyFormat' => $this->request->getBodyParam('translationKeyFormat'),
-            'settings' => $this->request->getBodyParam('types.' . $type),
+            'settings' => $this->getFieldSettings($type),
         ]);
 
         if (!$fieldsService->saveField($field)) {
@@ -263,5 +275,27 @@ class BaseController extends Controller
         Craft::$app->getSession()->setNotice(Craft::t('field-manager', 'No fields imported.'));
 
         return null;
+    }
+
+    // Private Methods
+    // =========================================================================
+
+    private function getFieldSettings(string $type): mixed
+    {
+        $settings = $this->request->getBodyParam('types.' . $type);
+
+        if (is_string($settings)) {
+            $decodedSettings = Json::decode($settings);
+
+            if (is_array($decodedSettings)) {
+                $settings = $decodedSettings;
+            }
+        }
+
+        if (is_array($settings)) {
+            unset($settings['id'], $settings['uid']);
+        }
+
+        return $settings;
     }
 }

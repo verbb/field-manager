@@ -83,8 +83,7 @@ $(function() {
 		},
 
 		saveSettings: function() {
-			var data = this.$body.find('form').serializeObject();
-			data.fieldId = this.fieldId;
+			var data = this.$body.find('form').serialize();
 
 			this.$footerSpinner.removeClass('hidden');
 
@@ -227,4 +226,3 @@ $(function() {
 		}
 	});
 });
-

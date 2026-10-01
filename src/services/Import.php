@@ -377,7 +377,7 @@ class Import extends Component
             return false;
         }
 
-        return ComponentHelper::cleanseConfig($data);
+        return array_values(ComponentHelper::cleanseConfig($data));
     }
 
     private function _processCraft2Fields(&$fieldInfo): array

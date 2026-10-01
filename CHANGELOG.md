@@ -4,6 +4,7 @@
 
 ### Fixed
 - Fixed a high-severity insufficient authorization vulnerability.
+- Fixed a moderate-severity cross-site scripting vulnerability.
 
 ## 4.0.7 - 2026-09-30
 

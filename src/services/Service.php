@@ -150,6 +150,7 @@ class Service extends Component
                 // Pass usage-shaped config so Matrix keeps per-field metadata (e.g. entry type groups since Craft 5.8).
                 // Bare numeric IDs make setEntryTypes() load globals without the group overlay — see Entries::getEntryType().
                 $usage = ['id' => $entryType->id];
+
                 if (isset($blockType->group) && $blockType->group !== '') {
                     $usage['group'] = $blockType->group;
                 }

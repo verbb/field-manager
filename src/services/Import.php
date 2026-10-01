@@ -213,7 +213,7 @@ class Import extends Component
                                 }
                             }
                         }
-                    } else if ($fieldInfo['type'] == 'verbb\supertable\fields\SuperTableField') {
+                    } elseif ($fieldInfo['type'] == 'verbb\supertable\fields\SuperTableField') {
                         foreach ($field->getBlockTypes() as $blockType) {
                             foreach ($blockType->getCustomFields() as $blockTypeField) {
                                 if ($blockTypeField->hasErrors()) {

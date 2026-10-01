@@ -147,12 +147,14 @@ class Export extends Component
         $blockTypes = SuperTable::$plugin->getService()->getBlockTypesByFieldId($field->id);
 
         $blockCount = 1;
+
         foreach ($blockTypes as $blockType) {
             $fieldSettings['blockTypes']['new' . $blockCount] = [
                 'fields' => [],
             ];
 
             $fieldCount = 1;
+
             foreach ($blockType->getCustomFields() as $blockField) {
                 // Case for nested Matrix
                 if ($blockField::class == Matrix::class) {

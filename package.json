@@ -1,0 +1,13 @@
+{
+    "name": "field-manager",
+    "private": true,
+    "scripts": {
+        "build": "npm run build:css && npm run build:js",
+        "build:css": "vite build --mode css",
+        "build:js": "vite build --mode js"
+    },
+    "devDependencies": {
+        "esbuild": "^0.28.2",
+        "vite": "^8.2.0"
+    }
+}

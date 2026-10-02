@@ -3,7 +3,7 @@ namespace verbb\fieldmanager;
 
 use verbb\fieldmanager\base\PluginTrait;
 use verbb\fieldmanager\models\Settings;
-use verbb\fieldmanager\twigextensions\Extension;
+use verbb\fieldmanager\web\twig\Extension;
 use verbb\fieldmanager\variables\FieldManagerVariable;
 
 use Craft;

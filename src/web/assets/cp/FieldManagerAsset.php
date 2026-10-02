@@ -1,10 +1,10 @@
 <?php
-namespace verbb\fieldmanager\assetbundles;
+namespace verbb\fieldmanager\web\assets\cp;
 
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
-use verbb\base\assetbundles\CpAsset as VerbbCpAsset;
+use verbb\base\web\assets\cp\CpAsset as VerbbCpAsset;
 
 class FieldManagerAsset extends AssetBundle
 {
@@ -13,7 +13,7 @@ class FieldManagerAsset extends AssetBundle
 
     public function init(): void
     {
-        $this->sourcePath = "@verbb/fieldmanager/resources/dist";
+        $this->sourcePath = '@verbb/fieldmanager/web/assets/cp/dist';
 
         $this->depends = [
             VerbbCpAsset::class,
@@ -21,11 +21,11 @@ class FieldManagerAsset extends AssetBundle
         ];
 
         $this->js = [
-            'js/field-manager.js',
+            'field-manager.js',
         ];
 
         $this->css = [
-            'css/field-manager.css',
+            'field-manager.css',
         ];
 
         parent::init();

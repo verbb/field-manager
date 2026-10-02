@@ -5,9 +5,9 @@
 
 // ==========================================================================
 
-// @codekit-prepend "_cookie.js"    
-// @codekit-prepend "_events.js"    
-// @codekit-prepend "_utils.js"    
+import './_cookie.js';
+import './_events.js';
+import './_utils.js';
 
 if (typeof Craft.FieldManager === typeof undefined) {
     Craft.FieldManager = {};

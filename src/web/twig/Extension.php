@@ -1,5 +1,5 @@
 <?php
-namespace verbb\fieldmanager\twigextensions;
+namespace verbb\fieldmanager\web\twig;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;

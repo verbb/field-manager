@@ -5,7 +5,7 @@
 
 {% requireAdmin %}
 
-{% do view.registerAssetBundle('verbb\\fieldmanager\\assetbundles\\FieldManagerAsset') %}
+{% do view.registerAssetBundle('verbb\\fieldmanager\\web\\assets\\cp\\FieldManagerAsset') %}
 
 {% set crumbs = [
     { label: 'Settings' | t('app'), url: url('settings') },

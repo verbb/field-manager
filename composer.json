@@ -2,7 +2,7 @@
     "name": "verbb/field-manager",
     "description": "A Craft CMS plugin for cloning, auditing, importing and exporting fields and field groups.",
     "type": "craft-plugin",
-    "version": "4.0.7",
+    "version": "4.0.8",
     "keywords": [
         "craft",
         "cms",

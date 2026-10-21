@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+- Updated the frontend build toolchain to Vite 8.3.4.
+
 ## 4.0.9 - 2026-10-07
 
 ### Changed

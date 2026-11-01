@@ -84,7 +84,8 @@
                                 </th>
                             </tr>
 
-                            {% set elements = tab.elements|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField')) %}
+                            {# Skip layout elements whose field has since been deleted #}
+                            {% set elements = tab.elements|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField') and craft.app.fields.getFieldByUid(e.fieldUid)) %}
 
                             {% for element in elements %}
                                 {% set field = element.field %}

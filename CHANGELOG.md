@@ -4,6 +4,7 @@
 
 ### Fixed
 - Fixed the Audit page not listing entry types.
+- Fixed the Audit page throwing an error when a field layout contains a deleted field.
 
 ## 4.0.10 - 2026-10-22
 

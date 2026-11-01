@@ -186,7 +186,7 @@ class Audit extends Component
     private function getEntryTypeInfo($fieldLayout): array
     {
         $group = (new Query())
-            ->select(['id', 'name', 'sectionId'])
+            ->select(['id', 'name'])
             ->from('{{%entrytypes}}')
             ->where(['fieldLayoutId' => $fieldLayout->id])
             ->one();
@@ -197,7 +197,7 @@ class Audit extends Component
             ];
         }
 
-        $url = UrlHelper::cpUrl('settings/sections/' . $group['sectionId'] . '/entrytypes/' . $group['id']);
+        $url = UrlHelper::cpUrl('settings/entry-types/' . $group['id']);
 
         return [
             'name' => $group['name'],

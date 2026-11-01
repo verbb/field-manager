@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.0.11 - 2026-11-01
 
 ### Fixed
 - Fixed the Audit page not listing entry types.

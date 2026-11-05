@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.0.12 - 2026-11-05
 
 ### Fixed
 - Fixed an error when importing invalid JSON, which now shows the “Could not parse JSON data.” message.

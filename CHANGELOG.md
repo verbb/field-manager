@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed an error when importing invalid JSON, which now shows the “Could not parse JSON data.” message.
+- Fixed an error when a Matrix field failed to import.
+- Fixed the Export breadcrumb linking to a page with no export data.
+
 ## 4.0.11 - 2026-11-01
 
 ### Fixed

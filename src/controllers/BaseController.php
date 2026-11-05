@@ -253,6 +253,12 @@ class BaseController extends Controller
         $json = Craft::$app->getRequest()->getBodyParam('data', '{}');
         $data = FieldManager::$plugin->getImport()->getData($json);
 
+        if ($data === false) {
+            Craft::$app->getSession()->setError(Craft::t('field-manager', 'Could not parse JSON data.'));
+
+            return null;
+        }
+
         $fieldsToImport = FieldManager::$plugin->getImport()->prepFieldsForImport($fields, $data);
 
         if ($fieldsToImport) {

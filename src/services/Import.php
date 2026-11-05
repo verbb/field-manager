@@ -12,6 +12,7 @@ use craft\models\EntryType;
 use craft\models\FieldLayout;
 
 use yii\base\Component;
+use yii\base\InvalidArgumentException;
 
 use Throwable;
 
@@ -363,7 +364,13 @@ class Import extends Component
 
     public function getData($json)
     {
-        $data = Json::decode($json, true, 512);
+        try {
+            $data = Json::decode($json, true, 512);
+        } catch (InvalidArgumentException $e) {
+            FieldManager::error('Could not parse JSON data - {error}.', ['error' => $e->getMessage()]);
+
+            return false;
+        }
 
         if ($data === null) {
             FieldManager::error('Could not parse JSON data - {error}.', ['error' => json_last_error_msg()]);

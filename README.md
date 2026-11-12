@@ -7,21 +7,23 @@ A carefully configured field is a terrible thing to rebuild from memory. Clone o
 
 ## Features
 
-- Use an existing field configuration as the starting point for a new one.
-- Repeat a related collection of fields in one operation.
+- Clone a field as the starting point for a new one.
+- Clone a whole field group in one step.
 - Identify fields that are not currently attached to element layouts.
-- Package selected fields or whole groups in a portable format.
-- Bring exported definitions into another project and choose their destination.
-- Work with several field definitions together instead of one screen at a time.
+- Export selected fields or whole groups as JSON.
+- Import exported JSON into another project and choose the destination group.
 
 ## Documentation
+
 Visit the [Field Manager Plugin page](https://verbb.io/craft-plugins/field-manager) for all documentation, guides, pricing and developer resources.
 
 ## Support
-Get in touch with us by [creating a Github issue](https://github.com/verbb/field-manager/issues)
+
+Get in touch with us via the [Field Manager Support page](https://verbb.io/craft-plugins/field-manager/support) or by [creating a GitHub issue](https://github.com/verbb/field-manager/issues).
 
 ## Sponsor
-Field Manager is licensed under the MIT license, meaning it will always be free and open source - we love free stuff! If you'd like to show your support to the plugin regardless, [Sponsor](https://github.com/sponsors/verbb) development.
+
+Field Manager is licensed under the MIT license, so it will always be free and open source. If you'd like to support it anyway, you can [sponsor its development](https://github.com/sponsors/verbb).
 
 <h2></h2>
 

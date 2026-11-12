@@ -4,9 +4,8 @@ A carefully configured field is a terrible thing to rebuild from memory. Clone o
 
 ## Features
 
-- Use an existing field configuration as the starting point for a new one.
-- Repeat a related collection of fields in one operation.
+- Clone a field as the starting point for a new one.
+- Clone a whole field group in one step.
 - Identify fields that are not currently attached to element layouts.
-- Package selected fields or whole groups in a portable format.
-- Bring exported definitions into another project and choose their destination.
-- Work with several field definitions together instead of one screen at a time.
+- Export selected fields or whole groups as JSON.
+- Import exported JSON into another project and choose the destination group.

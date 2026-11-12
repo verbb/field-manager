@@ -5,13 +5,13 @@ Make a large collection of Craft fields easier to manage. Clone individual field
 <!-- feature-section media-size="large" -->
 ## Clone fields and field groups
 
-Replicating a carefully configured field can be tedious — just think of a sizeable Matrix field. Clone one field or an entire group, then change the name, handle and any settings that need to be different.
+Replicating a carefully configured field can be tedious, especially a sizeable Matrix field. Clone one field or an entire group, then change the name, handle and any settings that need to be different.
 
 ![Field Manager listing native Craft fields with their handles and types.](../screenshots/main.png)
 <!-- feature-section-end -->
 
 <!-- feature-section media-size="medium" -->
-## Clean up unused fields
+## Clean up and move fields between projects
 
 Large sites and rapid prototypes tend to collect fields, and not all of them keep earning their place. Work with several definitions at once, see which are no longer attached to an element layout, then export selected fields or groups to reviewable JSON when a proven setup belongs in another project.
 

@@ -12,7 +12,7 @@ return [
 ];
 ```
 
-All other settings keep their defaults. Add any further settings you want to change to the same array. The options below explain the available settings and their defaults.
+All other settings keep their defaults. Add any further settings you want to change to the same array. The options below explain the available settings and their defaults. You can also manage these settings in the control panel under **Settings → Field Manager**.
 
 ## Configuration Options
 
@@ -23,7 +23,3 @@ All other settings keep their defaults. Add any further settings you want to cha
 
 Whether the plugin's page should be shown in the main sidebar navigation.
 :::
-
-
-## Control Panel
-You can also manage configuration settings through the Control Panel by visiting Settings → Field Manager.

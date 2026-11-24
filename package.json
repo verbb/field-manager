@@ -12,6 +12,6 @@
         "vite": "^8.3.5"
     },
     "dependencies": {
-        "@verbb/plugin-kit-web": "file:../../../plugin-kit/plugin-kit/plugin-kit-web"
+        "@verbb/plugin-kit-web": "^2.3.0"
     }
 }

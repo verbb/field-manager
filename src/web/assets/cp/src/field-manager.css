@@ -223,3 +223,58 @@ body.ltr .rightalign {
     font-size: 11px;
     padding: 2px 0 2px 20px !important;
 }
+
+/* A page with nothing to show yet: Plugin Kit's page empty state, straight on the page background. */
+.field-manager-bare-content #content.content-pane {
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.field-manager-bare-content #content > pk-state-panel[layout='page'] {
+    flex: 1 1 auto;
+}
+
+/* Field Manager's spot illustration: a duotone in its brand colour (#9f2784, from icon.svg), a darker line on white
+   with soft tinted fills and the new field in the brand colour itself. */
+.field-manager-spot {
+    --field-manager-spot-line: #7a1d65;
+    --field-manager-spot-tint: #f6e6f2;
+    --field-manager-spot-new: #9f2784;
+    overflow: visible;
+}
+
+.field-manager-spot :is(.field-manager-spot__paper, .field-manager-spot__fill, .field-manager-spot__line, .field-manager-spot__dash) {
+    stroke: var(--field-manager-spot-line);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.field-manager-spot .field-manager-spot__paper {
+    fill: var(--white, #fff);
+}
+
+.field-manager-spot .field-manager-spot__fill {
+    fill: var(--field-manager-spot-tint);
+}
+
+.field-manager-spot .field-manager-spot__line {
+    fill: none;
+}
+
+.field-manager-spot .field-manager-spot__dash {
+    fill: none;
+    stroke-dasharray: 2.5 2.5;
+}
+
+.field-manager-spot .field-manager-spot__new {
+    fill: var(--field-manager-spot-new);
+}
+
+.field-manager-spot .field-manager-spot__plus {
+    fill: none;
+    stroke: var(--white, #fff);
+    stroke-width: 1.75;
+    stroke-linecap: round;
+}

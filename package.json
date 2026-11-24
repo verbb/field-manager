@@ -2,12 +2,16 @@
     "name": "field-manager",
     "private": true,
     "scripts": {
-        "build": "npm run build:css && npm run build:js",
+        "build": "npm run build:css && npm run build:js && npm run build:plugin-kit",
         "build:css": "vite build --mode css",
-        "build:js": "vite build --mode js"
+        "build:js": "vite build --mode js",
+        "build:plugin-kit": "vite build --mode plugin-kit"
     },
     "devDependencies": {
         "esbuild": "^0.28.2",
         "vite": "^8.3.5"
+    },
+    "dependencies": {
+        "@verbb/plugin-kit-web": "file:../../../plugin-kit/plugin-kit/plugin-kit-web"
     }
 }

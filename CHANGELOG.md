@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Added a “Create your first field” screen to the Fields page for sites with no fields yet.
+- Added an empty state to the Audit page when no field layouts use fields yet.
+
+### Fixed
+- Fixed the Fields page not updating after its last field was deleted.
+
 ## 4.0.12 - 2026-11-05
 
 ### Fixed

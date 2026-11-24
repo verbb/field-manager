@@ -9,6 +9,10 @@
 {% set title = 'Audit' %}
 {% set selectedTab = 'audit' %}
 
+{# Nothing to audit yet: an empty state replaces the groups, so the sidebar of groups goes too. #}
+{% if elementInfo is empty %}
+    {% do view.registerAssetBundle('verbb\\fieldmanager\\web\\assets\\cp\\PluginKitAsset') %}
+{% else %}
 {% set sidebar %}
     <nav class="sidebar-nav">
         <ul>
@@ -21,8 +25,15 @@
         </ul>
     </nav>
 {% endset %}
+{% endif %}
 
 {% block blockContent %}
+
+{% if elementInfo is empty %}
+    <pk-state-panel heading="{{ 'No field layouts use fields yet' | t('field-manager') }}" heading-level="2">
+        {{ 'Once an entry type, volume or other field layout has a field, the audit lists it here.' | t('field-manager') }}
+    </pk-state-panel>
+{% endif %}
 
 {% for elementGroup, elementGroupData in elementInfo %}
     <div class="fieldmanager-audit-content" data-groupid="{{ elementGroup }}">

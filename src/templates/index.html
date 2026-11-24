@@ -9,13 +9,41 @@
 {% set title = 'Fields' %}
 {% set selectedTab = 'fields' %}
 
-{% set fullPageForm = true %}
+{% set fields = craft.app.fields.getAllFields() %}
+
+{# No fields yet: the page is one empty state on the page background, without the table, the header button or the footer. #}
+{% set firstRun = fields is empty %}
+
+{% if firstRun %}
+    {% set bareContent = true %}
+    {% set hidePluginFooter = true %}
+    {% do view.registerAssetBundle('verbb\\fieldmanager\\web\\assets\\cp\\PluginKitAsset') %}
+{% else %}
+    {% set fullPageForm = true %}
+{% endif %}
 
 {% block actionButton %}
-    <a href="{{ url('settings/fields/new') }}" class="submit btn add icon new-field-btn">{{ 'New field' | t('field-manager') }}</a>
+    {% if not firstRun %}
+        <a href="{{ url('settings/fields/new') }}" class="submit btn add icon new-field-btn">{{ 'New field' | t('field-manager') }}</a>
+    {% endif %}
 {% endblock %}
 
 {% block blockContent %}
+
+{% if firstRun %}
+    {% set canCreate = craft.app.config.general.allowAdminChanges %}
+
+    <pk-state-panel layout="page" heading="{{ canCreate ? 'Create your first field' | t('field-manager') : 'No fields yet' | t('field-manager') }}" heading-level="2">
+        {% include 'field-manager/_includes/spots/fields' %}
+
+        {% if canCreate %}
+            {{ 'Once your site has fields, you can clone, export and import them here.' | t('field-manager') }}
+            <a slot="actions" class="btn submit add icon" href="{{ url('settings/fields/new') }}">{{ 'New field' | t('field-manager') }}</a>
+        {% else %}
+            {{ 'Fields are created where admin changes are allowed, then deployed to this environment.' | t('field-manager') }}
+        {% endif %}
+    </pk-state-panel>
+{% else %}
 
 <input type="hidden" name="action" value="field-manager/base/export">
 
@@ -40,7 +68,7 @@
             <td></td>
         </tr>
 
-        {% for field in craft.app.fields.getAllFields() %}
+        {% for field in fields %}
             <tr class="field" data-id="{{ field.id }}" data-groupid="1" data-name="{{ field.name }}">
                 <th scope="row" class="name">
                     {% set label %}
@@ -96,12 +124,20 @@
     }) }}
 </div>
 
-{% endblock %}
-
 {% js %}
     new Craft.AdminTable({
         tableSelector: '#fieldmanager',
-        noObjectsSelector: '#nofields',
-        deleteAction: 'fields/delete-field'
+        deleteAction: 'fields/delete-field',
+
+        // The "All Fields" row keeps the table from ever counting as empty, so once the last field is deleted, reload
+        // to show the first-field screen in its place.
+        onDeleteItem: function() {
+            if (!$('#fieldmanager tr.field').length) {
+                window.location.reload();
+            }
+        },
     });
 {% endjs %}
+{% endif %}
+
+{% endblock %}

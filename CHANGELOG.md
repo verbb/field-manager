@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.0.13 - 2026-11-24
 
 ### Added
 - Added a “Create your first field” screen to the Fields page for sites with no fields yet.
